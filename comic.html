@@ -7,94 +7,316 @@
 <title>PROJECT #DOOR</title>
 
 <style>
+
 body{
     margin:0;
     background:#111;
     overflow:hidden;
 }
 
+/* ===== 上帯 ===== */
+
+#header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:50px;
+
+    background:#fff;
+    color:#222;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 20px;
+    box-sizing:border-box;
+
+    z-index:1000;
+
+    font-family:
+    "Yu Mincho",
+    "Hiragino Mincho ProN",
+    serif;
+}
+
+#header a{
+    color:#222;
+    text-decoration:none;
+}
+
+/* ===== 閲覧エリア ===== */
+
 #reader{
-    width:100vw;
-    height:100vh;
+    position:fixed;
+
+    top:50px;
+    bottom:50px;
+    left:0;
+    right:0;
+
     display:flex;
     justify-content:center;
     align-items:center;
+
+    overflow:hidden;
 }
 
 #page{
+
     max-width:100%;
     max-height:100%;
+
     object-fit:contain;
+
+    transition:
+        opacity .18s ease,
+        transform .2s ease;
+
+    opacity:1;
 }
 
-#counter{
+/* ===== 下帯 ===== */
+
+#footer{
+
     position:fixed;
-    bottom:15px;
-    left:50%;
-    transform:translateX(-50%);
-    color:white;
+
+    bottom:0;
+    left:0;
+
+    width:100%;
+    height:50px;
+
+    background:#000;
+    color:#fff;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 20px;
+    box-sizing:border-box;
+
+    z-index:1000;
 }
+
+#controls button{
+
+    width:34px;
+    height:34px;
+
+    margin-right:6px;
+
+    border:none;
+
+    background:#222;
+    color:#fff;
+
+    cursor:pointer;
+
+    font-size:18px;
+}
+
+/* ===== タップエリア ===== */
 
 .tap-left{
+
     position:fixed;
+
     left:0;
-    top:0;
+
+    top:50px;
+
+    bottom:50px;
+
     width:50vw;
-    height:100vh;
 }
 
 .tap-right{
+
     position:fixed;
+
     right:0;
-    top:0;
+
+    top:50px;
+
+    bottom:50px;
+
     width:50vw;
-    height:100vh;
 }
+
 </style>
 </head>
 
 <body>
 
+<!-- 上帯 -->
+
+<div id="header">
+
+    <a href="index.html">
+        パン倉庫
+    </a>
+
+    <div>
+        Pan-souko @Tti_sbr
+    </div>
+
+</div>
+
+<!-- 漫画 -->
+
 <div id="reader">
-    <img id="page" src="pages/002.png">
+
+    <img
+        id="page"
+        src="pages/002.png"
+        alt="page">
+
 </div>
 
-<div id="counter">
-    <span id="current">1</span>/2
+<!-- 下帯 -->
+
+<div id="footer">
+
+    <div id="controls">
+
+        <button onclick="zoomIn()">＋</button>
+
+        <button onclick="zoomOut()">－</button>
+
+    </div>
+
+    <div>
+
+        <span id="current">1</span>
+        /
+        <span id="total">2</span>
+
+    </div>
+
 </div>
 
-<div class="tap-left" onclick="prevPage()"></div>
-<div class="tap-right" onclick="nextPage()"></div>
+<!-- タップ領域 -->
+
+<div
+    class="tap-left"
+    onclick="prevPage()">
+</div>
+
+<div
+    class="tap-right"
+    onclick="nextPage()">
+</div>
 
 <script>
 
 const pages = [
-  "pages/002.png",
-  "pages/003.png"
+
+    "pages/002.png",
+    "pages/003.png"
+
 ];
 
 let current = 0;
 
-function loadPage(){
-  document.getElementById("page").src =
-    pages[current];
+let scale = 1;
 
-  document.getElementById("current").textContent =
+document
+.getElementById("total")
+.textContent =
+pages.length;
+
+/* ===== ページ表示 ===== */
+
+function loadPage(){
+
+    const img =
+    document.getElementById("page");
+
+    img.style.opacity = 0;
+
+    setTimeout(()=>{
+
+        img.src =
+        pages[current];
+
+        img.onload = ()=>{
+
+            img.style.opacity = 1;
+
+        };
+
+    },120);
+
+    document
+    .getElementById("current")
+    .textContent =
     current + 1;
+
 }
+
+/* ===== 次へ ===== */
 
 function nextPage(){
-  if(current < pages.length - 1){
-    current++;
-    loadPage();
-  }
+
+    if(
+        current <
+        pages.length - 1
+    ){
+
+        current++;
+
+        loadPage();
+
+    }
+
 }
 
+/* ===== 前へ ===== */
+
 function prevPage(){
-  if(current > 0){
-    current--;
-    loadPage();
-  }
+
+    if(
+        current > 0
+    ){
+
+        current--;
+
+        loadPage();
+
+    }
+
+}
+
+/* ===== ズーム ===== */
+
+function zoomIn(){
+
+    scale += 0.1;
+
+    document
+    .getElementById("page")
+    .style.transform =
+    `scale(${scale})`;
+
+}
+
+function zoomOut(){
+
+    scale =
+    Math.max(
+        0.5,
+        scale - 0.1
+    );
+
+    document
+    .getElementById("page")
+    .style.transform =
+    `scale(${scale})`;
+
 }
 
 </script>
