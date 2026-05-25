@@ -18,30 +18,37 @@ body{
 /* ===== 上帯 ===== */
 
 #header{
+
     position:fixed;
+
     top:0;
     left:0;
+
     width:100%;
     height:52px;
 
     background:#fff;
+
     color:#222;
 
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
 
     padding:0 20px;
+
     box-sizing:border-box;
 
     z-index:1000;
 
-    font-family:
-    "Yu Mincho",
-    "Hiragino Mincho ProN",
-    serif;
-
     transition:.25s;
+
+    font-family:
+      "Yu Mincho",
+      "Hiragino Mincho ProN",
+      serif;
 }
 
 #header.hide{
@@ -49,7 +56,9 @@ body{
 }
 
 #header a{
+
     color:#222;
+
     text-decoration:none;
 }
 
@@ -61,11 +70,14 @@ body{
 
     top:52px;
     bottom:52px;
+
     left:0;
     right:0;
 
     display:flex;
+
     justify-content:center;
+
     align-items:center;
 
     overflow:hidden;
@@ -78,11 +90,56 @@ body{
 
     object-fit:contain;
 
+    opacity:1;
+
     transition:
       opacity .18s ease,
       transform .18s ease;
+}
 
-    opacity:1;
+/* ===== ページ影 ===== */
+
+#page-shadow{
+
+    position:fixed;
+
+    top:52px;
+    bottom:52px;
+
+    width:140px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    z-index:500;
+
+    transition:
+      opacity .18s ease;
+}
+
+.shadow-next{
+
+    right:0;
+
+    background:
+      linear-gradient(
+        to left,
+        rgba(0,0,0,.35),
+        rgba(0,0,0,0)
+      );
+}
+
+.shadow-prev{
+
+    left:0;
+
+    background:
+      linear-gradient(
+        to right,
+        rgba(0,0,0,.35),
+        rgba(0,0,0,0)
+      );
 }
 
 /* ===== 下帯 ===== */
@@ -98,13 +155,17 @@ body{
     height:52px;
 
     background:#000;
+
     color:#fff;
 
     display:flex;
+
     justify-content:space-between;
+
     align-items:center;
 
     padding:0 20px;
+
     box-sizing:border-box;
 
     z-index:1000;
@@ -113,12 +174,14 @@ body{
 }
 
 #footer.hide{
+
     transform:translateY(100%);
 }
 
 #controls button{
 
     width:36px;
+
     height:36px;
 
     margin-right:6px;
@@ -126,11 +189,12 @@ body{
     border:none;
 
     background:#222;
+
     color:#fff;
 
     cursor:pointer;
 
-    font-size:18px;
+    font-size:16px;
 }
 
 /* ===== タップエリア ===== */
@@ -179,8 +243,6 @@ body{
 
 <body>
 
-<!-- 上帯 -->
-
 <div id="header">
 
 <a href="index.html">
@@ -193,8 +255,6 @@ Pan-souko @Tti_sbr
 
 </div>
 
-<!-- 漫画 -->
-
 <div id="reader">
 
 <img
@@ -204,7 +264,7 @@ alt="page">
 
 </div>
 
-<!-- 下帯 -->
+<div id="page-shadow"></div>
 
 <div id="footer">
 
@@ -214,19 +274,21 @@ alt="page">
 
 <button onclick="zoomOut()">－</button>
 
+<button onclick="saveBookmark()">
+記録保存
+</button>
+
 </div>
 
 <div>
 
 <span id="current">1</span>
 /
-<span id="total">2</span>
+<span id="total">4</span>
 
 </div>
 
 </div>
-
-<!-- タップ領域 -->
 
 <div class="tap-left"></div>
 
@@ -242,14 +304,12 @@ const pages = [
 
 "pages/002.png",
 "pages/003.png",
-"pages/002.png",
-"pages/002.png",
-"pages/003.png",
-"pages/002.png",
-"pages/003.png"
+"pages/004.png",
+"pages/005.png"
+
 ];
 
-/* ================= */
+/* ===================== */
 
 let current = 0;
 
@@ -262,12 +322,81 @@ document
 .textContent =
 pages.length;
 
-/* ===== ページ読込 ===== */
+/* ===== 再開確認 ===== */
+
+const savedPage =
+localStorage.getItem(
+"door-bookmark"
+);
+
+if(savedPage !== null){
+
+const pageNum =
+parseInt(savedPage)+1;
+
+if(
+confirm(
+`前回の閲覧記録があります。\n${pageNum}ページから再開しますか？`
+)
+){
+
+current =
+parseInt(savedPage);
+
+}
+
+}
+
+/* ===== 記録保存 ===== */
+
+function saveBookmark(){
+
+localStorage.setItem(
+"door-bookmark",
+current
+);
+
+alert(
+`${current+1}ページを保存しました`
+);
+
+}
+
+/* ===== 影 ===== */
+
+function showPageShadow(next=true){
+
+const shadow =
+document.getElementById(
+"page-shadow"
+);
+
+shadow.className="";
+
+shadow.classList.add(
+next
+? "shadow-next"
+: "shadow-prev"
+);
+
+shadow.style.opacity="1";
+
+setTimeout(()=>{
+
+shadow.style.opacity="0";
+
+},180);
+
+}
+
+/* ===== 読込 ===== */
 
 function loadPage(direction=1){
 
 const img =
-document.getElementById("page");
+document.getElementById(
+"page"
+);
 
 img.style.opacity="0";
 
@@ -281,9 +410,6 @@ pages[current];
 
 img.onload = ()=>{
 
-img.style.transition =
-"opacity .18s ease, transform .18s ease";
-
 img.style.opacity="1";
 
 img.style.transform=
@@ -294,9 +420,18 @@ img.style.transform=
 },120);
 
 document
-.getElementById("current")
+.getElementById(
+"current"
+)
 .textContent =
 current+1;
+
+/* 自動保存 */
+
+localStorage.setItem(
+"door-bookmark",
+current
+);
 
 }
 
@@ -308,6 +443,8 @@ if(
 current <
 pages.length-1
 ){
+
+showPageShadow(true);
 
 current++;
 
@@ -325,6 +462,8 @@ if(
 current > 0
 ){
 
+showPageShadow(false);
+
 current--;
 
 loadPage(-1);
@@ -337,7 +476,8 @@ loadPage(-1);
 
 function toggleUI(){
 
-uiVisible = !uiVisible;
+uiVisible =
+!uiVisible;
 
 document
 .getElementById("header")
@@ -442,6 +582,10 @@ nextPage();
 
 }
 );
+
+/* ===== 初期表示 ===== */
+
+loadPage();
 
 </script>
 
