@@ -2,42 +2,345 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>認証</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>UNCLASSIFIED DATA</title>
+
+<style>
+
+:root{
+--glass:rgba(255,255,255,.55);
+--border:rgba(255,255,255,.7);
+--shadow:0 20px 60px rgba(0,0,0,.08);
+}
+
+*{
+box-sizing:border-box;
+}
+
+body{
+
+margin:0;
+
+min-height:100vh;
+
+font-family:
+"Yu Mincho",
+"Hiragino Mincho ProN",
+serif;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+background:
+radial-gradient(
+circle at top,
+#ffffff,
+#edf4fb 40%,
+#e3edf7 100%
+);
+
+color:#55606d;
+}
+
+/* ガラスカード */
+
+.panel{
+
+width:min(650px,90vw);
+
+padding:50px;
+
+border-radius:30px;
+
+background:var(--glass);
+
+backdrop-filter:blur(18px);
+
+border:1px solid var(--border);
+
+box-shadow:var(--shadow);
+
+text-align:center;
+}
+
+.label{
+
+font-size:.8rem;
+
+letter-spacing:.4em;
+
+opacity:.6;
+}
+
+h1{
+
+font-weight:normal;
+
+letter-spacing:.12em;
+
+margin:20px 0;
+}
+
+.divider{
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+gap:12px;
+
+margin:25px 0;
+}
+
+.divider::before,
+.divider::after{
+
+content:"";
+
+width:70px;
+
+height:1px;
+
+background:
+rgba(120,140,170,.4);
+}
+
+.dot{
+
+width:8px;
+height:8px;
+
+border-radius:50%;
+
+background:#ffffff;
+
+box-shadow:
+0 0 12px rgba(255,255,255,.8);
+}
+
+.description{
+
+line-height:2;
+
+margin-bottom:25px;
+}
+
+input{
+
+width:min(320px,90%);
+
+padding:14px;
+
+border-radius:12px;
+
+border:1px solid rgba(180,190,210,.5);
+
+background:
+rgba(255,255,255,.6);
+
+font-size:16px;
+
+text-align:center;
+}
+
+button{
+
+margin-top:18px;
+
+padding:12px 28px;
+
+border:none;
+
+border-radius:12px;
+
+cursor:pointer;
+
+background:#ffffff;
+
+color:#55606d;
+
+font-family:inherit;
+
+transition:.2s;
+}
+
+button:hover{
+
+transform:translateY(-2px);
+}
+
+#msg{
+
+margin-top:24px;
+
+letter-spacing:.15em;
+
+opacity:.8;
+
+min-height:24px;
+}
+
+#result{
+
+margin-top:25px;
+}
+
+.file-link{
+
+display:block;
+
+margin:12px auto;
+
+padding:14px;
+
+max-width:260px;
+
+text-decoration:none;
+
+color:#55606d;
+
+border-radius:14px;
+
+background:
+rgba(255,255,255,.45);
+
+border:
+1px solid rgba(255,255,255,.6);
+
+transition:.2s;
+}
+
+.file-link:hover{
+
+transform:translateY(-2px);
+
+background:
+rgba(255,255,255,.8);
+}
+
+.success{
+
+font-size:1.1rem;
+
+margin-bottom:12px;
+}
+
+</style>
 </head>
 
 <body>
 
-<h2>ACCESS DENIED</h2>
+<div class="panel">
 
-<p>認証キーを入力してください</p>
+<div class="label">
+UNCLASSIFIED DATA
+</div>
 
-<input id="pw">
+<h1>
+PROJECT #DOOR
+</h1>
+
+<div class="divider">
+<div class="dot"></div>
+</div>
+
+<div class="description">
+
+認証キーを入力してください。<br>
+認証された利用者のみ閲覧できます。
+
+</div>
+
+<input
+id="pw"
+type="password"
+placeholder="Authentication Key">
+
+<br>
 
 <button onclick="checkPass()">
-認証
+ACCESS
 </button>
 
-<p id="msg"></p>
+<div id="msg"></div>
+
+<div id="result"></div>
+
+</div>
 
 <script>
+
 function checkPass(){
 
- const pw =
- document.getElementById("pw").value;
+const pw =
+document
+.getElementById("pw")
+.value
+.trim()
+.toLowerCase();
 
- if(pw==="DOOR"){
+const msg =
+document
+.getElementById("msg");
 
-   location.href =
-   "secret.html";
+const result =
+document
+.getElementById("result");
 
- }else{
+result.innerHTML="";
 
-   document.getElementById("msg")
-   .textContent =
-   "認証失敗";
+msg.textContent =
+"ACCESSING ARCHIVE...";
 
- }
+setTimeout(()=>{
+
+if(pw==="specimen"){
+
+msg.textContent="";
+
+result.innerHTML = `
+
+<div class="success">
+
+ACCESS GRANTED
+
+</div>
+
+<p>
+
+ロックを解除しました
+
+</p>
+
+<a
+class="file-link"
+href="secret.html">
+
+▶ FILE-005
+
+</a>
+
+`;
+
 }
+
+else{
+
+msg.textContent =
+"認証失敗";
+
+}
+
+},1500);
+
+}
+
 </script>
 
 </body>
