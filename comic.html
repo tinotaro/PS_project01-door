@@ -7,7 +7,6 @@
 <title>PROJECT #DOOR</title>
 
 <style>
-
 body{
     margin:0;
     background:#111;
@@ -17,7 +16,6 @@ body{
 #reader{
     width:100vw;
     height:100vh;
-
     display:flex;
     justify-content:center;
     align-items:center;
@@ -34,9 +32,7 @@ body{
     bottom:15px;
     left:50%;
     transform:translateX(-50%);
-
     color:white;
-    font-family:sans-serif;
 }
 
 .tap-left{
@@ -54,18 +50,17 @@ body{
     width:50vw;
     height:100vh;
 }
-
 </style>
 </head>
 
 <body>
 
 <div id="reader">
-    <img id="page" src="pages/001.webp">
+    <img id="page" src="pages/002.png">
 </div>
 
 <div id="counter">
-    <span id="current">1</span>/4
+    <span id="current">1</span>/2
 </div>
 
 <div class="tap-left" onclick="prevPage()"></div>
@@ -73,41 +68,33 @@ body{
 
 <script>
 
-let current = 1;
-const total = 4;
+const pages = [
+  "pages/002.png",
+  "pages/003.png"
+];
+
+let current = 0;
 
 function loadPage(){
+  document.getElementById("page").src =
+    pages[current];
 
-    document.getElementById("page").src =
-    `pages/${String(current).padStart(3,'0')}.webp`;
-
-    document.getElementById("current").textContent =
-    current;
-
+  document.getElementById("current").textContent =
+    current + 1;
 }
 
 function nextPage(){
-
-    if(current < total){
-
-        current++;
-
-        loadPage();
-
-    }
-
+  if(current < pages.length - 1){
+    current++;
+    loadPage();
+  }
 }
 
 function prevPage(){
-
-    if(current > 1){
-
-        current--;
-
-        loadPage();
-
-    }
-
+  if(current > 0){
+    current--;
+    loadPage();
+  }
 }
 
 </script>
