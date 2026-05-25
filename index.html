@@ -9,263 +9,387 @@
 <style>
 
 :root{
-    --glass:rgba(255,255,255,.55);
-    --border:rgba(255,255,255,.65);
-    --shadow:0 20px 60px rgba(0,0,0,.08);
+--glass:rgba(255,255,255,.42);
+--border:rgba(255,255,255,.55);
+--shadow:0 20px 60px rgba(0,0,0,.12);
 }
 
 *{
-    box-sizing:border-box;
+box-sizing:border-box;
+}
+
+html{
+height:100%;
 }
 
 body{
 
-    margin:0;
+margin:0;
 
-    min-height:100vh;
+min-height:100vh;
 
-    color:#55606d;
+font-family:
+"Yu Mincho",
+"Hiragino Mincho ProN",
+serif;
 
-    font-family:
-    "Yu Mincho",
-    "Hiragino Mincho ProN",
-    serif;
+color:#4f5964;
 
-    background:
-    radial-gradient(
-        circle at top,
-        #ffffff,
-        #edf4fb 35%,
-        #e3edf7 100%
-    );
+overflow-x:hidden;
 
-    overflow-x:hidden;
+background:
+
+linear-gradient(
+rgba(248,250,252,.78),
+rgba(236,242,248,.88)
+),
+
+url("pages/door.png");
+
+background-size:cover;
+
+background-position:center;
+
+background-repeat:no-repeat;
+
+background-attachment:fixed;
 }
 
-/* 背景の光 */
+/* 光 */
 
 body::before{
 
-    content:"";
+content:"";
 
-    position:fixed;
+position:fixed;
 
-    inset:0;
+inset:0;
 
-    background:
+background:
 
-    radial-gradient(
-      circle at 20% 15%,
-      rgba(255,255,255,.95),
-      transparent 30%
-    ),
+radial-gradient(
+circle at 15% 10%,
+rgba(255,255,255,.95),
+transparent 30%
+),
 
-    radial-gradient(
-      circle at 80% 10%,
-      rgba(255,255,255,.65),
-      transparent 25%
-    ),
+radial-gradient(
+circle at 85% 15%,
+rgba(255,255,255,.65),
+transparent 30%
+),
 
-    radial-gradient(
-      circle at 50% 100%,
-      rgba(255,255,255,.35),
-      transparent 45%
-    );
+radial-gradient(
+circle at 50% 100%,
+rgba(255,255,255,.25),
+transparent 50%
+);
 
-    pointer-events:none;
+backdrop-filter:blur(3px);
+
+pointer-events:none;
+
+z-index:-1;
 }
 
-/* 上部 */
+/* タイトル */
 
 header{
 
-    text-align:center;
+text-align:center;
 
-    padding-top:80px;
+padding-top:70px;
+
+padding-bottom:30px;
 }
 
-.subtitle{
+.archive-label{
 
-    font-size:.8rem;
+font-size:.8rem;
 
-    letter-spacing:.45em;
+letter-spacing:.45em;
 
-    opacity:.55;
+opacity:.55;
 }
 
 h1{
 
-    margin:18px 0;
+margin:18px 0;
 
-    font-size:clamp(2rem,5vw,4rem);
+font-size:
+clamp(2.4rem,6vw,5rem);
 
-    font-weight:normal;
+font-weight:normal;
 
-    letter-spacing:.18em;
+letter-spacing:.12em;
+
+color:#ffffff;
+
+text-shadow:
+0 2px 20px rgba(0,0,0,.25);
+}
+
+.lead{
+
+font-size:.85rem;
+
+letter-spacing:.3em;
+
+opacity:.75;
+
+margin-top:-10px;
 }
 
 .divider{
 
-    display:flex;
+display:flex;
 
-    align-items:center;
+align-items:center;
 
-    justify-content:center;
+justify-content:center;
 
-    gap:12px;
+gap:12px;
 
-    margin-top:20px;
+margin-top:18px;
 }
 
 .divider::before,
 .divider::after{
 
-    content:"";
+content:"";
 
-    width:80px;
+width:90px;
 
-    height:1px;
+height:1px;
 
-    background:
-    linear-gradient(
-      to right,
-      transparent,
-      rgba(255,255,255,.9)
-    );
+background:
+rgba(255,255,255,.8);
 }
 
 .dot{
 
-    width:8px;
-    height:8px;
+width:8px;
 
-    border-radius:50%;
+height:8px;
 
-    background:white;
+border-radius:50%;
 
-    box-shadow:
-    0 0 20px rgba(255,255,255,1);
+background:white;
+
+box-shadow:
+0 0 20px rgba(255,255,255,.9);
 }
 
-/* メインカード */
+/* ガラスカード */
 
 .panel{
 
-    width:min(900px,90vw);
+width:min(900px,90vw);
 
-    margin:50px auto;
+margin:auto;
 
-    background:var(--glass);
+padding:40px;
 
-    backdrop-filter:blur(18px);
+border-radius:32px;
 
-    border:1px solid var(--border);
+background:var(--glass);
 
-    border-radius:28px;
+backdrop-filter:blur(18px);
 
-    box-shadow:var(--shadow);
+border:1px solid var(--border);
 
-    padding:40px;
+box-shadow:var(--shadow);
 }
 
 .panel p{
 
-    line-height:2;
+line-height:2;
+
+text-align:center;
 }
+
+/* アーカイブ */
 
 .archive-grid{
 
-    display:grid;
+display:grid;
 
-    gap:16px;
+grid-template-columns:
+repeat(
+auto-fit,
+minmax(260px,1fr)
+);
 
-    margin-top:35px;
+gap:18px;
+
+margin-top:35px;
 }
-
-/* ファイルカード */
 
 .card{
 
-    display:flex;
+display:flex;
 
-    justify-content:space-between;
+justify-content:space-between;
 
-    align-items:center;
+align-items:center;
 
-    text-decoration:none;
+padding:22px;
 
-    color:inherit;
+border-radius:20px;
 
-    padding:20px 24px;
+text-decoration:none;
 
-    border-radius:20px;
+color:inherit;
 
-    background:
-    rgba(255,255,255,.45);
+background:
+rgba(255,255,255,.55);
 
-    border:
-    1px solid rgba(255,255,255,.7);
+border:
+1px solid rgba(255,255,255,.65);
 
-    transition:.25s;
+transition:
+transform .25s,
+background .25s;
 }
 
 .card:hover{
 
-    transform:translateY(-3px);
+transform:
+translateY(-3px);
 
-    background:
-    rgba(255,255,255,.7);
+background:
+rgba(255,255,255,.8);
 }
 
 .card-title{
 
-    font-size:1.05rem;
+font-size:1.05rem;
 }
 
 .card-sub{
 
-    font-size:.8rem;
+font-size:.75rem;
 
-    opacity:.55;
+opacity:.55;
 
-    margin-top:5px;
+margin-top:5px;
+
+letter-spacing:.12em;
 }
 
 .status{
 
-    font-size:.8rem;
+font-size:.8rem;
 
-    letter-spacing:.15em;
+letter-spacing:.15em;
 }
 
 .locked{
 
-    color:#9a8b8b;
+color:#a78f8f;
+}
+
+/* 最近読んだ記録 */
+
+#recent{
+
+margin-top:28px;
+
+padding:24px;
+
+border-radius:20px;
+
+background:
+rgba(255,255,255,.35);
+
+border:
+1px solid rgba(255,255,255,.55);
+}
+
+#recent h3{
+
+margin-top:0;
+
+font-weight:normal;
+}
+
+#recent-text{
+
+opacity:.8;
+}
+
+/* SNS */
+
+.sns{
+
+margin-top:30px;
+
+display:flex;
+
+justify-content:center;
+
+gap:24px;
+}
+
+.sns a{
+
+transition:.25s;
+}
+
+.sns a:hover{
+
+transform:translateY(-2px);
+}
+
+.sns img{
+
+width:64px;
+
+height:64px;
+
+image-rendering:pixelated;
 }
 
 /* フッター */
 
 footer{
 
-    width:min(900px,90vw);
+width:min(900px,90vw);
 
-    margin:0 auto 60px;
+margin:30px auto 60px;
 
-    display:flex;
+display:flex;
 
-    justify-content:space-between;
+justify-content:space-between;
 
-    font-size:.85rem;
+font-size:.85rem;
 
-    opacity:.75;
+opacity:.7;
 }
 
 .meta{
 
-    border-top:
-    1px solid rgba(255,255,255,.65);
+padding-top:10px;
 
-    padding-top:10px;
+border-top:
+1px solid rgba(255,255,255,.6);
+}
+
+/* モバイル */
+
+@media(max-width:700px){
+
+.panel{
+padding:24px;
+}
+
+footer{
+
+flex-direction:column;
+
+gap:10px;
+}
+
 }
 
 </style>
@@ -275,13 +399,17 @@ footer{
 
 <header>
 
-<div class="subtitle">
+<div class="archive-label">
 PAN-SOUKO ARCHIVE
 </div>
 
 <h1>
 PROJECT #DOOR
 </h1>
+
+<div class="lead">
+Coffee / Archive / Reading Room
+</div>
 
 <div class="divider">
 <div class="dot"></div>
@@ -293,11 +421,11 @@ PROJECT #DOOR
 
 <p>
 
-閲覧可能な記録を選択してください。
+閲覧可能な記録を選択してください。<br>
 
 このアーカイブには観察記録、
-会話ログ、映像資料および
-未分類資料が保存されています。
+会話ログ、
+映像資料および未分類資料が保存されています。
 
 </p>
 
@@ -405,6 +533,37 @@ LOCKED
 
 </div>
 
+<div id="recent">
+
+<h3>
+最近読んだ記録
+</h3>
+
+<p id="recent-text">
+まだ閲覧記録はありません
+</p>
+
+</div>
+
+<div class="sns">
+
+<a href="https://x.com/Tti_sbr" target="_blank">
+
+<img src="pages/x-icon.png"
+alt="X">
+
+</a>
+
+<a href="https://pan-souko.booth.pm/"
+target="_blank">
+
+<img src="pages/booth-icon.png"
+alt="BOOTH">
+
+</a>
+
+</div>
+
 </section>
 
 <footer>
@@ -418,6 +577,27 @@ ACCESS OPEN
 </div>
 
 </footer>
+
+<script>
+
+const page =
+localStorage.getItem(
+"door-bookmark"
+);
+
+if(page !== null){
+
+document
+.getElementById(
+"recent-text"
+)
+.textContent =
+
+`被験体記録 ${parseInt(page)+1}ページ`;
+
+}
+
+</script>
 
 </body>
 </html>
