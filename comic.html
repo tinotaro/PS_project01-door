@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>PROJECT #DOOR</title>
+
+<style>
+
+body{
+    margin:0;
+    background:#111;
+    overflow:hidden;
+}
+
+#reader{
+    width:100vw;
+    height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+#page{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+}
+
+#counter{
+    position:fixed;
+    bottom:15px;
+    left:50%;
+    transform:translateX(-50%);
+
+    color:white;
+    font-family:sans-serif;
+}
+
+.tap-left{
+    position:fixed;
+    left:0;
+    top:0;
+    width:50vw;
+    height:100vh;
+}
+
+.tap-right{
+    position:fixed;
+    right:0;
+    top:0;
+    width:50vw;
+    height:100vh;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="reader">
+    <img id="page" src="pages/001.webp">
+</div>
+
+<div id="counter">
+    <span id="current">1</span>/4
+</div>
+
+<div class="tap-left" onclick="prevPage()"></div>
+<div class="tap-right" onclick="nextPage()"></div>
+
+<script>
+
+let current = 1;
+const total = 4;
+
+function loadPage(){
+
+    document.getElementById("page").src =
+    `pages/${String(current).padStart(3,'0')}.webp`;
+
+    document.getElementById("current").textContent =
+    current;
+
+}
+
+function nextPage(){
+
+    if(current < total){
+
+        current++;
+
+        loadPage();
+
+    }
+
+}
+
+function prevPage(){
+
+    if(current > 1){
+
+        current--;
+
+        loadPage();
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
