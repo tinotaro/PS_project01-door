@@ -12,6 +12,7 @@ body{
     margin:0;
     background:#111;
     overflow:hidden;
+    touch-action:pan-y;
 }
 
 /* ===== 上帯 ===== */
@@ -21,7 +22,7 @@ body{
     top:0;
     left:0;
     width:100%;
-    height:50px;
+    height:52px;
 
     background:#fff;
     color:#222;
@@ -39,6 +40,12 @@ body{
     "Yu Mincho",
     "Hiragino Mincho ProN",
     serif;
+
+    transition:.25s;
+}
+
+#header.hide{
+    transform:translateY(-100%);
 }
 
 #header a{
@@ -46,13 +53,14 @@ body{
     text-decoration:none;
 }
 
-/* ===== 閲覧エリア ===== */
+/* ===== 読書エリア ===== */
 
 #reader{
+
     position:fixed;
 
-    top:50px;
-    bottom:50px;
+    top:52px;
+    bottom:52px;
     left:0;
     right:0;
 
@@ -71,8 +79,8 @@ body{
     object-fit:contain;
 
     transition:
-        opacity .18s ease,
-        transform .2s ease;
+      opacity .18s ease,
+      transform .18s ease;
 
     opacity:1;
 }
@@ -87,7 +95,7 @@ body{
     left:0;
 
     width:100%;
-    height:50px;
+    height:52px;
 
     background:#000;
     color:#fff;
@@ -100,12 +108,18 @@ body{
     box-sizing:border-box;
 
     z-index:1000;
+
+    transition:.25s;
+}
+
+#footer.hide{
+    transform:translateY(100%);
 }
 
 #controls button{
 
-    width:34px;
-    height:34px;
+    width:36px;
+    height:36px;
 
     margin-right:6px;
 
@@ -127,11 +141,11 @@ body{
 
     left:0;
 
-    top:50px;
+    top:52px;
 
-    bottom:50px;
+    bottom:52px;
 
-    width:50vw;
+    width:35vw;
 }
 
 .tap-right{
@@ -140,11 +154,24 @@ body{
 
     right:0;
 
-    top:50px;
+    top:52px;
 
-    bottom:50px;
+    bottom:52px;
 
-    width:50vw;
+    width:35vw;
+}
+
+.tap-center{
+
+    position:fixed;
+
+    left:35vw;
+
+    width:30vw;
+
+    top:52px;
+
+    bottom:52px;
 }
 
 </style>
@@ -156,13 +183,13 @@ body{
 
 <div id="header">
 
-    <a href="index.html">
-        パン倉庫
-    </a>
+<a href="index.html">
+パン倉庫
+</a>
 
-    <div>
-        Pan-souko @Tti_sbr
-    </div>
+<div>
+Pan-souko @Tti_sbr
+</div>
 
 </div>
 
@@ -170,10 +197,10 @@ body{
 
 <div id="reader">
 
-    <img
-        id="page"
-        src="pages/002.png"
-        alt="page">
+<img
+id="page"
+src="pages/002.png"
+alt="page">
 
 </div>
 
@@ -181,80 +208,95 @@ body{
 
 <div id="footer">
 
-    <div id="controls">
+<div id="controls">
 
-        <button onclick="zoomIn()">＋</button>
+<button onclick="zoomIn()">＋</button>
 
-        <button onclick="zoomOut()">－</button>
+<button onclick="zoomOut()">－</button>
 
-    </div>
+</div>
 
-    <div>
+<div>
 
-        <span id="current">1</span>
-        /
-        <span id="total">2</span>
+<span id="current">1</span>
+/
+<span id="total">2</span>
 
-    </div>
+</div>
 
 </div>
 
 <!-- タップ領域 -->
 
-<div
-    class="tap-left"
-    onclick="prevPage()">
-</div>
+<div class="tap-left"></div>
 
-<div
-    class="tap-right"
-    onclick="nextPage()">
-</div>
+<div class="tap-center"></div>
+
+<div class="tap-right"></div>
 
 <script>
 
+/* ===== ページ一覧 ===== */
+
 const pages = [
 
-    "pages/002.png",
-    "pages/003.png"
-
+"pages/002.png",
+"pages/003.png",
+"pages/002.png",
+"pages/002.png",
+"pages/003.png",
+"pages/002.png",
+"pages/003.png"
 ];
+
+/* ================= */
 
 let current = 0;
 
 let scale = 1;
+
+let uiVisible = true;
 
 document
 .getElementById("total")
 .textContent =
 pages.length;
 
-/* ===== ページ表示 ===== */
+/* ===== ページ読込 ===== */
 
-function loadPage(){
+function loadPage(direction=1){
 
-    const img =
-    document.getElementById("page");
+const img =
+document.getElementById("page");
 
-    img.style.opacity = 0;
+img.style.opacity="0";
 
-    setTimeout(()=>{
+img.style.transform=
+`translateX(${direction*40}px) scale(${scale})`;
 
-        img.src =
-        pages[current];
+setTimeout(()=>{
 
-        img.onload = ()=>{
+img.src =
+pages[current];
 
-            img.style.opacity = 1;
+img.onload = ()=>{
 
-        };
+img.style.transition =
+"opacity .18s ease, transform .18s ease";
 
-    },120);
+img.style.opacity="1";
 
-    document
-    .getElementById("current")
-    .textContent =
-    current + 1;
+img.style.transform=
+`translateX(0px) scale(${scale})`;
+
+};
+
+},120);
+
+document
+.getElementById("current")
+.textContent =
+current+1;
 
 }
 
@@ -262,16 +304,16 @@ function loadPage(){
 
 function nextPage(){
 
-    if(
-        current <
-        pages.length - 1
-    ){
+if(
+current <
+pages.length-1
+){
 
-        current++;
+current++;
 
-        loadPage();
+loadPage(1);
 
-    }
+}
 
 }
 
@@ -279,15 +321,33 @@ function nextPage(){
 
 function prevPage(){
 
-    if(
-        current > 0
-    ){
+if(
+current > 0
+){
 
-        current--;
+current--;
 
-        loadPage();
+loadPage(-1);
 
-    }
+}
+
+}
+
+/* ===== UI切替 ===== */
+
+function toggleUI(){
+
+uiVisible = !uiVisible;
+
+document
+.getElementById("header")
+.classList
+.toggle("hide");
+
+document
+.getElementById("footer")
+.classList
+.toggle("hide");
 
 }
 
@@ -295,29 +355,93 @@ function prevPage(){
 
 function zoomIn(){
 
-    scale += 0.1;
+scale += 0.1;
 
-    document
-    .getElementById("page")
-    .style.transform =
-    `scale(${scale})`;
+document
+.getElementById("page")
+.style.transform =
+`scale(${scale})`;
 
 }
 
 function zoomOut(){
 
-    scale =
-    Math.max(
-        0.5,
-        scale - 0.1
-    );
+scale =
+Math.max(
+0.5,
+scale-0.1
+);
 
-    document
-    .getElementById("page")
-    .style.transform =
-    `scale(${scale})`;
+document
+.getElementById("page")
+.style.transform =
+`scale(${scale})`;
 
 }
+
+/* ===== タップ ===== */
+
+document
+.querySelector(".tap-left")
+.addEventListener(
+"click",
+prevPage
+);
+
+document
+.querySelector(".tap-right")
+.addEventListener(
+"click",
+nextPage
+);
+
+document
+.querySelector(".tap-center")
+.addEventListener(
+"click",
+toggleUI
+);
+
+/* ===== スワイプ ===== */
+
+let startX = 0;
+
+document
+.addEventListener(
+"touchstart",
+e=>{
+
+startX =
+e.touches[0].clientX;
+
+}
+);
+
+document
+.addEventListener(
+"touchend",
+e=>{
+
+let endX =
+e.changedTouches[0].clientX;
+
+let diff =
+endX-startX;
+
+if(diff > 60){
+
+prevPage();
+
+}
+
+else if(diff < -60){
+
+nextPage();
+
+}
+
+}
+);
 
 </script>
 
