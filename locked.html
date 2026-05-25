@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>認証</title>
+</head>
+
+<body>
+
+<h2>ACCESS DENIED</h2>
+
+<p>認証キーを入力してください</p>
+
+<input id="pw">
+
+<button onclick="checkPass()">
+認証
+</button>
+
+<p id="msg"></p>
+
+<script>
+function checkPass(){
+
+ const pw =
+ document.getElementById("pw").value;
+
+ if(pw==="DOOR"){
+
+   location.href =
+   "secret.html";
+
+ }else{
+
+   document.getElementById("msg")
+   .textContent =
+   "認証失敗";
+
+ }
+}
+</script>
+
+</body>
+</html>
