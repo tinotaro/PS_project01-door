@@ -2,61 +2,422 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>PROJECT #DOOR</title>
+
 <style>
+
+:root{
+    --glass:rgba(255,255,255,.55);
+    --border:rgba(255,255,255,.65);
+    --shadow:0 20px 60px rgba(0,0,0,.08);
+}
+
+*{
+    box-sizing:border-box;
+}
+
 body{
-    background:#050505;
-    color:#d9d9d9;
-    font-family: "MS Gothic", monospace;
-    max-width:900px;
-    margin:auto;
+
+    margin:0;
+
+    min-height:100vh;
+
+    color:#55606d;
+
+    font-family:
+    "Yu Mincho",
+    "Hiragino Mincho ProN",
+    serif;
+
+    background:
+    radial-gradient(
+        circle at top,
+        #ffffff,
+        #edf4fb 35%,
+        #e3edf7 100%
+    );
+
+    overflow-x:hidden;
+}
+
+/* 背景の光 */
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(255,255,255,.95),
+      transparent 30%
+    ),
+
+    radial-gradient(
+      circle at 80% 10%,
+      rgba(255,255,255,.65),
+      transparent 25%
+    ),
+
+    radial-gradient(
+      circle at 50% 100%,
+      rgba(255,255,255,.35),
+      transparent 45%
+    );
+
+    pointer-events:none;
+}
+
+/* 上部 */
+
+header{
+
+    text-align:center;
+
+    padding-top:80px;
+}
+
+.subtitle{
+
+    font-size:.8rem;
+
+    letter-spacing:.45em;
+
+    opacity:.55;
+}
+
+h1{
+
+    margin:18px 0;
+
+    font-size:clamp(2rem,5vw,4rem);
+
+    font-weight:normal;
+
+    letter-spacing:.18em;
+}
+
+.divider{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:12px;
+
+    margin-top:20px;
+}
+
+.divider::before,
+.divider::after{
+
+    content:"";
+
+    width:80px;
+
+    height:1px;
+
+    background:
+    linear-gradient(
+      to right,
+      transparent,
+      rgba(255,255,255,.9)
+    );
+}
+
+.dot{
+
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+
+    background:white;
+
+    box-shadow:
+    0 0 20px rgba(255,255,255,1);
+}
+
+/* メインカード */
+
+.panel{
+
+    width:min(900px,90vw);
+
+    margin:50px auto;
+
+    background:var(--glass);
+
+    backdrop-filter:blur(18px);
+
+    border:1px solid var(--border);
+
+    border-radius:28px;
+
+    box-shadow:var(--shadow);
+
     padding:40px;
 }
 
-a{
-    color:#d9d9d9;
+.panel p{
+
+    line-height:2;
+}
+
+.archive-grid{
+
+    display:grid;
+
+    gap:16px;
+
+    margin-top:35px;
+}
+
+/* ファイルカード */
+
+.card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
     text-decoration:none;
+
+    color:inherit;
+
+    padding:20px 24px;
+
+    border-radius:20px;
+
+    background:
+    rgba(255,255,255,.45);
+
+    border:
+    1px solid rgba(255,255,255,.7);
+
+    transition:.25s;
 }
 
-.menu{
-    margin-top:30px;
+.card:hover{
+
+    transform:translateY(-3px);
+
+    background:
+    rgba(255,255,255,.7);
 }
 
-.menu div{
-    margin:12px 0;
+.card-title{
+
+    font-size:1.05rem;
 }
-.lock{
-    color:#888;
+
+.card-sub{
+
+    font-size:.8rem;
+
+    opacity:.55;
+
+    margin-top:5px;
 }
+
+.status{
+
+    font-size:.8rem;
+
+    letter-spacing:.15em;
+}
+
+.locked{
+
+    color:#9a8b8b;
+}
+
+/* フッター */
+
+footer{
+
+    width:min(900px,90vw);
+
+    margin:0 auto 60px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    font-size:.85rem;
+
+    opacity:.75;
+}
+
+.meta{
+
+    border-top:
+    1px solid rgba(255,255,255,.65);
+
+    padding-top:10px;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>PROJECT #DOOR</h1>
+<header>
+
+<div class="subtitle">
+PAN-SOUKO ARCHIVE
+</div>
+
+<h1>
+PROJECT #DOOR
+</h1>
+
+<div class="divider">
+<div class="dot"></div>
+</div>
+
+</header>
+
+<section class="panel">
 
 <p>
-研究データベースへ接続しました。
+
+閲覧可能な記録を選択してください。
+
+このアーカイブには観察記録、
+会話ログ、映像資料および
+未分類資料が保存されています。
+
 </p>
 
-<div class="menu">
+<div class="archive-grid">
 
-<a href="comic.html">
-▶ 観察記録を閲覧
-</a>
-
-<div>▶ 観察ログ</div>
-
-<div>▶ 映像資料</div>
+<a class="card" href="comic.html">
 
 <div>
-<a href="locked.html">
-▶ 未分類データ
-<span class="lock">[LOCKED]</span>
-</a>
+
+<div class="card-title">
+被験体記録
+</div>
+
+<div class="card-sub">
+SUBJECT RECORD
 </div>
 
 </div>
+
+<div class="status">
+OPEN
+</div>
+
+</a>
+
+<a class="card" href="#">
+
+<div>
+
+<div class="card-title">
+観察ログ
+</div>
+
+<div class="card-sub">
+OBSERVATION LOG
+</div>
+
+</div>
+
+<div class="status">
+OPEN
+</div>
+
+</a>
+
+<a class="card" href="#">
+
+<div>
+
+<div class="card-title">
+映像資料
+</div>
+
+<div class="card-sub">
+VISUAL ARCHIVE
+</div>
+
+</div>
+
+<div class="status">
+OPEN
+</div>
+
+</a>
+
+<a class="card" href="#">
+
+<div>
+
+<div class="card-title">
+会話記録
+</div>
+
+<div class="card-sub">
+DIALOG ARCHIVE
+</div>
+
+</div>
+
+<div class="status">
+OPEN
+</div>
+
+</a>
+
+<a class="card" href="locked.html">
+
+<div>
+
+<div class="card-title">
+未分類資料
+</div>
+
+<div class="card-sub">
+UNCLASSIFIED DATA
+</div>
+
+</div>
+
+<div class="status locked">
+LOCKED
+</div>
+
+</a>
+
+</div>
+
+</section>
+
+<footer>
+
+<div class="meta">
+ARCHIVE STATUS
+</div>
+
+<div class="meta">
+ACCESS OPEN
+</div>
+
+</footer>
 
 </body>
 </html>
