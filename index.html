@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Advanced)</title>
+    <title>rei-style Editor (Perfect Left Menu)</title>
+    <!-- Google Fonts から「しっぽり明朝」と「M PLUS Round 1c」を読み込み -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
@@ -30,9 +31,9 @@
             overflow: hidden;
         }
 
-        /* --- 左側メニュー一律配置 --- */
+        /* --- 左側メニュー（一律左配置） --- */
         #sidebar {
-            width: 280px;
+            width: 290px;
             background-color: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -111,9 +112,35 @@
         .sidebar-input { margin-bottom: 5px; }
         .sidebar-textarea {
             resize: vertical;
-            min-height: 120px;
+            min-height: 100px;
             font-family: inherit;
             line-height: 1.4;
+        }
+
+        /* 選択中の言葉チェック用エリア（強化ポイント） */
+        #selected-word-display {
+            background: #151515;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px dashed #555;
+            min-height: 20px;
+            margin-bottom: 8px;
+            word-break: break-all;
+            color: #fff;
+            font-style: italic;
+        }
+        .dict-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .dict-buttons button {
+            text-align: left;
+            background-color: #2c3e50;
+            border-color: #34495e;
+        }
+        .dict-buttons button:hover {
+            background-color: var(--accent-color);
         }
 
         /* フォント・文字サイズ変更 */
@@ -187,7 +214,6 @@
             justify-content: center;
             padding: 40px;
             box-sizing: border-box;
-            position: relative;
         }
 
         #editor-wrapper {
@@ -202,7 +228,6 @@
             flex-direction: column;
         }
 
-        /* 実際の入力欄（初期状態はしっぽり明朝） */
         #editor {
             flex: 1;
             width: 100%;
@@ -219,7 +244,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* フッター（ページ情報） */
         #editor-footer {
             padding: 10px 20px;
             background-color: #151515;
@@ -230,46 +254,39 @@
             justify-content: space-between;
             border-radius: 0 0 4px 4px;
         }
-
-        /* --- センシティブ対応：文字選択時のWEB検索ポップアップ --- */
-        #lookup-popup {
-            position: absolute;
-            display: none;
-            background-color: #2c2c2c;
-            border: 1px solid #444;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-            border-radius: 4px;
-            z-index: 1000;
-            padding: 4px;
-            gap: 4px;
-        }
-        #lookup-popup button {
-            font-size: 12px;
-            padding: 4px 8px;
-            background: #3e3e3e;
-            border: none;
-        }
-        #lookup-popup button:hover {
-            background: var(--accent-color);
-        }
     </style>
 </head>
 <body>
 
+    <!-- 左側メニュー（一律左配置に完全統一） -->
     <div id="sidebar">
         
+        <!-- 【新設】選択した言葉のチェックエリア -->
+        <div class="menu-section">
+            <div class="menu-title">言葉の意味・使い方チェック</div>
+            <div id="selected-word-display">本文で文字を選択してください</div>
+            <div class="dict-buttons">
+                <button onclick="searchWord('kotobank')">🔍 コトバンクで意味を調べる</button>
+                <button onclick="searchWord('weblio')">📚 Weblio類語辞典で調べる</button>
+                <button onclick="searchWord('google')">🌐 Googleで使い方・誤用検索</button>
+            </div>
+        </div>
+
+        <!-- 作品保存（.txt） -->
         <div class="menu-section">
             <div class="menu-title">作品出力</div>
             <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft" placeholder="ファイル名を入力">
             <button class="save-btn" onclick="exportToTxt()">.txt形式で全ページ保存</button>
         </div>
 
+        <!-- ページ管理 (方式A) -->
         <div class="menu-section">
             <div class="menu-title">ページ管理 (方式A)</div>
             <div class="page-grid" id="page-container"></div>
             <button class="add-page-btn" onclick="addNewPage()">＋ 新しいページを追加</button>
         </div>
 
+        <!-- フォント・文字サイズ設定 -->
         <div class="menu-section">
             <div class="menu-title">表示設定</div>
             <div class="control-group">
@@ -286,32 +303,29 @@
             </div>
         </div>
 
+        <!-- 定型文ボタン機能 -->
         <div class="menu-section">
             <div class="menu-title">よく使う文章（定型文）</div>
             <input type="text" id="new-phrase-input" class="sidebar-input" placeholder="文章を入力してEnterで登録">
             <div class="phrase-list" id="phrase-container"></div>
         </div>
 
+        <!-- 作品メモ用エリア -->
         <div class="menu-section">
             <div class="menu-title">作品メモ</div>
-            <textarea id="memo-area" class="sidebar-textarea" placeholder="プロットや設定、キャラクターのメモをここに自由に書き残せます（自動保存されます）" oninput="saveMemo()"></textarea>
+            <textarea id="memo-area" class="sidebar-textarea" placeholder="プロットや設定メモ（自動保存）" oninput="saveMemo()"></textarea>
         </div>
     </div>
 
+    <!-- 右側：執筆メインエリア -->
     <div id="main-container">
         <div id="editor-wrapper">
-            <textarea id="editor" placeholder="ここに小説を書き出せます..." oninput="updatePageData()"></textarea>
+            <textarea id="editor" placeholder="ここに小説を書き出せます..." oninput="updatePageData()" onselect="handleTextSelection()"></textarea>
             <div id="editor-footer">
                 <span id="current-page-display">ページ: 1</span>
                 <span id="char-count-display">0 文字</span>
             </div>
         </div>
-    </div>
-
-    <div id="lookup-popup">
-        <button onclick="searchWord('kotobank')">コトバンクで意味</button>
-        <button onclick="searchWord('weblio')">類語辞典</button>
-        <button onclick="searchWord('google')">Google検索</button>
     </div>
 
     <script>
@@ -329,7 +343,7 @@
         const pageContainer = document.getElementById('page-container');
         const phraseContainer = document.getElementById('phrase-container');
         const memoArea = document.getElementById('memo-area');
-        const popup = document.getElementById('lookup-popup');
+        const wordDisplay = document.getElementById('selected-word-display');
         let selectedText = "";
 
         window.onload = function() {
@@ -337,12 +351,10 @@
             renderPhrases();
             loadPage(0);
             
-            // メモの復元
             if(localStorage.getItem('novel_memo')) {
                 memoArea.value = localStorage.getItem('novel_memo');
             }
 
-            // 定型文入力イベント
             document.getElementById('new-phrase-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && this.value.trim() !== "") {
                     customPhrases.push(this.value.trim());
@@ -351,9 +363,38 @@
                     renderPhrases();
                 }
             });
-
-            document.addEventListener('selectionchange', handleSelection);
         };
+
+        // --- 【確実版】選択テキスト取得処理 ---
+        function handleTextSelection() {
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const text = editor.value.substring(start, end).trim();
+
+            if (text && start !== end) {
+                selectedText = text;
+                wordDisplay.innerText = `「${text}」が選択中`;
+                wordDisplay.style.color = "#4a90e2";
+                wordDisplay.style.fontWeight = "bold";
+            }
+        }
+
+        // 外部サイト連携（センシティブ完全フリー）
+        function searchWord(type) {
+            if (!selectedText) {
+                alert("先に本文の調べたい文字をマウスなどで選択してください。");
+                return;
+            }
+            let url = "";
+            if (type === 'kotobank') {
+                url = `https://kotobank.jp/word/${encodeURIComponent(selectedText)}`;
+            } else if (type === 'weblio') {
+                url = `https://thesaurus.weblio.jp/content/${encodeURIComponent(selectedText)}`;
+            } else if (type === 'google') {
+                url = `https://www.google.com/search?q=${encodeURIComponent(selectedText + " 意味 使い方")}`;
+            }
+            window.open(url, '_blank');
+        }
 
         // --- ページ切り替え機能 ---
         function renderPages() {
@@ -373,6 +414,13 @@
             editor.value = pages[currentPageIndex];
             renderPages();
             updatePageData();
+            
+            // ページ移動時に選択状態をリセット
+            selectedText = "";
+            wordDisplay.innerText = "本文で文字を選択してください";
+            wordDisplay.style.color = "#777";
+            wordDisplay.style.fontWeight = "normal";
+            
             editor.focus();
         }
 
@@ -388,7 +436,7 @@
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
         }
 
-        // --- 表示設定の変更 ---
+        // --- 表示設定 ---
         function changeFontFamily(fontName) {
             editor.style.fontFamily = fontName;
         }
@@ -397,7 +445,7 @@
             editor.style.fontSize = size;
         }
 
-        // --- 定型文機能 ---
+        // --- 定型文 ---
         function renderPhrases() {
             phraseContainer.innerHTML = "";
             customPhrases.forEach((phrase, index) => {
@@ -438,18 +486,14 @@
             renderPhrases();
         }
 
-        // --- 作品メモ自動保存 ---
+        // --- メモ保存 ---
         function saveMemo() {
             localStorage.setItem('novel_memo', memoArea.value);
         }
 
-        // --- 作品保存 (.txtダウンロード機能) ---
+        // --- .txt出力 ---
         function exportToTxt() {
-            // 現在の編集内容を配列に最終反映
             pages[currentPageIndex] = editor.value;
-            
-            // 各ページを2行の改行（ページ区切り）で結合する
-            // ※お好みで「◆ 2ページ目 ◆」のような区切り線を挟むことも可能です
             const joinedText = pages.map((pageText, index) => {
                 return `--- 【${index + 1}ページ目】 ---\n${pageText}`;
             }).join('\n\n');
@@ -464,43 +508,6 @@
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
-        }
-
-        // --- WEB確認ベースの言葉チェック ---
-        function handleSelection() {
-            const selection = window.getSelection();
-            const text = selection.toString().trim();
-            
-            if (text && document.activeElement === editor) {
-                selectedText = text;
-                const range = selection.getRangeAt(0);
-                const rect = range.getBoundingClientRect();
-                
-                popup.style.left = `${rect.left + window.scrollX}px`;
-                popup.style.top = `${rect.top + window.scrollY - 40}px`;
-                popup.style.display = 'flex';
-            } else {
-                setTimeout(() => {
-                    if (!window.getSelection().toString().trim()) {
-                        popup.style.display = 'none';
-                    }
-                }, 100);
-            }
-        }
-
-        function searchWord(type) {
-            if (!selectedText) return;
-            let url = "";
-            if (type === 'kotobank') {
-                url = `https://kotobank.jp/word/${encodeURIComponent(selectedText)}`;
-            } else if (type === 'weblio') {
-                url = `https://thesaurus.weblio.jp/content/${encodeURIComponent(selectedText)}`;
-            } else if (type === 'google') {
-                url = `https://www.google.com/search?q=${encodeURIComponent(selectedText + " 意味 使い方")}`;
-            }
-            window.open(url, '_blank');
-            popup.style.display = 'none';
-            window.getSelection().removeAllRanges();
         }
     </script>
 </body>
