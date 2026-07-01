@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Page-based)</title>
+    <title>rei-style Editor (Advanced)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         /* --- 基本デザイン（arei風のシンプル・ダーク系） --- */
         :root {
@@ -26,9 +30,9 @@
             overflow: hidden;
         }
 
-        /* --- 左側メニュー（一律左配置） --- */
+        /* --- 左側メニュー一律配置 --- */
         #sidebar {
-            width: 260px;
+            width: 280px;
             background-color: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -37,10 +41,12 @@
             box-sizing: border-box;
             overflow-y: auto;
             font-size: 14px;
+            gap: 25px;
         }
 
         .menu-section {
-            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
         }
 
         .menu-title {
@@ -70,51 +76,7 @@
             color: #fff;
         }
 
-        /* 文字サイズ変更 */
-        .size-buttons {
-            display: flex;
-            gap: 5px;
-        }
-        .size-buttons button {
-            flex: 1;
-        }
-
-        /* 定型文登録 */
-        .phrase-list {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .phrase-item {
-            display: flex;
-            gap: 5px;
-        }
-        .phrase-btn {
-            flex: 1;
-            text-align: left;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .delete-btn {
-            background-color: #552222;
-            color: #ffaaaa;
-        }
-        .delete-btn:hover {
-            background-color: #aa3333;
-        }
-        #new-phrase-input {
-            width: 100%;
-            background: #111;
-            border: 1px solid var(--border-color);
-            color: #fff;
-            padding: 6px;
-            box-sizing: border-box;
-            border-radius: 4px;
-            margin-bottom: 5px;
-        }
-
-        /* ページ切り替え（方式A） */
+        /* ページ切り替え */
         .page-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -135,7 +97,88 @@
             background-color: #3a5a3a;
         }
 
-        /* --- 中央・右側のメイン執筆エリア（areiリスペクト） --- */
+        /* 各種入力コントロール */
+        .sidebar-input, .sidebar-textarea {
+            width: 100%;
+            background: #111;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 8px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .sidebar-input { margin-bottom: 5px; }
+        .sidebar-textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+            line-height: 1.4;
+        }
+
+        /* フォント・文字サイズ変更 */
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .btn-row {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-row button {
+            flex: 1;
+        }
+        select {
+            background-color: #333;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* 定型文登録 */
+        .phrase-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .phrase-item {
+            display: flex;
+            gap: 5px;
+        }
+        .phrase-btn {
+            flex: 1;
+            text-align: left;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .delete-btn {
+            background-color: #552222;
+            color: #ffaaaa;
+            padding: 6px 10px;
+        }
+        .delete-btn:hover {
+            background-color: #aa3333;
+        }
+
+        /* 作品保存（.txt） */
+        .save-btn {
+            background-color: #3b3b5c;
+            color: #ddddff;
+            font-weight: bold;
+        }
+        .save-btn:hover {
+            background-color: #4d4d80;
+        }
+
+        /* --- 右側：メイン執筆エリア（areiリスペクト） --- */
         #main-container {
             flex: 1;
             display: flex;
@@ -147,11 +190,10 @@
             position: relative;
         }
 
-        /* 方式A：原稿用紙・ページをイメージした独立したエディタ枠 */
         #editor-wrapper {
             width: 100%;
-            max-width: 700px;
-            height: 80vh;
+            max-width: 720px;
+            height: 85vh;
             background-color: #1e1e1e;
             border: 1px solid var(--border-color);
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -160,7 +202,7 @@
             flex-direction: column;
         }
 
-        /* 実際の入力欄（縦書きではなくarei風のすっきりした横書き明朝ベース） */
+        /* 実際の入力欄（初期状態はしっぽり明朝） */
         #editor {
             flex: 1;
             width: 100%;
@@ -171,8 +213,8 @@
             box-sizing: border-box;
             resize: none;
             outline: none;
-            font-family: "ヒラギノ明朝 ProN", "Hiragino Mincho ProN", "MS 明朝", serif;
-            font-size: 16px; /* 初期サイズ（中） */
+            font-family: 'Shippori Mincho', serif;
+            font-size: 17px;
             line-height: 1.8;
             letter-spacing: 0.05em;
         }
@@ -215,27 +257,44 @@
 <body>
 
     <div id="sidebar">
+        
+        <div class="menu-section">
+            <div class="menu-title">作品出力</div>
+            <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft" placeholder="ファイル名を入力">
+            <button class="save-btn" onclick="exportToTxt()">.txt形式で全ページ保存</button>
+        </div>
+
         <div class="menu-section">
             <div class="menu-title">ページ管理 (方式A)</div>
-            <div class="page-grid" id="page-container">
-                </div>
+            <div class="page-grid" id="page-container"></div>
             <button class="add-page-btn" onclick="addNewPage()">＋ 新しいページを追加</button>
         </div>
 
         <div class="menu-section">
-            <div class="menu-title">文字サイズ</div>
-            <div class="size-buttons">
-                <button onclick="changeFontSize('13px')">小</button>
-                <button onclick="changeFontSize('17px')">中</button>
-                <button onclick="changeFontSize('22px')">大</button>
+            <div class="menu-title">表示設定</div>
+            <div class="control-group">
+                <select id="font-selector" onchange="changeFontFamily(this.value)">
+                    <option value="'Shippori Mincho', serif">しっぽり明朝（濁点対応）</option>
+                    <option value="'M PLUS Round 1c', sans-serif">かわいめ丸ゴシック</option>
+                    <option value="'Helvetica Neue', Arial, sans-serif">標準ゴシック体</option>
+                </select>
+                <div class="btn-row">
+                    <button onclick="changeFontSize('14px')">小</button>
+                    <button onclick="changeFontSize('17px')">中</button>
+                    <button onclick="changeFontSize('22px')">大</button>
+                </div>
             </div>
         </div>
 
         <div class="menu-section">
             <div class="menu-title">よく使う文章（定型文）</div>
-            <input type="text" id="new-phrase-input" placeholder="文章を入力してEnterで登録">
-            <div class="phrase-list" id="phrase-container">
-                </div>
+            <input type="text" id="new-phrase-input" class="sidebar-input" placeholder="文章を入力してEnterで登録">
+            <div class="phrase-list" id="phrase-container"></div>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-title">作品メモ</div>
+            <textarea id="memo-area" class="sidebar-textarea" placeholder="プロットや設定、キャラクターのメモをここに自由に書き残せます（自動保存されます）" oninput="saveMemo()"></textarea>
         </div>
     </div>
 
@@ -257,30 +316,33 @@
 
     <script>
         // --- データ管理 ---
-        // 各ページの本文を保持する配列 (初期状態は1ページ目だけ空)
         let pages = [""];
         let currentPageIndex = 0;
 
-        // 定型文の初期リスト（ブラウザ保存対応）
         let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || [
             "同数くらいで考え中",
             "息を呑んだ。",
-            "その瞬間、"
+            "あ゛っ、"
         ];
 
         const editor = document.getElementById('editor');
         const pageContainer = document.getElementById('page-container');
         const phraseContainer = document.getElementById('phrase-container');
+        const memoArea = document.getElementById('memo-area');
         const popup = document.getElementById('lookup-popup');
         let selectedText = "";
 
-        // --- 初期化処理 ---
         window.onload = function() {
             renderPages();
             renderPhrases();
             loadPage(0);
+            
+            // メモの復元
+            if(localStorage.getItem('novel_memo')) {
+                memoArea.value = localStorage.getItem('novel_memo');
+            }
 
-            // 定型文の入力エンターキー監視
+            // 定型文入力イベント
             document.getElementById('new-phrase-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && this.value.trim() !== "") {
                     customPhrases.push(this.value.trim());
@@ -290,11 +352,10 @@
                 }
             });
 
-            // 範囲選択時のポップアップ監視（センシティブ対応WEB確認）
             document.addEventListener('selectionchange', handleSelection);
         };
 
-        // --- ページ切り替え機能 (方式A) ---
+        // --- ページ切り替え機能 ---
         function renderPages() {
             pageContainer.innerHTML = "";
             pages.forEach((_, index) => {
@@ -307,23 +368,18 @@
         }
 
         function loadPage(index) {
-            // 現在のページの書き込みを保存
             pages[currentPageIndex] = editor.value;
-            
-            // ターゲットのページに切り替え
             currentPageIndex = index;
             editor.value = pages[currentPageIndex];
-            
             renderPages();
             updatePageData();
             editor.focus();
         }
 
         function addNewPage() {
-            // 現在のページを保存してから新ページ追加
             pages[currentPageIndex] = editor.value;
             pages.push(""); 
-            loadPage(pages.length - 1); // 追加した新しいページへ飛ぶ
+            loadPage(pages.length - 1);
         }
 
         function updatePageData() {
@@ -332,12 +388,16 @@
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
         }
 
-        // --- 文字サイズ変更 ---
+        // --- 表示設定の変更 ---
+        function changeFontFamily(fontName) {
+            editor.style.fontFamily = fontName;
+        }
+
         function changeFontSize(size) {
             editor.style.fontSize = size;
         }
 
-        // --- 定型文ボタン機能 ---
+        // --- 定型文機能 ---
         function renderPhrases() {
             phraseContainer.innerHTML = "";
             customPhrases.forEach((phrase, index) => {
@@ -378,22 +438,48 @@
             renderPhrases();
         }
 
-        // --- センシティブ対応：WEB確認ベースの言葉チェック ---
+        // --- 作品メモ自動保存 ---
+        function saveMemo() {
+            localStorage.setItem('novel_memo', memoArea.value);
+        }
+
+        // --- 作品保存 (.txtダウンロード機能) ---
+        function exportToTxt() {
+            // 現在の編集内容を配列に最終反映
+            pages[currentPageIndex] = editor.value;
+            
+            // 各ページを2行の改行（ページ区切り）で結合する
+            // ※お好みで「◆ 2ページ目 ◆」のような区切り線を挟むことも可能です
+            const joinedText = pages.map((pageText, index) => {
+                return `--- 【${index + 1}ページ目】 ---\n${pageText}`;
+            }).join('\n\n');
+
+            const blob = new Blob([joinedText], { type: 'text/plain;charset=utf-8' });
+            const fileNameInput = document.getElementById('file-name-input').value.trim();
+            const fileName = (fileNameInput !== "") ? `${fileNameInput}.txt` : "novel_draft.txt";
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = fileName;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        // --- WEB確認ベースの言葉チェック ---
         function handleSelection() {
             const selection = window.getSelection();
             const text = selection.toString().trim();
             
-            // エディタ内の選択かつ、文字が選ばれている場合のみポップアップを表示
             if (text && document.activeElement === editor) {
                 selectedText = text;
                 const range = selection.getRangeAt(0);
                 const rect = range.getBoundingClientRect();
                 
                 popup.style.left = `${rect.left + window.scrollX}px`;
-                popup.style.top = `${rect.top + window.scrollY - 40}px`; // 選択文字の少し上に表示
+                popup.style.top = `${rect.top + window.scrollY - 40}px`;
                 popup.style.display = 'flex';
             } else {
-                // 何もないところをクリックしたらポップアップを隠す
                 setTimeout(() => {
                     if (!window.getSelection().toString().trim()) {
                         popup.style.display = 'none';
@@ -402,11 +488,9 @@
             }
         }
 
-        // 外部のWEB辞書・検索に安全に別タブで飛ばす機能（検閲フリー）
         function searchWord(type) {
             if (!selectedText) return;
             let url = "";
-            
             if (type === 'kotobank') {
                 url = `https://kotobank.jp/word/${encodeURIComponent(selectedText)}`;
             } else if (type === 'weblio') {
@@ -414,10 +498,9 @@
             } else if (type === 'google') {
                 url = `https://www.google.com/search?q=${encodeURIComponent(selectedText + " 意味 使い方")}`;
             }
-            
-            window.open(url, '_blank'); // 安全に別タブで開く
+            window.open(url, '_blank');
             popup.style.display = 'none';
-            window.getSelection().removeAllRanges(); // 選択解除
+            window.getSelection().removeAllRanges();
         }
     </script>
 </body>
