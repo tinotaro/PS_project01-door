@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Perfect Custom v3)</title>
+    <title>rei-style Editor (Replace Custom v5)</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -173,6 +173,32 @@
             font-family: inherit;
         }
 
+        /* カラーカスタム用の入力欄組み */
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .color-code-input {
+            flex: 1;
+        }
+
+        /* 文字置き換えエリアの調整 */
+        .replace-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .replace-btn {
+            background-color: #5c3b4d;
+            color: #ffdde5;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .replace-btn:hover {
+            background-color: #804d65;
+        }
+
         /* 定型文登録 */
         .phrase-list {
             display: flex;
@@ -225,6 +251,7 @@
             border-radius: 4px;
             display: flex;
             flex-direction: column;
+            transition: background-color 0.3s;
         }
 
         /* 特等席ツールバー */
@@ -261,6 +288,7 @@
             font-size: 17px;
             line-height: 1.8;
             letter-spacing: 0.05em;
+            transition: color 0.3s;
         }
 
         #editor-footer {
@@ -276,10 +304,10 @@
 </head>
 <body>
 
-    <!-- 左側メニュー（全セクションが「たためる」仕様） -->
+    <!-- 左側メニュー -->
     <div id="sidebar">
         
-        <!-- 1. 意味・使い方チェック（アイコン・その場簡易表示） -->
+        <!-- 1. 意味・使い方チェック -->
         <div class="menu-section" id="section-dict">
             <div class="menu-title" onclick="toggleSection('section-dict')">言葉の意味を調べる</div>
             <div class="menu-content">
@@ -294,7 +322,19 @@
             </div>
         </div>
 
-        <!-- 2. よく使う文章・単語登録（2番目に配置変更＋たためる） -->
+        <!-- 【新設】2. 文字の置き換え（一括置換） -->
+        <div class="menu-section" id="section-replace">
+            <div class="menu-title" onclick="toggleSection('section-replace')">文字の置き換え（一括）</div>
+            <div class="menu-content">
+                <div class="replace-group">
+                    <input type="text" id="replace-src" class="sidebar-input" placeholder="置き換え前の文字（消したい文字）">
+                    <input type="text" id="replace-dst" class="sidebar-input" placeholder="置き換え後の文字（新しい文字）">
+                    <button class="replace-btn" onclick="replaceAllText()">すべてのページを置き換える</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. よく使う文章・単語登録 -->
         <div class="menu-section" id="section-phrases">
             <div class="menu-title" onclick="toggleSection('section-phrases')">よく使う単語・文章登録</div>
             <div class="menu-content">
@@ -303,7 +343,7 @@
             </div>
         </div>
 
-        <!-- 3. ページ管理 -->
+        <!-- 4. ページ管理 -->
         <div class="menu-section" id="section-pages">
             <div class="menu-title" onclick="toggleSection('section-pages')">ページ管理</div>
             <div class="menu-content">
@@ -312,9 +352,9 @@
             </div>
         </div>
 
-        <!-- 4. 表示設定 -->
+        <!-- 5. 表示・カラー設定 -->
         <div class="menu-section" id="section-settings">
-            <div class="menu-title" onclick="toggleSection('section-settings')">表示設定</div>
+            <div class="menu-title" onclick="toggleSection('section-settings')">表示・カラー設定</div>
             <div class="menu-content">
                 <select id="font-selector" onchange="changeFontFamily(this.value)">
                     <option value="'Shippori Mincho', serif">しっぽり明朝（濁点対応）</option>
@@ -326,10 +366,18 @@
                     <button onclick="changeFontSize('17px')">中</button>
                     <button onclick="changeFontSize('22px')">大</button>
                 </div>
+                <div class="color-picker-group">
+                    <span style="font-size:12px; width:55px;">背景色:</span>
+                    <input type="text" id="bg-color-code" class="sidebar-input color-code-input" value="#1e1e1e" placeholder="#1e1e1e" oninput="applyCustomColors()">
+                </div>
+                <div class="color-picker-group">
+                    <span style="font-size:12px; width:55px;">文字色:</span>
+                    <input type="text" id="text-color-code" class="sidebar-input color-code-input" value="#dddddd" placeholder="#dddddd" oninput="applyCustomColors()">
+                </div>
             </div>
         </div>
 
-        <!-- 5. 作品保存 -->
+        <!-- 6. 作品出力 -->
         <div class="menu-section" id="section-save">
             <div class="menu-title" onclick="toggleSection('section-save')">作品出力</div>
             <div class="menu-content">
@@ -338,7 +386,7 @@
             </div>
         </div>
 
-        <!-- 6. 作品メモ -->
+        <!-- 7. 作品メモ -->
         <div class="menu-section" id="section-memo">
             <div class="menu-title" onclick="toggleSection('section-memo')">作品メモ</div>
             <div class="menu-content">
@@ -381,6 +429,7 @@
         ];
 
         const editor = document.getElementById('editor');
+        const editorWrapper = document.getElementById('editor-wrapper');
         const pageContainer = document.getElementById('page-container');
         const phraseContainer = document.getElementById('phrase-container');
         const memoArea = document.getElementById('memo-area');
@@ -391,6 +440,14 @@
             renderPhrases();
             loadPage(0);
             
+            if(localStorage.getItem('custom_bg_color')) {
+                document.getElementById('bg-color-code').value = localStorage.getItem('custom_bg_color');
+            }
+            if(localStorage.getItem('custom_text_color')) {
+                document.getElementById('text-color-code').value = localStorage.getItem('custom_text_color');
+            }
+            applyCustomColors();
+
             if(localStorage.getItem('novel_memo')) {
                 memoArea.value = localStorage.getItem('novel_memo');
             }
@@ -411,7 +468,61 @@
             section.classList.toggle('collapsed');
         }
 
-        // --- 選択テキストの補正取得 ---
+        // --- カラーコードのリアルタイム反映 ---
+        function applyCustomColors() {
+            const bgColor = document.getElementById('bg-color-code').value.trim();
+            const textColor = document.getElementById('text-color-code').value.trim();
+
+            if (bgColor.match(/^#[0-9a-fA-F]{3,6}$/) || bgColor === "transparent") {
+                editorWrapper.style.backgroundColor = bgColor;
+                localStorage.setItem('custom_bg_color', bgColor);
+            }
+            if (textColor.match(/^#[0-9a-fA-F]{3,6}$/)) {
+                editor.style.color = textColor;
+                localStorage.setItem('custom_text_color', textColor);
+            }
+        }
+
+        // --- 【新機能】文字の一括置き換え処理 ---
+        function replaceAllText() {
+            const srcText = document.getElementById('replace-src').value;
+            const dstText = document.getElementById('replace-dst').value;
+
+            if (!srcText) {
+                alert("置き換え前の文字（消したい文字）を入力してください。");
+                return;
+            }
+
+            // 現在表示中のページの最新内容を配列に同期
+            pages[currentPageIndex] = editor.value;
+
+            // 特殊文字をエスケープして正規表現を作成（すべて一括置換するため「g」フラグを使用）
+            const escapedSrc = srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escapedSrc, 'g');
+
+            let totalCount = 0;
+
+            // 全ページを走査して文字を置換
+            pages = pages.map((pageText) => {
+                const matches = pageText.match(regex);
+                if (matches) {
+                    totalCount += matches.length;
+                }
+                return pageText.replace(regex, dstText);
+            });
+
+            // エディタの表示内容を更新
+            editor.value = pages[currentPageIndex];
+            updatePageData();
+
+            alert(`すべてのページから「${srcText}」を「${dstText}」に一括置き換えしました（計 ${totalCount} 箇所）。`);
+            
+            // 入力欄をクリア
+            document.getElementById('replace-src').value = "";
+            document.getElementById('replace-dst').value = "";
+        }
+
+        // --- 選択テキストの取得 ---
         function handleTextSelection() {
             const start = editor.selectionStart;
             const end = editor.selectionEnd;
@@ -421,7 +532,7 @@
             }
         }
 
-        // --- 【新機能】その場で簡易辞書表示 ---
+        // --- その場で簡易辞書表示 ---
         function searchWordInline(type) {
             if (!selectedText) {
                 previewArea.innerHTML = `<span style="color:#e74c3c;">⚠️ 本文の調べたい文字をドラッグ選択してから押してください。</span>`;
@@ -430,7 +541,6 @@
 
             previewArea.innerHTML = `<span style="color:#3498db;">🔄 「${selectedText}」を検索中...</span>`;
 
-            // 通常のブラウザ用：iframe埋め込みがブロックされる対策を施した簡易擬似プレビュー＋検索リンク
             let searchUrl = "";
             let siteName = "";
             
@@ -442,7 +552,6 @@
                 searchUrl = `https://thesaurus.weblio.jp/content/${encodeURIComponent(selectedText)}`;
             }
 
-            // 安全かつその場で大体の確認・ジャンプができるハイブリッド表示
             setTimeout(() => {
                 previewArea.innerHTML = `
                     <div style="font-weight:bold; color:#4a90e2; margin-bottom:5px;">🧐 「${selectedText}」の検索</div>
@@ -454,7 +563,6 @@
             }, 300);
         }
 
-        // 辞書のリセット
         function resetDictInline() {
             selectedText = "";
             previewArea.innerHTML = `<span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>`;
