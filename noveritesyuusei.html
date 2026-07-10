@@ -426,6 +426,7 @@
                 <div class="page-scroll-container" id="page-container"></div>
                 
                 <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
+                <button onclick="openPreview()" class="palette-icon-btn">プレビュー別窓</button>
                 <button class="jump-btn emoji-bold" onclick="scrollToElement('top-phrase-panel')" title="一番上へスクロール">🔺</button>
             </div>
         </div>
@@ -710,6 +711,32 @@
             updatePageData();
             alert("このページの置き換えが完了しました。");
         }
+
+       function openPreview() {
+    // 編集中の内容を取得
+    const content = editor.value;
+    
+    // 別窓を開く
+    const previewWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    // プレビュー用のHTMLを構築
+    previewWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>プレビュー</title>
+            <style>
+                body { font-family: 'Shippori Mincho', serif; padding: 40px; line-height: 2.0; color: #333; }
+                rt { font-size: 0.5em; } /* ルビのサイズ調整 */
+            </style>
+        </head>
+        <body>
+            ${content}
+        </body>
+        </html>
+    `);
+    previewWindow.document.close();
+}
 
         // --- メモ・YouTube・入出力 ---
         function saveMemo() { 
