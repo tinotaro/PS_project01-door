@@ -2,104 +2,830 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>rei-style Editor - Full Integrated</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rei-style Editor (Palette Layout v24)</title>
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji&display=swap" rel="stylesheet">
     <style>
-        :root { --bg-color: #808080; --text-color: #ffffff; --sidebar-bg: #707070; --panel-bg: #888888; --editor-bg: #7a7a7a; --border-color: #666666; --accent-color: #4a90e2; }
-        body { margin: 0; display: flex; height: 100vh; overflow: hidden; background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; }
-        #sidebar-palette { width: 60px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; padding: 15px 0; z-index: 1000; flex-shrink: 0; }
-        .palette-icon-btn { cursor: pointer; padding: 10px; font-size: 20px; }
-        #main-container { flex: 1; display: flex; flex-direction: column; padding: 20px; transition: margin-left 0.3s ease; position: relative; }
-        body.panel-open #main-container { margin-left: 300px; }
-        .floating-panel { position: absolute; left: 60px; top: 0; width: 300px; height: 100vh; background: var(--panel-bg); border-right: 1px solid var(--border-color); display: none; flex-direction: column; padding: 20px; z-index: 999; box-sizing: border-box; }
+        /* --- 強制モノクロ化（カラー絵文字の抑制） --- */
+        /* 絵文字をカラーにさせず、必ずテキスト色（var(--text-color)）に追従させるための最強設定 */
+        * {
+            font-variant-emoji: text !important;
+            -webkit-font-variant-emoji: text !important;
+        }
+
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #cccccc;
+            --sidebar-bg: #242424;
+            --panel-bg: #2c2c2c;
+            --border-color: #333333;
+            --accent-color: #4a90e2;
+            --button-hover: #357abd;
+            --editor-bg: #1e1e1e;
+            --panel-header-border: #444;
+            --input-bg: #111;
+            --ruby-color: #a5c7f2;
+        }
+
+        /* テーマ切り替え用のCSS変数定義は省略（前回と同じものをそのまま使用してください） */
+        body.theme-default-white { --bg-color: #f5f5f5; --text-color: #333333; --sidebar-bg: #e0e0e0; --panel-bg: #ffffff; --border-color: #cccccc; --accent-color: #3498db; --editor-bg: #ffffff; }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            /* Noto Emojiを先頭に置くことで、OS標準のカラー絵文字フォントの読み込みを回避 */
+            font-family: 'Noto Emoji', "Helvetica Neue", Arial, sans-serif;
+            display: flex; height: 100vh; overflow: hidden;
+        }
+
+        /* アイコンボタン系は特に色が化けやすいので、明示的に色を固定 */
+        .palette-icon-btn, .jump-btn, .quick-btn {
+            color: var(--text-color) !important;
+            fill: var(--text-color) !important;
+        }
+
+        /* 各種プリセットテーマのCSS変数切り替え */
+        body.theme-default-white {
+            --bg-color: #f5f5f5; --text-color: #333333; --sidebar-bg: #e0e0e0; --panel-bg: #ffffff;
+            --border-color: #cccccc; --accent-color: #3498db; --button-hover: #2980b9; --editor-bg: #ffffff;
+            --panel-header-border: #dddddd; --input-bg: #fafafa; --ruby-color: #2980b9;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            display: flex; height: 100vh; overflow: hidden; position: relative;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* 絵文字を完全な白黒・単色テキスト表示にするためのクラス */
+        .emoji-bold {
+            font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+            font-weight: bold;
+            font-variant-emoji: text; /* 完全にテキスト仕様（白黒）に固定 */
+            color: var(--text-color); /* 現在のテーマの文字色に強制同期 */
+        }
+
+        /* --- 左側：テキストツールパレット --- */
+        #sidebar-palette {
+            width: 56px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; align-items: center; padding: 15px 0; box-sizing: border-box; gap: 10px; z-index: 10;
+        }
+
+        .palette-spacer {
+            flex: 1;
+        }
+
+        .palette-icon-btn {
+            width: 44px; height: 38px; border-radius: 6px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; position: relative;
+            font-size: 18px; color: var(--text-color);
+            font-variant-emoji: text; /* パレットボタン内を単色モノクロ固定 */
+        }
+        .palette-icon-btn:hover, .palette-icon-btn.active {
+            background-color: var(--accent-color); border-color: #555; transform: scale(1.05); color: #ffffff;
+        }
+        .palette-icon-btn::after {
+            content: attr(data-tooltip); position: absolute; left: 54px; top: 50%; transform: translateY(-50%); background: #000; color: #fff;
+            padding: 5px 9px; border-radius: 4px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-family: sans-serif; font-weight: normal;
+        }
+        .palette-icon-btn:hover::after { opacity: 1; }
+
+        /* --- ポップアップする機能パネル --- */
+        .floating-panel {
+            position: absolute; left: 62px; top: 15px; bottom: 15px; width: 290px;
+            background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            box-shadow: 5px 5px 20px rgba(0,0,0,0.4); z-index: 20; display: none; flex-direction: column; padding: 15px; box-sizing: border-box; overflow-y: auto;
+        }
         .floating-panel.active { display: flex; }
-        #editor-wrapper { flex: 1; display: flex; flex-direction: column; background: var(--editor-bg); }
-        #editor { flex: 1; width: 100%; background: transparent; color: var(--text-color); border: none; padding: 20px; resize: none; }
-        .panel-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-weight: bold; }
-        .theme-select-btn { width: 100%; margin-bottom: 5px; }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-header-border); padding-bottom: 8px; margin-bottom: 12px;
+        }
+        .panel-title { font-size: 13px; font-weight: bold; color: var(--text-color); }
+        .panel-close-btn { background: transparent; border: none; color: var(--text-color); opacity: 0.6; font-size: 16px; cursor: pointer; padding: 0 4px; }
+        .panel-close-btn:hover { opacity: 1; }
+
+        button {
+            background-color: rgba(0,0,0,0.2); color: var(--text-color); border: 1px solid var(--border-color);
+            padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: all 0.2s;
+        }
+        button:hover { background-color: var(--accent-color); color: #fff; }
+
+        .sidebar-input, .sidebar-textarea {
+            width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color);
+            padding: 8px; box-sizing: border-box; border-radius: 4px; font-size: 13px; margin-bottom: 8px;
+        }
+        .sidebar-textarea { resize: vertical; min-height: 120px; font-family: inherit; }
+
+        .theme-grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 15px; }
+        .theme-select-btn { padding: 8px 4px; font-size: 11px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.15); cursor: pointer; font-weight: bold; transition: transform 0.1s, box-shadow 0.1s; display: flex; align-items: center; justify-content: center; }
+        .theme-select-btn:hover { transform: scale(1.02); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .theme-select-btn.active { outline: 2px solid var(--accent-color); outline-offset: -1px; }
+
+        .replace-pickup-container { background: rgba(0,0,0,0.1); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px; margin-top: 8px; font-size: 11px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
+        .pickup-item { padding: 6px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .pickup-line-num { color: var(--text-color); opacity: 0.7; font-weight: bold; }
+        .item-replace-btn { background-color: var(--accent-color); color: #fff; border: none; padding: 3px 8px; font-size: 10px; border-radius: 3px; cursor: pointer; }
+
+        .dict-icon-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 8px; }
+        .dict-icon-btn { font-size: 12px; font-weight: bold; padding: 8px; text-align: center; background-color: rgba(0,0,0,0.2); }
+        #dict-preview-area { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; font-size: 13px; height: 180px; overflow-y: auto; color: var(--text-color); line-height: 1.5; }
+        .preview-placeholder { opacity: 0.5; font-style: italic; }
+
+        .replace-btn { background-color: rgba(128,77,101,0.3); color: var(--text-color); font-weight: bold; width: 100%; margin-bottom: 4px;}
+        .confirm-btn { background-color: rgba(39,174,96,0.4); color: var(--text-color); font-weight: bold; width: 100%; margin-top: 6px; display: none;}
+        .save-btn { background-color: rgba(59,59,92,0.4); color: var(--text-color); font-weight: bold; width: 100%; margin-top: 5px;}
+        .load-label { background-color: rgba(42,58,58,0.4); color: var(--text-color); font-weight: bold; text-align: center; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; font-size: 13px; display: block; margin-top: 8px; transition: all 0.2s; }
+
+        #yt-container { width: 100%; aspect-ratio: 16 / 9; background: #000; margin-top: 8px; border: 1px solid var(--border-color); border-radius: 4px; }
+        .btn-row { display: flex; gap: 5px; margin-bottom: 8px; }
+        .btn-row button { flex: 1; }
+
+        /* ヘルプ用コンテンツスタイル */
+        .help-section { margin-bottom: 16px; }
+        .help-subtitle { font-size: 12px; font-weight: bold; color: var(--accent-color); margin-bottom: 4px; border-left: 2px solid var(--accent-color); padding-left: 6px; }
+        .help-text { font-size: 11px; line-height: 1.6; opacity: 0.85; margin: 0 0 8px 0; }
+
+        /* --- 右側：メイン執筆エリア --- */
+        #main-container {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px 40px; box-sizing: border-box; z-index: 5;
+        }
+
+        #top-phrase-panel {
+            width: 95%; max-width: 1400px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; box-sizing: border-box; display: flex; align-items: center; gap: 8px;
+        }
+        .phrase-main-block { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+        .phrase-horizontal-list { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+        .phrase-horizontal-list::-webkit-scrollbar { height: 4px; }
+        .phrase-horizontal-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+        
+        .phrase-chip { display: flex; align-items: center; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: 4px; white-space: nowrap; }
+        .phrase-chip-btn { background: transparent; border: none; color: var(--text-color); padding: 4px 8px; font-size: 13px; }
+        .phrase-chip-btn:hover { background: var(--accent-color); color: #fff; }
+        .phrase-chip-del { background: rgba(100,30,30,0.4); border: none; color: var(--text-color); padding: 4px 6px; cursor: pointer; border-radius: 0 3px 3px 0; font-size: 11px; }
+
+        #editor-wrapper {
+            width: 95%; max-width: 1400px; flex: 1; margin: 10px 0; background-color: var(--editor-bg); border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 4px; display: flex; flex-direction: column; position: relative;
+            transition: background-color 0.2s;
+        }
+
+        #quick-toolbar {
+            display: flex; gap: 6px; padding: 10px 20px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); border-radius: 4px 4px 0 0; z-index: 3; flex-wrap: wrap;
+        }
+        .quick-btn {
+            background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color); color: var(--text-color);
+            padding: 4px 12px; font-size: 14px; font-family: 'Shippori Mincho', serif; min-width: 38px; text-align: center;
+        }
+
+        .editor-container-inner { flex: 1; position: relative; width: 100%; overflow: hidden; }
+
+        #backdrop {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 30px 40px; box-sizing: border-box;
+            font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 2.2; letter-spacing: 0.05em;
+            white-space: pre-wrap; word-wrap: break-word; color: var(--text-color); background-color: transparent;
+            overflow-y: auto; pointer-events: none; z-index: 1;
+            color: var(--text-color);
+    background-color: var(--editor-bg); /* エディタと同じ背景色にする */
+    pointer-events: none;
+    z-index: 1;
+        }
+
+        #backdrop ruby { color: var(--text-color); }
+        #backdrop rt { font-size: 0.55em; color: var(--ruby-color); letter-spacing: 0; padding-bottom: 0.1em; }
+        .editor-match-highlight { background-color: rgba(241, 196, 15, 0.5); border-radius: 2px; color: transparent; }
+/* backdropを一旦非表示にする */
+#backdrop {
+    display: none;
+}
+
+/* エディタの文字を透明にしない（普通に見えるようにする） */
+#editor {
+    position: relative; /* absoluteから変更 */
+    width: 100%; height: 500px; /* 高さを確保 */
+    background: var(--editor-bg);
+    color: var(--text-color); /* 透明にしない */
+    -webkit-text-fill-color: var(--text-color);
+    padding: 30px 40px;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 17px;
+    resize: vertical;
+    border: 1px solid var(--border-color);
+}
+        #editor-footer {
+            padding: 10px 20px; background-color: var(--sidebar-bg); border-top: 1px solid var(--border-color); font-size: 12px; color: var(--text-color); opacity: 0.6; display: flex; justify-content: space-between; z-index: 3;
+        }
+
+        /* --- 下部：ページ管理パネル --- */
+        #bottom-page-panel {
+            width: 95%; max-width: 1400px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px;
+        }
+        .page-control-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .page-scroll-container { flex: 1; display: flex; gap: 5px; overflow-x: auto; padding: 2px 0; }
+        .page-scroll-container::-webkit-scrollbar { height: 4px; }
+        .page-scroll-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+        
+        .page-btn { padding: 6px 12px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color); color: var(--text-color); min-width: 35px; text-align: center; }
+        .page-btn.active { background-color: var(--accent-color); color: #fff; font-weight: bold; }
+        
+        /* 統合された同じエリア内のボタンスタイル */
+        .add-page-btn { background-color: rgba(42,58,42,0.4); color: var(--text-color); white-space: nowrap; }
+        .del-page-btn { background-color: rgba(61,34,34,0.4); color: var(--text-color); white-space: nowrap; }
+        .next-page-send-btn { background-color: rgba(42,58,42,0.4); color: var(--text-color); white-space: nowrap; }
+
+        .jump-btn {
+            background-color: rgba(0,0,0,0.15); color: var(--text-color); font-weight: bold; font-size: 13px; width: 38px; height: 36px;
+            display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; border: 1px solid var(--border-color); flex-shrink: 0; transition: all 0.2s;
+            font-variant-emoji: text; /* ジャンプボタンの矢印も単色固定 */
+        }
+        .jump-btn:hover { background-color: var(--accent-color); color: #fff; }
+        /* すべてのアイコンや要素の絵文字を強制的にモノクロ化 */
+        .palette-icon-btn, .jump-btn, button, i, span {
+            font-family: 'Noto Emoji', sans-serif !important;
+            font-variant-emoji: text !important;
+        }
     </style>
 </head>
 <body>
-    <div id="sidebar-palette">
-        <div class="palette-icon-btn" onclick="togglePanel('panel-dict')">🔍</div>
-        <div class="palette-icon-btn" onclick="togglePanel('panel-replace')">🔁</div>
-        <div class="palette-icon-btn" onclick="togglePanel('panel-memo')">✒️</div>
-        <div class="palette-icon-btn" onclick="togglePanel('panel-youtube')">🎬</div>
-        <div class="palette-icon-btn" onclick="togglePanel('panel-settings')">🖌️</div>
-        <div class="palette-icon-btn" onclick="togglePanel('panel-save')">🔖</div>
-        <div class="palette-icon-btn" onclick="togglePanel('panel-help')">❓</div>
+
+    <div id="sidebar-palette" class="emoji-bold">
+        <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">🔍</div>
+        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">🔁</div>
+        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">✒️</div>
+        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">🎬</div>
+        <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">🖌️</div>
+        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">🔖</div>
+        <div class="palette-spacer"></div>
+        <div class="palette-icon-btn" data-tooltip="操作説明ヘルプ" onclick="togglePanel('panel-help')" style="border-color: var(--accent-color);">❓</div>
+    </div>
+
+    <div class="floating-panel" id="panel-dict">
+        <div class="panel-header">
+            <div class="panel-title">言葉の意味を調べる</div>
+            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
+        </div>
+        <div class="dict-icon-row">
+            <button class="dict-icon-btn" onclick="searchWordInline('kotobank')">コトバンク</button>
+            <button class="dict-icon-btn" onclick="searchWordInline('weblio')">類語辞典</button>
+            <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:rgba(0,0,0,0.3);">リセット</button>
+        </div>
+        <div id="dict-preview-area">
+            <span class="preview-placeholder">本文で文字を選択して、上のボタンを押すとここに簡易表示されます。</span>
+        </div>
+    </div>
+
+    <div class="floating-panel" id="panel-replace">
+        <div class="panel-header">
+            <div class="panel-title">文字の抽出と置き換え</div>
+            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
+        </div>
+        <div class="btn-row" style="margin-bottom: 12px;">
+            <button onclick="checkAndConvertAlphaNumeric('toFull')" style="font-size:11px; padding:4px;">英数全角に一括</button>
+            <button onclick="checkAndConvertAlphaNumeric('toHalf')" style="font-size:11px; padding:4px;">英数半角に一括</button>
+        </div>
+        <input type="text" id="replace-src" class="sidebar-input" placeholder="置き換え前の文字（消したい文字）" oninput="clearPickup()">
+        <input type="text" id="replace-dst" class="sidebar-input" placeholder="置き換え後の文字（新しい文字）">
+        <button class="replace-btn" onclick="pickupMatches()">対象箇所を本文で確認</button>
+        <div class="replace-pickup-container" id="pickup-results">
+            <span style="color:#666; font-style:italic;">「対象箇所を本文で確認」を押すと、メイン執筆エリアが黄色くハイライトされます。</span>
+        </div>
+        <button id="replace-confirm-btn" class="confirm-btn" onclick="executeConfirmedReplaceAll()">このページの抽出箇所をすべて置き換える</button>
+    </div>
+
+    <div class="floating-panel" id="panel-memo">
+        <div class="panel-header">
+            <div class="panel-title">作品メモ</div>
+            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
+        </div>
+        <textarea id="memo-area" class="sidebar-textarea" placeholder="プロットや設定メモ（自動保存）" oninput="saveMemo()"></textarea>
+    </div>
+
+    <div class="floating-panel" id="panel-youtube">
+        <div class="panel-header">
+            <div class="panel-title">ミニYouTube</div>
+            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
+        </div>
+        <input type="text" id="yt-url-input" class="sidebar-input" placeholder="動画ID または URL を入力">
+        <button style="width:100%;" onclick="loadYouTubeVideo()">プレイヤーに読み込み</button>
+        <div id="yt-container">
+            <div style="text-align:center; padding-top:25px; font-size:12px; opacity:0.5;">動画未読込</div>
+        </div>
     </div>
 
     <div class="floating-panel" id="panel-settings">
-        <div class="panel-header">表示設定 <button onclick="closeAllPanels()">×</button></div>
-        <button class="theme-select-btn" onclick="applyPresetTheme('default')">デフォルトブラック</button>
-        <button class="theme-select-btn" onclick="applyPresetTheme('default-white')">デフォルトホワイト</button>
+        <div class="panel-header">
+            <div class="panel-title">表示・カラー設定</div>
+            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
+        </div>
+        <div class="theme-grid-container">
+            <div class="theme-select-btn" id="btn-theme-default" style="background-color:#1a1a1a; color:#ccc;" onclick="applyPresetTheme('default')">デフォルトブラック</div>
+            <div class="theme-select-btn" id="btn-theme-default-white" style="background-color:#f5f5f5; color:#333;" onclick="applyPresetTheme('default-white')">デフォルトホワイト</div>
+            <div class="theme-select-btn" id="btn-theme-coffeebrown" style="background-color:#4a3e3d; color:#f4f1ea;" onclick="applyPresetTheme('coffeebrown')">コーヒーブラウン</div>
+            <div class="theme-select-btn" id="btn-theme-bluegray" style="background-color:#34495e; color:#ecf0f1;" onclick="applyPresetTheme('bluegray')">ブルーグレイ</div>
+            <div class="theme-select-btn" id="btn-theme-pitchblack" style="background-color:#0b0b0b; color:#999;" onclick="applyPresetTheme('pitchblack')">ピッチブラック</div>
+            <div class="theme-select-btn" id="btn-theme-craftpaper" style="background-color:#f1ebd9; color:#4a3c31;" onclick="applyPresetTheme('craftpaper')">クラフトペーパー</div>
+            <div class="theme-select-btn" id="btn-theme-greentea" style="background-color:#556b2f; color:#f5f5dc;" onclick="applyPresetTheme('greentea')">グリーンティー</div>
+            <div class="theme-select-btn" id="btn-theme-lavender" style="background-color:#7d75a1; color:#fff;" onclick="applyPresetTheme('lavender')">ラベンダー</div>
+            <div class="theme-select-btn" id="btn-theme-dustyrose" style="background-color:#9c8285; color:#fbf7f7;" onclick="applyPresetTheme('dustyrose')">ダスティローズ</div>
+            <div class="theme-select-btn" id="btn-theme-mintgreen" style="background-color:#6e8b7e; color:#f4f9f6;" onclick="applyPresetTheme('mintgreen')">ミントグリーン</div>
+            <div class="theme-select-btn" id="btn-theme-namari" style="background-color:#707c74; color:#fff;" onclick="applyPresetTheme('namari')">鉛色</div>
+            <div class="theme-select-btn" id="btn-theme-budou" style="background-color:#5e525e; color:#f7f2f7;" onclick="applyPresetTheme('budou')">ぶどう鼠</div>
+            <div class="theme-select-btn" id="btn-theme-botan" style="background-color:#7a5f66; color:#faf5f6;" onclick="applyPresetTheme('botan')">牡丹鼠</div>
+            <div class="theme-select-btn" id="btn-theme-konnezumi" style="background-color:#4b535c; color:#f4f6f8;" onclick="applyPresetTheme('konnezumi')">紺鼠</div>
+        </div>
+        <select id="font-selector" class="sidebar-input" onchange="changeFontFamily(this.value)">
+            <option value="'Shippori Mincho', serif">しっぽり明朝（濁点対応）</option>
+            <option value="'M PLUS Round 1c', sans-serif">かわいめ丸ゴシック</option>
+            <option value="'Helvetica Neue', Arial, sans-serif">標準ゴシック体</option>
+        </select>
+        <div class="btn-row">
+            <button onclick="changeFontSize('14px')">小</button>
+            <button onclick="changeFontSize('17px')">中</button>
+            <button onclick="changeFontSize('22px')">大</button>
+        </div>
     </div>
-    <div class="floating-panel" id="panel-dict"><div class="panel-header">辞書 <button onclick="closeAllPanels()">×</button></div><div id="dict-preview-area"></div></div>
-    <div class="floating-panel" id="panel-replace"><div class="panel-header">置換 <button onclick="closeAllPanels()">×</button></div><input id="replace-src"><input id="replace-dst"><button onclick="executeConfirmedReplaceAll()">置換実行</button></div>
-    <div class="floating-panel" id="panel-memo"><div class="panel-header">メモ <button onclick="closeAllPanels()">×</button></div><textarea id="memo-area" oninput="saveMemo()"></textarea></div>
-    <div class="floating-panel" id="panel-youtube"><div class="panel-header">YouTube <button onclick="closeAllPanels()">×</button></div><input id="yt-url-input"><button onclick="loadYouTubeVideo()">読込</button><div id="yt-container"></div></div>
-    <div class="floating-panel" id="panel-save"><div class="panel-header">保存 <button onclick="closeAllPanels()">×</button></div><button onclick="exportToTxt()">全ページ保存</button></div>
-    <div class="floating-panel" id="panel-help"><div class="panel-header">ヘルプ <button onclick="closeAllPanels()">×</button></div></div>
+
+    <div class="floating-panel" id="panel-save">
+        <div class="panel-header">
+            <div class="panel-title">作品出力と読み込み</div>
+            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
+        </div>
+        <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft">
+        <button class="save-btn" onclick="exportToTxt()">.txt形式で全ページ保存</button>
+        <label for="file-loader" class="load-label">続きから書く（txt読込）</label>
+        <input type="file" id="file-loader" accept=".txt" style="display:none;" onchange="importFromTxt(this)">
+    </div>
+
+    <div class="floating-panel" id="panel-help">
+        <div class="panel-header">
+            <div class="panel-title">操作説明・機能ヘルプ</div>
+            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
+        </div>
+        
+        <div class="help-section">
+            <div class="help-subtitle">1. ルビ入力ルール</div>
+            <p class="help-text">本文中で「文字《るび》」または「|対象《るび》」の形式で記述すると、エルビが反映されます。上部バーの「|《》」ボタンでテンプレートを挿入可能です。</p>
+        </div>
+
+        <div class="help-section">
+            <div class="help-subtitle">2. 定型文（単語登録）</div>
+            <p class="help-text">画面最上部の入力欄に文字列を入力してEnterキーを押すと、下のクイック一覧に登録されます。クリックするだけで本文のカーソル位置にその文章を挿入できます。（ブラウザに自動保存されます）</p>
+        </div>
+
+        <div class="help-section">
+            <div class="help-subtitle">3. 抽出と置き換え</div>
+            <p class="help-text">「置換」パネルから文字を入力して確認ボタンを押すと、該当箇所が本文上で黄色くハイライトされます。個別での置換のほか、そのページ内の該当文字を一括置換することも可能です。</p>
+        </div>
+
+        <div class="help-section">
+            <div class="help-subtitle">4. ページ送り機能</div>
+            <p class="help-text">新規ページボタンを押すと、自動的に次のページの先頭に移動します。ページを切り替えて執筆できます。</p>
+        </div>
+
+        <div class="help-section">
+            <div class="help-subtitle">5. 外部連携と保存</div>
+            <p class="help-text">「辞書」は選択文字をインラインで簡易検索できます。「動画」は作業用BGM等のURLを入力して再生可能です。「保存」から出力したtxtファイルは、いつでも再読込して執筆を再開できます。</p>
+        </div>
+    </div>
 
     <div id="main-container">
-        <div id="editor-wrapper"><textarea id="editor" oninput="updatePageData()"></textarea></div>
-        <div id="page-container"></div><button onclick="addNewPage()">＋追加</button>
+        <div id="top-phrase-panel">
+            <div class="phrase-main-block">
+                <input type="text" id="new-phrase-input" class="sidebar-input" style="margin:0;" placeholder="文章を入力してEnterで定型文に登録">
+                <div class="phrase-horizontal-list" id="phrase-container"></div>
+            </div>
+            <button class="jump-btn emoji-bold" onclick="scrollToElement('bottom-page-panel')" title="一番下へスクロール">🔻</button>
+        </div>
+
+        <div id="editor-wrapper">
+            <div id="quick-toolbar">
+                <button class="quick-btn" onclick="insertQuickText('「」')">「」</button>
+                <button class="quick-btn" onclick="insertQuickText('――')">――</button>
+                <button class="quick-btn" onclick="insertQuickText('……')">……</button>
+                <button class="quick-btn" onclick="insertQuickText('゛')">゛</button>
+                <button class="quick-btn" onclick="insertQuickText('♡')">♡</button>
+                <button class="quick-btn" onclick="insertQuickText('ッ')">ッ</button>
+                <button class="quick-btn" onclick="insertQuickText('▼▼▼')">▼▼▼</button>
+                <button class="quick-btn" onclick="insertQuickText('|《》')">|《》</button>
+            </div>
+            
+            <div class="editor-container-inner">
+                <div id="backdrop"></div>
+                <textarea id="editor" placeholder="ここに小説を書き出せます..." oninput="updatePageData()" onscroll="syncScroll()" onselect="handleTextSelection()"></textarea>
+            </div>
+
+            <div id="editor-footer">
+                <span id="current-page-display">ページ: 1</span>
+                <span id="char-count-display">0 文字</span>
+            </div>
+        </div>
+
+        <div id="bottom-page-panel">
+            <div class="page-control-row">
+                <button class="add-page-btn" onclick="addNewPage()">＋ 新規ページ</button>
+                
+                
+                <div class="page-scroll-container" id="page-container"></div>
+                
+                <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
+                <div class="palette-icon-btn" data-tooltip="プレビュー" onclick="openPreview()">⭐</div>
+                <button class="jump-btn emoji-bold" onclick="scrollToElement('top-phrase-panel')" title="一番上へスクロール">🔺</button>
+            </div>
+        </div>
     </div>
-    <script>
-    let pages = [""];
-    let currentPageIndex = 0;
-    const editor = document.getElementById('editor');
 
-    function togglePanel(id) {
-        const panel = document.getElementById(id);
-        const isActive = panel.classList.contains('active');
-        document.querySelectorAll('.floating-panel').forEach(p => p.classList.remove('active'));
-        document.body.classList.remove('panel-open');
-        if (!isActive) {
-            panel.classList.add('active');
-            document.body.classList.add('panel-open');
+   <script>
+        let pages = [""];
+        let currentPageIndex = 0;
+        let selectedText = "";
+        let targetSearchText = ""; 
+        let activeTheme = "default";
+        let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || ["定型文１","定型文２","定型文３"];
+        let currentPanel = null;
+
+        const editor = document.getElementById('editor');
+        const backdrop = document.getElementById('backdrop');
+        const pageContainer = document.getElementById('page-container');
+        const phraseContainer = document.getElementById('phrase-container');
+        const memoArea = document.getElementById('memo-area');
+        const previewArea = document.getElementById('dict-preview-area');
+        const pickupResults = document.getElementById('pickup-results');
+        const confirmBtn = document.getElementById('replace-confirm-btn');
+
+        window.onload = function() {
+            if (localStorage.getItem('novel_saved_pages')) {
+                pages = JSON.parse(localStorage.getItem('novel_saved_pages'));
+                currentPageIndex = Number(localStorage.getItem('novel_current_page_idx')) || 0;
+            }
+            renderPages();
+            renderPhrases();
+            loadPage(currentPageIndex);
+            
+            applyPresetTheme(localStorage.getItem('active_preset_theme') || 'default');
+            if(localStorage.getItem('custom_font_family')) {
+                document.getElementById('font-selector').value = localStorage.getItem('custom_font_family');
+                changeFontFamily(localStorage.getItem('custom_font_family'));
+            }
+            if(localStorage.getItem('custom_font_size')) changeFontSize(localStorage.getItem('custom_font_size'));
+            if(localStorage.getItem('novel_memo')) memoArea.value = localStorage.getItem('novel_memo');
+            if(localStorage.getItem('novel_yt_id')) {
+                document.getElementById('yt-url-input').value = localStorage.getItem('novel_yt_id');
+                loadYouTubeVideo();
+            }
+
+            document.getElementById('new-phrase-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && this.value.trim() !== "") {
+                    customPhrases.push(this.value.trim());
+                    localStorage.setItem('novel_phrases', JSON.stringify(customPhrases));
+                    this.value = "";
+                    renderPhrases();
+                }
+            });
+        };
+
+        // --- パネル・UI管理 ---
+        function togglePanel(id) {
+            if (currentPanel && currentPanel !== id) {
+                document.getElementById(currentPanel).classList.remove('active');
+            }
+            const panel = document.getElementById(id);
+            panel.classList.toggle('active');
+            currentPanel = panel.classList.contains('active') ? id : null;
         }
-    }
 
-    function closeAllPanels() {
-        document.body.classList.remove('panel-open');
-        document.querySelectorAll('.floating-panel').forEach(p => p.classList.remove('active'));
-    }
+        function closeAllPanels() {
+            if (currentPanel) {
+                document.getElementById(currentPanel).classList.remove('active');
+                currentPanel = null;
+            }
+        }
+
+        function syncScroll() {
+            backdrop.scrollTop = editor.scrollTop;
+            backdrop.scrollLeft = editor.scrollLeft;
+        }
+
+        function scrollToElement(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- ページ管理 ---
+        function renderPages() {
+            pageContainer.innerHTML = "";
+            pages.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'page-btn' + (index === currentPageIndex ? ' active' : '');
+                btn.innerText = (index + 1);
+                btn.onclick = () => loadPage(index);
+                pageContainer.appendChild(btn);
+            });
+        }
+
+        function loadPage(idx) {
+            pages[currentPageIndex] = editor.value;
+            currentPageIndex = idx;
+            editor.value = pages[currentPageIndex] || "";
+            renderPages();
+            updatePageData();
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+            localStorage.setItem('novel_current_page_idx', currentPageIndex);
+            editor.focus();
+        }
+
+        function addNewPage() {
+            pages[currentPageIndex] = editor.value;
+            pages.push("");
+            loadPage(pages.length - 1);
+        }
+
+        function deleteCurrentPage() {
+            if (pages.length <= 1) return;
+            pages.splice(currentPageIndex, 1);
+            if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
+            loadPage(currentPageIndex);
+        }
 
     function updatePageData() {
-        pages[currentPageIndex] = editor.value;
-        localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-    }
+    // エディタのテキストを取得
+    let text = editor.value;
 
-    function addNewPage() {
-        pages.push("");
-        currentPageIndex = pages.length - 1;
-        editor.value = "";
-        localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-    }
+    // ルビ変換処理（|対象《るび》をタグ化）
+    let html = text
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
+        .replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>')
+        .replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
 
-    function applyPresetTheme(themeName) {
-        const themes = {
-            'default': { bg: '#808080', text: '#ffffff', side: '#707070', panel: '#888888', editor: '#7a7a7a', border: '#666666' },
-            'default-white': { bg: '#ffffff', text: '#333333', side: '#f5f5f5', panel: '#ffffff', editor: '#fafafa', border: '#e0e0e0' }
-        };
-        const colors = themes[themeName] || themes['default'];
-        const root = document.documentElement;
-        Object.entries(colors).forEach(([k, v]) => root.style.setProperty('--' + (k === 'text' ? 'text-color' : k === 'side' ? 'sidebar-bg' : k + '-color'), v));
-        localStorage.setItem('active_preset_theme', themeName);
-    }
+    // backdropに変換後のHTMLを流し込む
+    document.getElementById('backdrop').innerHTML = html;
 
-    function saveMemo() { localStorage.setItem('novel_memo', document.getElementById('memo-area').value); }
-    function loadYouTubeVideo() { /* URL解析ロジック等 */ }
-    function exportToTxt() { /* エクスポートロジック */ }
-    function executeConfirmedReplaceAll() { /* 置換ロジック */ }
+    // その他更新処理
+    document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
+    document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
+    localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+}
 
-    window.onload = () => {
-        if(localStorage.getItem('novel_saved_pages')) pages = JSON.parse(localStorage.getItem('novel_saved_pages'));
-        editor.value = pages[0] || "";
-        applyPresetTheme(localStorage.getItem('active_preset_theme') || 'default');
-        if(localStorage.getItem('novel_memo')) document.getElementById('memo-area').value = localStorage.getItem('novel_memo');
+        // --- テーマ・フォント設定 ---
+        function applyPresetTheme(t) {
+    // 1. 各テーマのカラー定義を追加・修正する
+    const themes = {
+        'default': { bg: '#1a1a1a', text: '#cccccc', side: '#242424', panel: '#2c2c2c', border: '#333333', accent: '#4a90e2', editor: '#1e1e1e' },
+        'default-white': { bg: '#f5f5f5', text: '#333333', side: '#e0e0e0', panel: '#ffffff', border: '#cccccc', accent: '#3498db', editor: '#ffffff' },
+        'coffeebrown': { bg: '#4a3e3d', text: '#f4f1ea', side: '#3d3433', panel: '#5a4e4d', border: '#70605e', accent: '#a6897c', editor: '#3a3231' },
+        'bluegray': { bg: '#34495e', text: '#ecf0f1', side: '#2c3e50', panel: '#455a73', border: '#5d6d7e', accent: '#5dade2', editor: '#2c3e50' },
+        'pitchblack': { bg: '#0b0b0b', text: '#999999', side: '#1a1a1a', panel: '#222222', border: '#333333', accent: '#555555', editor: '#000000' },
+        'craftpaper': { bg: '#f1ebd9', text: '#4a3c31', side: '#e6dfca', panel: '#fcfaf5', border: '#dcd1b5', accent: '#b8a07a', editor: '#fcfaf5' },
+        'greentea': { bg: '#556b2f', text: '#f5f5dc', side: '#485c28', panel: '#6b8e23', border: '#80a040', accent: '#d2b48c', editor: '#4a5d2a' },
+        'lavender': { bg: '#7d75a1', text: '#ffffff', side: '#6a628a', panel: '#8e86b0', border: '#a098c0', accent: '#d8b4e2', editor: '#6a628a' },
+        'dustyrose': { bg: '#9c8285', text: '#fbf7f7', side: '#8a7275', panel: '#b09699', border: '#c0a8aa', accent: '#e2b4bb', editor: '#8a7275' },
+        'mintgreen': { bg: '#6e8b7e', text: '#f4f9f6', side: '#5f7a6d', panel: '#82a393', border: '#97b8a8', accent: '#a3d9c5', editor: '#5f7a6d' },
+        'namari': { bg: '#707c74', text: '#ffffff', side: '#606c64', panel: '#808c84', border: '#909c94', accent: '#b0bcb4', editor: '#606c64' },
+        'budou': { bg: '#5e525e', text: '#f7f2f7', side: '#4e424e', panel: '#6e626e', border: '#7e727e', accent: '#a68ca6', editor: '#4e424e' },
+        'botan': { bg: '#7a5f66', text: '#faf5f6', side: '#6a4f56', panel: '#8a6f76', border: '#9a7f86', accent: '#c6a8b0', editor: '#6a4f56' },
+        'konnezumi': { bg: '#4b535c', text: '#f4f6f8', side: '#3b434c', panel: '#5b636c', border: '#6b737c', accent: '#8b939c', editor: '#3b434c' }
     };
-</script>
+
+    // 2. 選択されたテーマの適用
+    const colors = themes[t] || themes['default'];
+    const root = document.documentElement;
+    root.style.setProperty('--bg-color', colors.bg);
+    root.style.setProperty('--text-color', colors.text);
+    root.style.setProperty('--sidebar-bg', colors.side);
+    root.style.setProperty('--panel-bg', colors.panel);
+    root.style.setProperty('--border-color', colors.border);
+    root.style.setProperty('--accent-color', colors.accent);
+    root.style.setProperty('--editor-bg', colors.editor);
+
+    // 3. アクティブ状態の切り替え
+    document.querySelectorAll('.theme-select-btn').forEach(b => b.classList.remove('active'));
+    const activeBtn = document.getElementById('btn-theme-' + t);
+    if (activeBtn) activeBtn.classList.add('active');
+
+    localStorage.setItem('active_preset_theme', t);
+}
+
+        function changeFontFamily(f) {
+            editor.style.fontFamily = f;
+            backdrop.style.fontFamily = f;
+            localStorage.setItem('custom_font_family', f);
+        }
+
+        function changeFontSize(s) {
+            editor.style.fontSize = s;
+            backdrop.style.fontSize = s;
+            localStorage.setItem('custom_font_size', s);
+        }
+
+        // --- 定型文・クイック入力 ---
+        function renderPhrases() {
+            phraseContainer.innerHTML = "";
+            customPhrases.forEach((p, i) => {
+                const chip = document.createElement('div');
+                chip.className = 'phrase-chip';
+                
+                const btn = document.createElement('button');
+                btn.className = 'phrase-chip-btn';
+                btn.innerText = p;
+                btn.onclick = () => insertQuickText(p);
+                
+                const del = document.createElement('button');
+                del.className = 'phrase-chip-del';
+                del.innerText = '×';
+                del.onclick = () => { 
+                    customPhrases.splice(i, 1); 
+                    localStorage.setItem('novel_phrases', JSON.stringify(customPhrases)); 
+                    renderPhrases(); 
+                };
+                
+                chip.appendChild(btn); 
+                chip.appendChild(del);
+                phraseContainer.appendChild(chip);
+            });
+        }
+
+        function insertQuickText(t) {
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const text = editor.value;
+            
+            if (t === '「」' || t === '|《》') {
+                const inner = text.substring(start, end);
+                const prefix = t.substring(0, t.length / 2);
+                const suffix = t.substring(t.length / 2);
+                editor.value = text.substring(0, start) + prefix + inner + suffix + text.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + prefix.length + inner.length;
+            } else {
+                editor.value = text.substring(0, start) + t + text.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + t.length;
+            }
+            updatePageData();
+            editor.focus();
+        }
+
+        // --- 辞書機能 ---
+        function handleTextSelection() {
+            const text = editor.value.substring(editor.selectionStart, editor.selectionEnd).trim();
+            if (text) selectedText = text;
+        }
+
+        function searchWordInline(type) {
+            if(!selectedText) { 
+                previewArea.innerHTML = "⚠️ 文字を選択してください"; 
+                return; 
+            }
+            previewArea.innerHTML = "検索中...";
+            
+            if (type === 'kotobank') {
+                fetch(`https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(selectedText)}`)
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(d => { previewArea.innerHTML = d.extract ? d.extract : "見つかりませんでした。"; })
+                .catch(() => { previewArea.innerHTML = `<a href="https://kotobank.jp/word/${encodeURIComponent(selectedText)}" target="_blank" style="color: var(--accent-color);">コトバンクで調べる</a>`; });
+            } else {
+                fetch(`https://ja.wikipedia.org/api/rest_v1/page/related/${encodeURIComponent(selectedText)}`)
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(d => { previewArea.innerHTML = d.pages ? d.pages.slice(0,5).map(p=>p.title).join(', ') : "見つかりませんでした。"; })
+                .catch(() => { previewArea.innerHTML = `<a href="https://thesaurus.weblio.jp/content/${encodeURIComponent(selectedText)}" target="_blank" style="color: var(--accent-color);">Weblioで調べる</a>`; });
+            }
+        }
+
+        function resetDictInline() {
+            selectedText = "";
+            previewArea.innerHTML = '<span class="preview-placeholder">本文で文字を選択して、上のボタンを押すとここに簡易表示されます。</span>';
+        }
+
+        // --- 文字の置換と全角半角 ---
+        function checkAndConvertAlphaNumeric(type) {
+            let val = editor.value;
+            if(type === 'toFull') {
+                val = val.replace(/[A-Za-z0-9]/g, s => String.fromCharCode(s.charCodeAt(0) + 0xFEE0));
+            }
+            if(type === 'toHalf') {
+                val = val.replace(/[Ａ-Ｚａ-ｚ０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+            }
+            editor.value = val;
+            updatePageData();
+        }
+
+        function clearPickup() {
+            pickupResults.innerHTML = '<span style="color:#666; font-style:italic;">「対象箇所を本文で確認」を押すと、メイン執筆エリアが黄色くハイライトされます。</span>';
+            confirmBtn.style.display = 'none';
+            updatePageData(); // ハイライトを消すために再描画
+        }
+
+        function pickupMatches() {
+            const src = document.getElementById('replace-src').value;
+            if(!src) return;
+            targetSearchText = src;
+            
+            // エスケープ処理をして正規表現を作成
+            const regex = new RegExp(src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+            const matches = [...editor.value.matchAll(regex)];
+            
+            if(matches.length === 0) {
+                pickupResults.innerHTML = "見つかりませんでした。";
+                confirmBtn.style.display = 'none';
+            } else {
+                pickupResults.innerHTML = `${matches.length}箇所見つかりました。`;
+                confirmBtn.style.display = 'block';
+                
+                // バックドロップにハイライトを反映
+                let html = editor.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                html = html.replace(regex, `<span class="editor-match-highlight">${src}</span>`);
+                backdrop.innerHTML = html;
+            }
+        }
+
+        function executeConfirmedReplaceAll() {
+            const src = document.getElementById('replace-src').value;
+            const dst = document.getElementById('replace-dst').value;
+            if(!src) return;
+            
+            editor.value = editor.value.split(src).join(dst);
+            clearPickup();
+            updatePageData();
+            alert("このページの置き換えが完了しました。");
+        }
+
+function openPreview() {
+    const content = editor.value;
+    
+    // ルビの変換ロジック
+    let formattedContent = content
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
+        .replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>')
+        .replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+    
+    const win = window.open("", "_blank", "width=800,height=900");
+    win.document.write(`
+        <html><head><style>
+            body { font-family: 'Shippori Mincho', serif; padding: 50px; line-height: 2.2; background: #fcfcfc; }
+            ruby { ruby-align: center; }
+            rt { font-size: 0.6em; color: #666; }
+        </style></head><body>
+            ${formattedContent}
+        </body></html>
+    `);
+    win.document.close();
+}
+
+        // --- メモ・YouTube・入出力 ---
+        function saveMemo() { 
+            localStorage.setItem('novel_memo', memoArea.value); 
+        }
+
+        function loadYouTubeVideo() {
+            const val = document.getElementById('yt-url-input').value;
+            let id = val;
+            if (val.includes('v=')) id = val.split('v=')[1].split('&')[0];
+            else if (val.includes('youtu.be/')) id = val.split('youtu.be/')[1].split('?')[0];
+            
+            if(id) {
+                document.getElementById('yt-container').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+                localStorage.setItem('novel_yt_id', id);
+            }
+        }
+
+        function exportToTxt() {
+            pages[currentPageIndex] = editor.value;
+            const joinedText = pages.map((t, i) => `--- 【${i + 1}ページ目】 ---\n${t}`).join('\n\n');
+            const blob = new Blob([joinedText], { type: 'text/plain;charset=utf-8' });
+            const fileName = document.getElementById('file-name-input').value.trim() || "novel_draft";
+            
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${fileName}.txt`;
+            a.click();
+        }
+
+        function importFromTxt(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const parts = e.target.result.split(/--- 【\d+ページ目】 ---\n/);
+                let newPages = parts.map(p => p.trim()).filter((p, i) => !(i === 0 && p === ""));
+                if (newPages.length === 0) newPages = [e.target.result];
+                
+                pages = newPages;
+                currentPageIndex = 0;
+                localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+                loadPage(0);
+                alert(`テキストファイルから ${pages.length} ページ分を読み込みました。`);
+                input.value = "";
+            };
+            reader.readAsText(file, 'utf-8');
+        }
+   </script>
 </body>
 </html>
