@@ -344,21 +344,21 @@
         <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
     </div>
     <div class="theme-grid-container">
-        <div class="theme-select-btn" id="btn-theme-default" onclick="applyPresetTheme('default')">デフォルト</div>
-        <div class="theme-select-btn" id="btn-theme-default-white" onclick="applyPresetTheme('default-white')">ホワイト</div>
-        <div class="theme-select-btn" id="btn-theme-coffeebrown" onclick="applyPresetTheme('coffeebrown')">コーヒー</div>
-        <div class="theme-select-btn" id="btn-theme-bluegray" onclick="applyPresetTheme('bluegray')">ブルーグレイ</div>
-        <div class="theme-select-btn" id="btn-theme-pitchblack" onclick="applyPresetTheme('pitchblack')">ピッチブラック</div>
-        <div class="theme-select-btn" id="btn-theme-craftpaper" onclick="applyPresetTheme('craftpaper')">クラフト</div>
-        <div class="theme-select-btn" id="btn-theme-greentea" onclick="applyPresetTheme('greentea')">グリーンティー</div>
-        <div class="theme-select-btn" id="btn-theme-ghostwhite" onclick="applyPresetTheme('ghostwhite')">ゴースト</div>
-        <div class="theme-select-btn" id="btn-theme-olivedrab" onclick="applyPresetTheme('olivedrab')">オリーブ</div>
-        <div class="theme-select-btn" id="btn-theme-lavender" onclick="applyPresetTheme('lavender')">ラベンダー</div>
-        <div class="theme-select-btn" id="btn-theme-dustyrose" onclick="applyPresetTheme('dustyrose')">ダスティ</div>
-        <div class="theme-select-btn" id="btn-theme-mintgreen" onclick="applyPresetTheme('mintgreen')">ミント</div>
-        <div class="theme-select-btn" id="btn-theme-namari" onclick="applyPresetTheme('namari')">鉛色</div>
-        <div class="theme-select-btn" id="btn-theme-budou" onclick="applyPresetTheme('budou')">ぶどう鼠</div>
-        <div class="theme-select-btn" id="btn-theme-botan" onclick="applyPresetTheme('botan')">牡丹鼠</div>
+        <button class="theme-select-btn" onclick="applyColorTheme('default')">デフォルトブラック</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('default-white')">デフォルトホワイト</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('coffeebrown')">コーヒーブラウン</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('bluegray')">ブルーグレイ</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('pitchblack')">ピッチブラック</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('craftpaper')">クラフトペーパー</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('greentea')">グリーンティー</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('ghostwhite')">ゴーストホワイト</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('olivedrab')">オリーブドラブ</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('lavender')">ラベンダー</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('dustyrose')">ダスティローズ</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('mintgreen')">ミントグリーン</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('namari')">鉛色</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('budou')">ぶどう鼠</button>
+        <button class="theme-select-btn" onclick="applyColorTheme('botan')">牡丹鼠</button>
     </div>
     <select id="font-selector" class="sidebar-input" onchange="changeFontFamily(this.value)">
         <option value="'Shippori Mincho', serif">しっぽり明朝</option>
@@ -591,43 +591,58 @@
     localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
 }
 
-        // --- テーマ・フォント設定 ---
+// --- テーマ・フォント設定 ---
 function applyPresetTheme(themeName) {
-    // 15種類のテーマクラスリスト
-    const themes = [
-        'theme-default', 'theme-default-white', 'theme-coffeebrown', 'theme-bluegray', 
-        'theme-pitchblack', 'theme-craftpaper', 'theme-greentea', 'theme-ghostwhite', 
-        'theme-olivedrab', 'theme-lavender', 'theme-dustyrose', 'theme-mintgreen', 
-        'theme-namari', 'theme-budou', 'theme-botan'
-    ];
-    
-    // 現在設定されているテーマクラスをすべて削除
-    themes.forEach(t => document.body.classList.remove(t));
-    
-    // 選択されたテーマクラスを追加（デフォルトの場合は theme-default を使用）
-    const className = themeName === 'default' ? 'theme-default' : 'theme-' + themeName;
-    document.body.classList.add(className);
-    
-    // 設定を保存
+    // 15色の定義をJSで一元管理（CSSの内容と一致）
+    const themes = {
+        'default': { bg: '#808080', text: '#ffffff', side: '#707070', panel: '#888888', editor: '#7a7a7a', border: '#666666' },
+        'default-white': { bg: '#ffffff', text: '#b0b0b0', side: '#f5f5f5', panel: '#ffffff', editor: '#fafafa', border: '#e0e0e0' },
+        'coffeebrown': { bg: '#a08a77', text: '#ffffff', side: '#907a67', panel: '#a8927f', editor: '#9a8471', border: '#806a57' },
+        'bluegray': { bg: '#7a8b99', text: '#ffffff', side: '#6a7b89', panel: '#8293a1', editor: '#748593', border: '#5a6b79' },
+        'pitchblack': { bg: '#555555', text: '#ffffff', side: '#444444', panel: '#5d5d5d', editor: '#4f4f4f', border: '#333333' },
+        'craftpaper': { bg: '#fdf5e6', text: '#8c7868', side: '#f0e6d5', panel: '#fffbf0', editor: '#faf1e0', border: '#e0d5c0' },
+        'greentea': { bg: '#939d83', text: '#ffffff', side: '#838d73', panel: '#9bafa1', editor: '#8d977d', border: '#737d63' },
+        'ghostwhite': { bg: '#f8f8ff', text: '#c0c0d0', side: '#ececf5', panel: '#ffffff', editor: '#f4f4fa', border: '#dcdce5' },
+        'olivedrab': { bg: '#a8a375', text: '#ffffff', side: '#989365', panel: '#b0ab7d', editor: '#a29d6f', border: '#888355' },
+        'lavender': { bg: '#b0a8b9', text: '#ffffff', side: '#a098a9', panel: '#b8b0c1', editor: '#aaa2b3', border: '#908899' },
+        'dustyrose': { bg: '#c7b3b8', text: '#ffffff', side: '#b7a3a8', panel: '#cfbbbe', editor: '#c1adb2', border: '#a79398' },
+        'mintgreen': { bg: '#a1c2b6', text: '#ffffff', side: '#91b2a6', panel: '#a9cabe', editor: '#9bbca0', border: '#81a296' },
+        'namari': { bg: '#aeb4b7', text: '#ffffff', side: '#9ea4a7', panel: '#b6bcbf', editor: '#a8aeb1', border: '#8e9497' },
+        'budou': { bg: '#998d9a', text: '#ffffff', side: '#897d8a', panel: '#a195a2', editor: '#938794', border: '#796d7a' },
+        'botan': { bg: '#c2a8b5', text: '#ffffff', side: '#b298a5', panel: '#cab0bd', editor: '#bca2af', border: '#a28895' }
+    };
+
+    const colors = themes[themeName] || themes['default'];
+    const root = document.documentElement;
+
+    // ブラウザのルート変数（CSS変数）を直接書き換える
+    root.style.setProperty('--bg-color', colors.bg);
+    root.style.setProperty('--text-color', colors.text);
+    root.style.setProperty('--sidebar-bg', colors.side);
+    root.style.setProperty('--panel-bg', colors.panel);
+    root.style.setProperty('--editor-bg', colors.editor);
+    root.style.setProperty('--border-color', colors.border);
+
     localStorage.setItem('active_preset_theme', themeName);
-    
-    // ボタンの選択状態を更新
+
+    // ボタンの選択状態（activeクラス）を更新
     document.querySelectorAll('.theme-select-btn').forEach(btn => btn.classList.remove('active'));
     const activeBtn = document.getElementById('btn-theme-' + themeName);
     if (activeBtn) activeBtn.classList.add('active');
 }
 
-        function changeFontFamily(f) {
-            editor.style.fontFamily = f;
-            backdrop.style.fontFamily = f;
-            localStorage.setItem('custom_font_family', f);
-        }
+// （以下、フォント関連の関数はそのまま変更なしでOKです）
+function changeFontFamily(f) {
+    editor.style.fontFamily = f;
+    backdrop.style.fontFamily = f;
+    localStorage.setItem('custom_font_family', f);
+}
 
-        function changeFontSize(s) {
-            editor.style.fontSize = s;
-            backdrop.style.fontSize = s;
-            localStorage.setItem('custom_font_size', s);
-        }
+function changeFontSize(s) {
+    editor.style.fontSize = s;
+    backdrop.style.fontSize = s;
+    localStorage.setItem('custom_font_size', s);
+}
 
         // --- 定型文・クイック入力 ---
         function renderPhrases() {
