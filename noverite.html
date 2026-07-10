@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v14)</title>
+    <title>rei-style Editor (Palette Layout v15)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,9 +33,9 @@
             position: relative;
         }
 
-        /* --- 左側：アイコンツールパレット（モノクロ1色＆最適サイズ化） --- */
+        /* --- 左側：アイコンツールパレット --- */
         #sidebar-palette {
-            width: 46px; /* 押しやすさとスリムさを両立 */
+            width: 46px;
             background-color: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -48,8 +48,8 @@
         }
 
         .palette-icon-btn {
-            width: 32px;  /* 小さすぎずクリックしやすい最適幅 */
-            height: 32px; /* 小さすぎずクリックしやすい最適高 */
+            width: 32px;
+            height: 32px;
             border-radius: 6px;
             background-color: #1e1e1e;
             border: 1px solid var(--border-color);
@@ -60,20 +60,17 @@
             transition: all 0.2s ease;
             position: relative;
             
-            /* 【重要】絵文字の色を完全に抜き、1色（薄グレー）に統一する魔法の処理 */
             font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-            font-size: 13px; /* 潰れず、視認性の高いミニマムサイズ */
+            font-size: 13px;
             color: transparent;
-            text-shadow: 0 0 0 #888888; /* 初期状態のアイコンの色（落ち着いたグレー） */
+            text-shadow: 0 0 0 #888888; /* 落ち着いたモノクロ1色 */
         }
         
-        /* ホバーまたはその機能のパネルが開いているアクティブ時 */
         .palette-icon-btn:hover, .palette-icon-btn.active {
             background-color: var(--accent-color);
             border-color: #555;
             transform: scale(1.05);
-            /* ホバー時はアイコンの色をくっきりした「白」に変化させる */
-            text-shadow: 0 0 0 #ffffff;
+            text-shadow: 0 0 0 #ffffff; /* ホバー・アクティブ時は白に発光 */
         }
 
         .palette-icon-btn::after {
@@ -94,7 +91,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             font-family: sans-serif;
             font-weight: normal;
-            text-shadow: none; /* ツールチップ文字がボケるのを防止 */
+            text-shadow: none;
         }
         .palette-icon-btn:hover::after {
             opacity: 1;
@@ -106,7 +103,7 @@
             left: 52px;
             top: 15px;
             bottom: 15px;
-            width: 280px;
+            width: 290px;
             background-color: var(--panel-bg);
             border: 1px solid #444;
             border-radius: 8px;
@@ -131,7 +128,7 @@
             margin-bottom: 12px;
         }
         .panel-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #fff;
         }
@@ -179,6 +176,31 @@
             font-family: inherit;
         }
 
+        /* 新設：ハイライトピックアップ・確認エリア */
+        .replace-pickup-container {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .pickup-item {
+            padding: 4px;
+            border-bottom: 1px solid #333;
+            line-height: 1.4;
+            color: #ccc;
+        }
+        .pickup-match {
+            background-color: #f1c40f;
+            color: #000;
+            padding: 0 2px;
+            font-weight: bold;
+            border-radius: 2px;
+        }
+
         .dict-icon-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -208,8 +230,11 @@
             font-style: italic;
         }
 
-        .replace-btn { background-color: #5c3b4d; color: #ffdde5; font-weight: bold; width: 100%; }
+        .replace-btn { background-color: #5c3b4d; color: #ffdde5; font-weight: bold; width: 100%; margin-bottom: 4px;}
         .replace-btn:hover { background-color: #804d65; }
+        .confirm-btn { background-color: #27ae60; color: #fff; font-weight: bold; width: 100%; margin-top: 6px; display: none;}
+        .confirm-btn:hover { background-color: #2ecc71; }
+        
         .save-btn { background-color: #3b3b5c; color: #ddddff; font-weight: bold; width: 100%; margin-top: 5px;}
         
         .load-label {
@@ -414,15 +439,18 @@
 </head>
 <body>
 
+    <!-- 左側：アイコンツールパレット（モノクロ1色・最適化） -->
     <div id="sidebar-palette">
         <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">🔍</div>
-        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">✒️</div>
-        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">📝</div>
-        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">🎬</div>
+        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">🔀</div>
+        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">✒️</div>
+        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">📺</div>
         <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">🎨</div>
-        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">💾</div>
+        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">🏷️</div>
     </div>
 
+    <!-- ポップアップパネル群 -->
+    <!-- 1. 辞書 -->
     <div class="floating-panel" id="panel-dict">
         <div class="panel-header">
             <div class="panel-title">🔍 言葉の意味を調べる</div>
@@ -438,27 +466,45 @@
         </div>
     </div>
 
+    <!-- 2. 置き換え（機能強化版） -->
     <div class="floating-panel" id="panel-replace">
         <div class="panel-header">
-            <div class="panel-title">✒️ 文字の一括置き換え</div>
+            <div class="panel-title">🔀 文字の抽出と置き換え</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
-        <input type="text" id="replace-src" class="sidebar-input" placeholder="置き換え前の文字（消したい文字）">
+        
+        <!-- 全角半角の統一ショートカット -->
+        <div class="btn-row" style="margin-bottom: 12px;">
+            <button onclick="convertAlphaNumeric('toFull')" style="font-size:11px; padding:4px;">英数全角に一括</button>
+            <button onclick="convertAlphaNumeric('toHalf')" style="font-size:11px; padding:4px;">英数半角に一括</button>
+        </div>
+
+        <input type="text" id="replace-src" class="sidebar-input" placeholder="置き換え前の文字（消したい文字）" oninput="clearPickup()">
         <input type="text" id="replace-dst" class="sidebar-input" placeholder="置き換え後の文字（新しい文字）">
-        <button class="replace-btn" onclick="replaceAllText()">すべてのページを置き換える</button>
+        
+        <button class="replace-btn" onclick="pickupMatches()">対象箇所をハイライト抽出</button>
+        
+        <!-- ピックアップ確認エリア -->
+        <div class="replace-pickup-container" id="pickup-results">
+            <span style="color:#666; font-style:italic;">ここに現在のページの該当箇所がハイライト抽出されます。</span>
+        </div>
+        
+        <button id="replace-confirm-btn" class="confirm-btn" onclick="executeConfirmedReplace()">このページの抽出箇所を置き換える</button>
     </div>
 
+    <!-- 3. メモ -->
     <div class="floating-panel" id="panel-memo">
         <div class="panel-header">
-            <div class="panel-title">📝 作品メモ</div>
+            <div class="panel-title">✒️ 作品メモ</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <textarea id="memo-area" class="sidebar-textarea" placeholder="プロットや設定メモ（自動保存）" oninput="saveMemo()"></textarea>
     </div>
 
+    <!-- 4. ミニYouTube -->
     <div class="floating-panel" id="panel-youtube">
         <div class="panel-header">
-            <div class="panel-title">🎬 ミニYouTube</div>
+            <div class="panel-title">📺 ミニYouTube</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <input type="text" id="yt-url-input" class="sidebar-input" placeholder="動画ID または URL を入力">
@@ -468,6 +514,7 @@
         </div>
     </div>
 
+    <!-- 5. 設定 -->
     <div class="floating-panel" id="panel-settings">
         <div class="panel-header">
             <div class="panel-title">🎨 表示・カラー設定</div>
@@ -493,9 +540,10 @@
         </div>
     </div>
 
+    <!-- 6. 保存・読込 -->
     <div class="floating-panel" id="panel-save">
         <div class="panel-header">
-            <div class="panel-title">💾 作品出力と読み込み</div>
+            <div class="panel-title">🏷️ 作品出力と読み込み</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft" placeholder="ファイル名を入力">
@@ -506,7 +554,9 @@
     </div>
 
 
+    <!-- 右側：メイン執筆エリア -->
     <div id="main-container">
+        <!-- 上部：定型文管理パネル -->
         <div id="top-phrase-panel">
             <div class="phrase-main-block">
                 <input type="text" id="new-phrase-input" class="sidebar-input" style="margin:0;" placeholder="文章を入力してEnterで定型文に登録">
@@ -515,6 +565,7 @@
             <button class="jump-btn" onclick="scrollToElement('bottom-page-panel')" title="一番下へジャンプ">↓</button>
         </div>
 
+        <!-- 中央：エディタ本体 -->
         <div id="editor-wrapper">
             <div id="quick-toolbar">
                 <button class="quick-btn" onclick="insertQuickText('「」')">「」</button>
@@ -533,6 +584,7 @@
             </div>
         </div>
 
+        <!-- 下部：ページ管理パネル -->
         <div id="bottom-page-panel">
             <button class="add-page-btn" onclick="addNewPage()">＋ 新規ページ</button>
             <div class="page-scroll-container" id="page-container"></div>
@@ -546,10 +598,11 @@
         let currentPageIndex = 0;
         let selectedText = "";
 
+        // 初期定型文をご指定のものに変更
         let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || [
-            "同数くらいで考え中",
-            "息を呑んだ。",
-            "あ゛っ、"
+            "定型文１",
+            "定型文２",
+            "定型文３"
         ];
 
         const editor = document.getElementById('editor');
@@ -558,6 +611,8 @@
         const phraseContainer = document.getElementById('phrase-container');
         const memoArea = document.getElementById('memo-area');
         const previewArea = document.getElementById('dict-preview-area');
+        const pickupResults = document.getElementById('pickup-results');
+        const confirmBtn = document.getElementById('replace-confirm-btn');
 
         window.onload = function() {
             if (localStorage.getItem('novel_saved_pages')) {
@@ -636,6 +691,7 @@
             document.querySelectorAll('.palette-icon-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
+            clearPickup();
         }
 
         function applyCustomColors() {
@@ -652,29 +708,83 @@
             }
         }
 
-        function replaceAllText() {
-            const srcText = document.getElementById('replace-src').value;
-            const dstText = document.getElementById('replace-dst').value;
+        /* --- 【機能強化】全角・半角の一括変換 --- */
+        function convertAlphaNumeric(mode) {
+            let text = editor.value;
+            if (mode === 'toFull') {
+                // 半角から全角へ
+                text = text.replace(/[A-Za-z0-9]/g, function(s) {
+                    return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
+                }).replace(/ /g, " ");
+                alert("現在のページの英数字・スペースを【全角】に統一しました。");
+            } else if (mode === 'toHalf') {
+                // 全角から半角へ
+                text = text.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+                    return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+                }).replace(/ /g, " ");
+                alert("現在のページの英数字・スペースを【半角】に統一しました。");
+            }
+            editor.value = text;
+            updatePageData();
+        }
 
+        /* --- 【機能大改造】ハイライトピックアップ＆確認置き換え --- */
+        function clearPickup() {
+            pickupResults.innerHTML = `<span style="color:#666; font-style:italic;">ここに現在のページの該当箇所がハイライト抽出されます。</span>`;
+            confirmBtn.style.display = 'none';
+        }
+
+        function pickupMatches() {
+            const srcText = document.getElementById('replace-src').value;
             if (!srcText) {
                 alert("置き換え前の文字を入力してください。");
                 return;
             }
 
-            pages[currentPageIndex] = editor.value;
+            const currentText = editor.value;
+            const escapedSrc = srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escapedSrc, 'g');
+            
+            // 現在のページ内を改行ごとに分けて検索
+            const lines = currentText.split('\n');
+            let matchCount = 0;
+            let htmlBuffer = "";
+
+            lines.forEach((line, index) => {
+                if (line.includes(srcText)) {
+                    matchCount++;
+                    // 該当ワードの前後を切り出してハイライト化
+                    const highlightedLine = line.replace(regex, `<span class="pickup-match">${srcText}</span>`);
+                    htmlBuffer += `<div class="pickup-item"><b>L:${index+1}</b> ${highlightedLine}</div>`;
+                }
+            });
+
+            if (matchCount > 0) {
+                pickupResults.innerHTML = htmlBuffer;
+                confirmBtn.innerText = `このページの抽出（${matchCount}箇所）を置き換える`;
+                confirmBtn.style.display = 'block';
+            } else {
+                pickupResults.innerHTML = `<span style="color:#e74c3c;">⚠️ 現在のページに対象の文字列は見つかりませんでした。</span>`;
+                confirmBtn.style.display = 'none';
+            }
+        }
+
+        function executeConfirmedReplace() {
+            const srcText = document.getElementById('replace-src').value;
+            const dstText = document.getElementById('replace-dst').value;
+
+            if (!srcText) return;
+
+            const currentText = editor.value;
             const escapedSrc = srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             const regex = new RegExp(escapedSrc, 'g');
 
-            let totalCount = 0;
-            pages = pages.map((pageText) => {
-                const matches = pageText.match(regex);
-                if (matches) totalCount += matches.length;
-                return pageText.replace(regex, dstText);
-            });
-
-            editor.value = pages[currentPageIndex];
+            const newText = currentText.replace(regex, dstText);
+            editor.value = newText;
             updatePageData();
-            alert(`全ページから「${srcText}」を「${dstText}」に一括置き換えしました（計 ${totalCount} 箇所）。`);
+
+            alert(`現在のページの対象箇所を「${dstText}」に置き換えました。`);
+            clearPickup();
             document.getElementById('replace-src').value = "";
             document.getElementById('replace-dst').value = "";
         }
