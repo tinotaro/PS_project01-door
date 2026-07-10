@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v9)</title>
+    <title>rei-style Editor (Palette Layout v10)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Noto Emoji Font とフォントの読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Noto+Emoji:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -53,17 +54,22 @@
             border-radius: 8px;
             background-color: #1e1e1e;
             border: 1px solid var(--border-color);
-            font-size: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
+            
+            /* Noto Emoji を適用して単色（テキスト色）化 */
+            font-family: 'Noto Emoji', sans-serif;
+            font-size: 20px;
+            color: #888888;
         }
         .palette-icon-btn:hover, .palette-icon-btn.active {
             background-color: var(--accent-color);
             border-color: #fff;
+            color: #ffffff; /* ホバー時は白に */
             transform: scale(1.05);
         }
 
@@ -83,6 +89,7 @@
             pointer-events: none;
             transition: opacity 0.2s;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            font-family: sans-serif; /* ツールチップは通常文字 */
         }
         .palette-icon-btn:hover::after {
             opacity: 1;
@@ -250,8 +257,15 @@
             padding: 10px;
             box-sizing: border-box;
             display: flex;
+            align-items: center; /* 横並びの垂直中央揃え */
+            gap: 8px;
+        }
+        .phrase-main-block {
+            flex: 1;
+            display: flex;
             flex-direction: column;
             gap: 8px;
+            overflow: hidden;
         }
         .phrase-horizontal-list {
             display: flex;
@@ -372,26 +386,31 @@
         .add-page-btn { background-color: #2a3a2a; color: #aaffaa; white-space: nowrap; }
         .del-page-btn { background-color: #3d2222; color: #ffaaaa; white-space: nowrap; }
         
-        /* 移動コントロールの矢印縦並び調整 */
-        .move-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .move-btn {
+        /* ジャンプボタンの共通デザイン */
+        .jump-btn {
             background-color: #2c3e50;
             color: #fff;
             font-weight: bold;
-            font-size: 11px;
-            padding: 2px 10px;
-            line-height: 1;
-            border-radius: 3px;
+            font-size: 16px;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .jump-btn:hover {
+            background-color: var(--accent-color);
         }
     </style>
 </head>
 <body>
 
-    <!-- 左側：アイコンツールパレット -->
+    <!-- 左側：アイコンツールパレット（Noto Emojiで単色表示） -->
     <div id="sidebar-palette">
         <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">🔍</div>
         <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">✒️</div>
@@ -495,8 +514,12 @@
     <div id="main-container">
         <!-- 上部：定型文管理パネル -->
         <div id="top-phrase-panel">
-            <input type="text" id="new-phrase-input" class="sidebar-input" style="margin:0;" placeholder="文章を入力してEnterで定型文に登録">
-            <div class="phrase-horizontal-list" id="phrase-container"></div>
+            <div class="phrase-main-block">
+                <input type="text" id="new-phrase-input" class="sidebar-input" style="margin:0;" placeholder="文章を入力してEnterで定型文に登録">
+                <div class="phrase-horizontal-list" id="phrase-container"></div>
+            </div>
+            <!-- 定型文の右端に「↓（下へスクロール）」ボタンを追加 -->
+            <button class="jump-btn" onclick="scrollToElement('bottom-page-panel')" title="一番下へジャンプ">↓</button>
         </div>
 
         <!-- 中央：エディタ本体 -->
@@ -522,14 +545,9 @@
         <div id="bottom-page-panel">
             <button class="add-page-btn" onclick="addNewPage()">＋ 新規ページ</button>
             <div class="page-scroll-container" id="page-container"></div>
-            
-            <!-- 移動コントロール：↑ と ↓ を縦並びに配置 -->
-            <div class="move-controls">
-                <button class="move-btn" onclick="movePage(-1)" title="現在のページを前に移動（ループ対応）">↑</button>
-                <button class="move-btn" onclick="movePage(1)" title="現在のページを後ろに移動（ループ対応）">↓</button>
-            </div>
-            
             <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
+            <!-- ページ管理の右端に「↑（上へスクロール）」ボタンを追加 -->
+            <button class="jump-btn" onclick="scrollToElement('top-phrase-panel')" title="一番上へジャンプ">↑</button>
         </div>
     </div>
 
@@ -597,6 +615,14 @@
                 }
             });
         };
+
+        // 指定した要素の位置へスムーズにジャンプする関数
+        function scrollToElement(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
 
         function togglePanel(panelId) {
             const targetPanel = document.getElementById(panelId);
@@ -777,30 +803,6 @@
             if (!confirm(`現在のページ（${currentPageIndex + 1}ページ目）を削除してもよろしいですか？`)) return;
             pages.splice(currentPageIndex, 1);
             if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
-            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-            loadPage(currentPageIndex);
-        }
-
-        // ページの無限ループ移動（上下端を跨げる処理）
-        function movePage(direction) {
-            if (pages.length <= 1) return;
-            
-            pages[currentPageIndex] = editor.value;
-            let targetIndex = currentPageIndex + direction;
-            
-            // ループ処理
-            if (targetIndex < 0) {
-                targetIndex = pages.length - 1; // 一番上（前）を突き抜けたら一番後ろへ
-            } else if (targetIndex >= pages.length) {
-                targetIndex = 0; // 一番後ろを突き抜けたら一番前へ
-            }
-            
-            // データの入れ替え
-            const temp = pages[currentPageIndex];
-            pages[currentPageIndex] = pages[targetIndex];
-            pages[targetIndex] = temp;
-            
-            currentPageIndex = targetIndex;
             localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
             loadPage(currentPageIndex);
         }
