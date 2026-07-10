@@ -133,9 +133,15 @@ body.theme-konnezumi { --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg:
 
 /* メインコンテナがメニューに合わせて自動調整されるようにする */
 #main-container {
-    flex: 1;
+    flex: 1; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: flex-start; /* これを flex-start に変えると左寄せになります */
+    justify-content: space-between; 
+    padding: 20px 20px; /* 左右のパディングを 40px から 20px に減らして空間を詰めます */
+    box-sizing: border-box; 
     transition: margin-left 0.3s ease;
-    overflow: hidden;
+    margin-left: 10px; /* パネルとエディタの隙間を狭くする */
 }
 
         .panel-header {
