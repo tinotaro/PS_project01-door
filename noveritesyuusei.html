@@ -323,38 +323,39 @@
         </div>
     </div>
 
-    <div class="floating-panel" id="panel-settings">
-        <div class="panel-header">
-            <div class="panel-title">表示・カラー設定</div>
-            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
-        </div>
-        <div class="theme-grid-container">
-            <div class="theme-select-btn" id="btn-theme-default" onclick="applyPresetTheme('default')">デフォルト</div>
-            <div class="theme-select-btn" id="btn-theme-default-white" onclick="applyPresetTheme('default-white')">ホワイト</div>
-            <div class="theme-select-btn" id="btn-theme-coffeebrown" onclick="applyPresetTheme('coffeebrown')">コーヒー</div>
-            <div class="theme-select-btn" id="btn-theme-bluegray" onclick="applyPresetTheme('bluegray')">青グレイ</div>
-            <div class="theme-select-btn" id="btn-theme-pitchblack" onclick="applyPresetTheme('pitchblack')">漆黒</div>
-            <div class="theme-select-btn" id="btn-theme-craftpaper" onclick="applyPresetTheme('craftpaper')">クラフト</div>
-            <div class="theme-select-btn" id="btn-theme-greentea" onclick="applyPresetTheme('greentea')">抹茶</div>
-            <div class="theme-select-btn" id="btn-theme-lavender" onclick="applyPresetTheme('lavender')">ラベンダー</div>
-            <div class="theme-select-btn" id="btn-theme-dustyrose" onclick="applyPresetTheme('dustyrose')">ダスティ</div>
-            <div class="theme-select-btn" id="btn-theme-mintgreen" onclick="applyPresetTheme('mintgreen')">ミント</div>
-            <div class="theme-select-btn" id="btn-theme-namari" onclick="applyPresetTheme('namari')">鉛色</div>
-            <div class="theme-select-btn" id="btn-theme-budou" onclick="applyPresetTheme('budou')">ぶどう</div>
-            <div class="theme-select-btn" id="btn-theme-botan" onclick="applyPresetTheme('botan')">牡丹</div>
-            <div class="theme-select-btn" id="btn-theme-konnezumi" onclick="applyPresetTheme('konnezumi')">紺鼠</div>
-        </div>
-        <select id="font-selector" class="sidebar-input" onchange="changeFontFamily(this.value)">
-            <option value="'Shippori Mincho', serif">しっぽり明朝</option>
-            <option value="'M PLUS Round 1c', sans-serif">丸ゴシック</option>
-            <option value="'Helvetica Neue', Arial, sans-serif">ゴシック体</option>
-        </select>
-        <div class="btn-row">
-            <button onclick="changeFontSize('14px')">小</button>
-            <button onclick="changeFontSize('17px')">中</button>
-            <button onclick="changeFontSize('22px')">大</button>
-        </div>
+<div class="floating-panel" id="panel-settings">
+    <div class="panel-header">
+        <div class="panel-title">表示・カラー設定</div>
+        <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
     </div>
+    <div class="theme-grid-container">
+        <div class="theme-select-btn" id="btn-theme-default" onclick="applyPresetTheme('default')">デフォルト</div>
+        <div class="theme-select-btn" id="btn-theme-default-white" onclick="applyPresetTheme('default-white')">ホワイト</div>
+        <div class="theme-select-btn" id="btn-theme-coffeebrown" onclick="applyPresetTheme('coffeebrown')">コーヒー</div>
+        <div class="theme-select-btn" id="btn-theme-bluegray" onclick="applyPresetTheme('bluegray')">ブルーグレイ</div>
+        <div class="theme-select-btn" id="btn-theme-pitchblack" onclick="applyPresetTheme('pitchblack')">ピッチブラック</div>
+        <div class="theme-select-btn" id="btn-theme-craftpaper" onclick="applyPresetTheme('craftpaper')">クラフト</div>
+        <div class="theme-select-btn" id="btn-theme-greentea" onclick="applyPresetTheme('greentea')">グリーンティー</div>
+        <div class="theme-select-btn" id="btn-theme-ghostwhite" onclick="applyPresetTheme('ghostwhite')">ゴースト</div>
+        <div class="theme-select-btn" id="btn-theme-olivedrab" onclick="applyPresetTheme('olivedrab')">オリーブ</div>
+        <div class="theme-select-btn" id="btn-theme-lavender" onclick="applyPresetTheme('lavender')">ラベンダー</div>
+        <div class="theme-select-btn" id="btn-theme-dustyrose" onclick="applyPresetTheme('dustyrose')">ダスティ</div>
+        <div class="theme-select-btn" id="btn-theme-mintgreen" onclick="applyPresetTheme('mintgreen')">ミント</div>
+        <div class="theme-select-btn" id="btn-theme-namari" onclick="applyPresetTheme('namari')">鉛色</div>
+        <div class="theme-select-btn" id="btn-theme-budou" onclick="applyPresetTheme('budou')">ぶどう鼠</div>
+        <div class="theme-select-btn" id="btn-theme-botan" onclick="applyPresetTheme('botan')">牡丹鼠</div>
+    </div>
+    <select id="font-selector" class="sidebar-input" onchange="changeFontFamily(this.value)">
+        <option value="'Shippori Mincho', serif">しっぽり明朝</option>
+        <option value="'M PLUS Round 1c', sans-serif">丸ゴシック</option>
+        <option value="'Helvetica Neue', Arial, sans-serif">ゴシック体</option>
+    </select>
+    <div class="btn-row">
+        <button onclick="changeFontSize('14px')">小</button>
+        <button onclick="changeFontSize('17px')">中</button>
+        <button onclick="changeFontSize('22px')">大</button>
+    </div>
+</div>
 
     <div class="floating-panel" id="panel-save">
         <div class="panel-header">
@@ -576,16 +577,30 @@
 }
 
         // --- テーマ・フォント設定 ---
-        function applyPresetTheme(t) {
-            document.body.className = '';
-            if (t !== 'default') document.body.classList.add('theme-' + t);
-            localStorage.setItem('active_preset_theme', t);
-            activeTheme = t;
-            
-            document.querySelectorAll('.theme-select-btn').forEach(b => b.classList.remove('active'));
-            const btn = document.getElementById('btn-theme-' + t);
-            if(btn) btn.classList.add('active');
-        }
+function applyPresetTheme(themeName) {
+    // 15種類のテーマクラスリスト
+    const themes = [
+        'theme-default', 'theme-default-white', 'theme-coffeebrown', 'theme-bluegray', 
+        'theme-pitchblack', 'theme-craftpaper', 'theme-greentea', 'theme-ghostwhite', 
+        'theme-olivedrab', 'theme-lavender', 'theme-dustyrose', 'theme-mintgreen', 
+        'theme-namari', 'theme-budou', 'theme-botan'
+    ];
+    
+    // 現在設定されているテーマクラスをすべて削除
+    themes.forEach(t => document.body.classList.remove(t));
+    
+    // 選択されたテーマクラスを追加（デフォルトの場合は theme-default を使用）
+    const className = themeName === 'default' ? 'theme-default' : 'theme-' + themeName;
+    document.body.classList.add(className);
+    
+    // 設定を保存
+    localStorage.setItem('active_preset_theme', themeName);
+    
+    // ボタンの選択状態を更新
+    document.querySelectorAll('.theme-select-btn').forEach(btn => btn.classList.remove('active'));
+    const activeBtn = document.getElementById('btn-theme-' + themeName);
+    if (activeBtn) activeBtn.classList.add('active');
+}
 
         function changeFontFamily(f) {
             editor.style.fontFamily = f;
