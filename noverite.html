@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v22)</title>
+    <title>rei-style Editor (Palette Layout v23)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,7 +23,7 @@
             --editor-bg: #1e1e1e;
             --panel-header-border: #444;
             --input-bg: #111;
-            --ruby-color: #a5c7f2; /* ルビ表示時の文字色 */
+            --ruby-color: #a5c7f2;
         }
 
         /* 各種プリセットテーマのCSS変数切り替え */
@@ -79,7 +79,7 @@
         }
         body.theme-budou {
             --bg-color: #5e525e; --text-color: #f7f2f7; --sidebar-bg: #4d434d; --panel-bg: #6c5e6c;
-            --border-color: #3d353d; --accent-color: #d1b3d1; --button-hover: #b89cb8; --editor-bg: #655865;
+            --border-color: #332b33; --accent-color: #d1b3d1; --button-hover: #b89cb8; --editor-bg: #655865;
             --panel-header-border: #4d434d; --input-bg: #3d353d; --ruby-color: #f5eeec;
         }
         body.theme-botan {
@@ -110,15 +110,14 @@
             display: flex; flex-direction: column; align-items: center; padding: 15px 0; box-sizing: border-box; gap: 10px; z-index: 10;
         }
 
-        /* ヘルプを最下部に固定するため、保存ボタンとヘルプボタンの間に空白を作る */
         .palette-spacer {
             flex: 1;
         }
 
         .palette-icon-btn {
-            width: 44px; height: 32px; border-radius: 6px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color);
+            width: 44px; height: 38px; border-radius: 6px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color);
             display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; position: relative;
-            font-size: 11px; font-weight: bold; color: var(--text-color);
+            font-size: 18px; color: var(--text-color);
         }
         .palette-icon-btn:hover, .palette-icon-btn.active {
             background-color: var(--accent-color); border-color: #555; transform: scale(1.05); color: #ffffff;
@@ -220,7 +219,6 @@
 
         .editor-container-inner { flex: 1; position: relative; width: 100%; overflow: hidden; }
 
-        /* 背景プレビュー用（文字色を透過させず設定色で表示） */
         #backdrop {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 30px 40px; box-sizing: border-box;
             font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 2.2; letter-spacing: 0.05em;
@@ -228,20 +226,10 @@
             overflow-y: auto; pointer-events: none; z-index: 1;
         }
 
-        /* プレビュー時のルビ（rubyタグ）のスタイル指定 */
-        #backdrop ruby {
-            color: var(--text-color);
-        }
-        #backdrop rt {
-            font-size: 0.55em;
-            color: var(--ruby-color);
-            letter-spacing: 0;
-            padding-bottom: 0.1em;
-        }
-
+        #backdrop ruby { color: var(--text-color); }
+        #backdrop rt { font-size: 0.55em; color: var(--ruby-color); letter-spacing: 0; padding-bottom: 0.1em; }
         .editor-match-highlight { background-color: rgba(241, 196, 15, 0.5); border-radius: 2px; color: transparent; }
 
-        /* 入力用：重ね合わせつつ文字をしっかり視認可能に変更 */
         #editor {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%;
             background: transparent; border: none; color: var(--text-color); padding: 30px 40px; box-sizing: border-box;
@@ -281,14 +269,14 @@
 <body>
 
     <div id="sidebar-palette">
-        <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">辞書</div>
-        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">置換</div>
-        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">メモ</div>
-        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">動画</div>
-        <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">設定</div>
-        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">保存</div>
+        <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">📖</div>
+        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">🔍</div>
+        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">📝</div>
+        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">🎬</div>
+        <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">⚙️</div>
+        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">💾</div>
         <div class="palette-spacer"></div>
-        <div class="palette-icon-btn" data-tooltip="操作説明ヘルプ" onclick="togglePanel('panel-help')" style="border-color: var(--accent-color);">ヘルプ</div>
+        <div class="palette-icon-btn" data-tooltip="操作説明ヘルプ" onclick="togglePanel('panel-help')" style="border-color: var(--accent-color);">❓</div>
     </div>
 
     <div class="floating-panel" id="panel-dict">
