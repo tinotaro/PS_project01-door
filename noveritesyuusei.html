@@ -205,20 +205,24 @@
         #backdrop ruby { color: var(--text-color); }
         #backdrop rt { font-size: 0.55em; color: var(--ruby-color); letter-spacing: 0; padding-bottom: 0.1em; }
         .editor-match-highlight { background-color: rgba(241, 196, 15, 0.5); border-radius: 2px; color: transparent; }
-
-        #editor {
-   /* 編集エリアは「透明」にして、下に隠れているbackdropを見せる */
-    color: transparent;
-    caret-color: var(--text-color); /* カーソルだけは見えるようにする */
-    background: transparent;
-    z-index: 2;
-}
-
-/* backdrop（重ね合わせ用）はプレビュー用と区別するため非表示にするか、役割を変える */
+/* backdropを一旦非表示にする */
 #backdrop {
-    display: none; 
+    display: none;
 }
 
+/* エディタの文字を透明にしない（普通に見えるようにする） */
+#editor {
+    position: relative; /* absoluteから変更 */
+    width: 100%; height: 500px; /* 高さを確保 */
+    background: var(--editor-bg);
+    color: var(--text-color); /* 透明にしない */
+    -webkit-text-fill-color: var(--text-color);
+    padding: 30px 40px;
+    font-family: 'Shippori Mincho', serif;
+    font-size: 17px;
+    resize: vertical;
+    border: 1px solid var(--border-color);
+}
         #editor-footer {
             padding: 10px 20px; background-color: var(--sidebar-bg); border-top: 1px solid var(--border-color); font-size: 12px; color: var(--text-color); opacity: 0.6; display: flex; justify-content: space-between; z-index: 3;
         }
@@ -727,37 +731,24 @@
 
 function openPreview() {
     const content = editor.value;
-    // ルビタグへ完全変換
+    
+    // ルビの変換ロジック
     let formattedContent = content
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
         .replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>')
         .replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
     
-    const previewWindow = window.open('', '_blank', 'width=800,height=900');
-    previewWindow.document.write(`
+    const win = window.open("", "_blank", "width=800,height=900");
+    win.document.write(`
         <html><head><style>
-            body { font-family: 'Shippori Mincho', serif; padding: 50px; line-height: 2.2; }
-            rt { font-size: 0.5em; color: #555; }
-        </style></head><body>${formattedContent}</body></html>
+            body { font-family: 'Shippori Mincho', serif; padding: 50px; line-height: 2.2; background: #fcfcfc; }
+            ruby { ruby-align: center; }
+            rt { font-size: 0.6em; color: #666; }
+        </style></head><body>
+            ${formattedContent}
+        </body></html>
     `);
-}
-
-       function syncScroll() {
-    const backdrop = document.getElementById('backdrop');
-    backdrop.scrollTop = editor.scrollTop;
-}
-       // エディタの入力内容をリアルタイムで色分けしてbackdropに反映
-function updateEditorHighlight() {
-    let text = editor.value;
-    
-    // ルビの記号部分や内容を色分けするタグに置換
-    let highlighted = text
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
-        // | を赤、《》を灰色に
-        .replace(/\|/g, '<span style="color:red;">|</span>')
-        .replace(/《([^》]+)》/g, '<span style="color:gray;">《$1》</span>');
-
-    document.getElementById('backdrop').innerHTML = highlighted;
-    document.getElementById('backdrop').style.display = 'block'; // 表示する
+    win.document.close();
 }
 
         // --- メモ・YouTube・入出力 ---
