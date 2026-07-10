@@ -1,29 +1,211 @@
-/* theme.css */
+/* theme.css: 全15色のカラーパレット */
 
-/* --- カラーテーマの変数定義群 --- */
+/* --- 1. デフォルトブラック（基準） --- */
 :root {
-    --bg-color: #1a1a1a;
-    --text-color: #cccccc;
-    --sidebar-bg: #242424;
-    --panel-bg: #2c2c2c;
-    --border-color: #333333;
-    --accent-color: #4a90e2;
-    --button-hover: #357abd;
-    --editor-bg: #1e1e1e;
-    --panel-header-border: #444;
-    --input-bg: #111;
+    --bg-color: #808080;
+    --text-color: #ffffff;
+    --sidebar-bg: #707070;
+    --panel-bg: #888888;
+    --border-color: #666666;
+    --accent-color: #a0a0a0;
+    --button-hover: #b0b0b0;
+    --editor-bg: #7a7a7a;
+    --panel-header-border: #666666;
+    --input-bg: #6a6a6a;
 }
 
+/* --- 2. デフォルトホワイト --- */
 body.theme-default-white {
-    --bg-color: #f5f5f5; --text-color: #333333; --sidebar-bg: #e0e0e0; --panel-bg: #ffffff;
-    --border-color: #cccccc; --accent-color: #3498db; --button-hover: #2980b9; --editor-bg: #ffffff;
-    --panel-header-border: #dddddd; --input-bg: #fafafa;
+    --bg-color: #ffffff;
+    --text-color: #b0b0b0;
+    --sidebar-bg: #f5f5f5;
+    --panel-bg: #ffffff;
+    --border-color: #e0e0e0;
+    --accent-color: #d0d0d0;
+    --button-hover: #c0c0c0;
+    --editor-bg: #fafafa;
+    --panel-header-border: #eeeeee;
+    --input-bg: #f0f0f0;
 }
 
+/* --- 3. コーヒーブラウン --- */
 body.theme-coffeebrown {
-    --bg-color: #4a3e3d; --text-color: #f4f1ea; --sidebar-bg: #3d3231; --panel-bg: #5a4d4c;
-    --border-color: #2e2524; --accent-color: #bfa18f; --button-hover: #a68574; --editor-bg: #524645;
-    --panel-header-border: #3d3231; --input-bg: #2e2524;
+    --bg-color: #a08a77;
+    --text-color: #ffffff;
+    --sidebar-bg: #907a67;
+    --panel-bg: #a8927f;
+    --border-color: #806a57;
+    --accent-color: #d0baaa;
+    --button-hover: #e0cabb;
+    --editor-bg: #9a8471;
+    --panel-header-border: #806a57;
+    --input-bg: #8a7461;
 }
 
-/* 今後新しいテーマを追加する場合は、このファイルの一番下に書き足していけばOKです */
+/* --- 4. ブルーグレイ --- */
+body.theme-bluegray {
+    --bg-color: #7a8b99;
+    --text-color: #ffffff;
+    --sidebar-bg: #6a7b89;
+    --panel-bg: #8293a1;
+    --border-color: #5a6b79;
+    --accent-color: #aaccdd;
+    --button-hover: #bbddee;
+    --editor-bg: #748593;
+    --panel-header-border: #5a6b79;
+    --input-bg: #647583;
+}
+
+/* --- 5. ピッチブラック --- */
+body.theme-pitchblack {
+    --bg-color: #555555;
+    --text-color: #ffffff;
+    --sidebar-bg: #444444;
+    --panel-bg: #5d5d5d;
+    --border-color: #333333;
+    --accent-color: #888888;
+    --button-hover: #999999;
+    --editor-bg: #4f4f4f;
+    --panel-header-border: #333333;
+    --input-bg: #3e3e3e;
+}
+
+/* --- 6. クラフトペーパー --- */
+body.theme-craftpaper {
+    --bg-color: #fdf5e6;
+    --text-color: #8c7868;
+    --sidebar-bg: #f0e6d5;
+    --panel-bg: #fffbf0;
+    --border-color: #e0d5c0;
+    --accent-color: #d0baaa;
+    --button-hover: #c0aa9a;
+    --editor-bg: #faf1e0;
+    --panel-header-border: #e0d5c0;
+    --input-bg: #eae0cd;
+}
+
+/* --- 7. グリーンティー --- */
+body.theme-greentea {
+    --bg-color: #939d83;
+    --text-color: #ffffff;
+    --sidebar-bg: #838d73;
+    --panel-bg: #9bafa1;
+    --border-color: #737d63;
+    --accent-color: #c0d0b0;
+    --button-hover: #d0e0c0;
+    --editor-bg: #8d977d;
+    --panel-header-border: #737d63;
+    --input-bg: #7d876d;
+}
+
+/* --- 8. ゴーストホワイト（新） --- */
+body.theme-ghostwhite {
+    --bg-color: #f8f8ff;
+    --text-color: #c0c0d0;
+    --sidebar-bg: #ececf5;
+    --panel-bg: #ffffff;
+    --border-color: #dcdce5;
+    --accent-color: #e0e0fa;
+    --button-hover: #d0d0ea;
+    --editor-bg: #f4f4fa;
+    --panel-header-border: #dcdce5;
+    --input-bg: #e6e6f0;
+}
+
+/* --- 9. オリーブドラブ（新） --- */
+body.theme-olivedrab {
+    --bg-color: #a8a375;
+    --text-color: #ffffff;
+    --sidebar-bg: #989365;
+    --panel-bg: #b0ab7d;
+    --border-color: #888355;
+    --accent-color: #d0cb9f;
+    --button-hover: #e0dbaf;
+    --editor-bg: #a29d6f;
+    --panel-header-border: #888355;
+    --input-bg: #928d5f;
+}
+
+/* --- 10. ラベンダー --- */
+body.theme-lavender {
+    --bg-color: #b0a8b9;
+    --text-color: #ffffff;
+    --sidebar-bg: #a098a9;
+    --panel-bg: #b8b0c1;
+    --border-color: #908899;
+    --accent-color: #d8d0e1;
+    --button-hover: #e8e0f1;
+    --editor-bg: #aaa2b3;
+    --panel-header-border: #908899;
+    --input-bg: #9a92a3;
+}
+
+/* --- 11. ダスティローズ --- */
+body.theme-dustyrose {
+    --bg-color: #c7b3b8;
+    --text-color: #ffffff;
+    --sidebar-bg: #b7a3a8;
+    --panel-bg: #cfbbbe;
+    --border-color: #a79398;
+    --accent-color: #efdbdf;
+    --button-hover: #ffebef;
+    --editor-bg: #c1adb2;
+    --panel-header-border: #a79398;
+    --input-bg: #b19da2;
+}
+
+/* --- 12. ミントグリーン --- */
+body.theme-mintgreen {
+    --bg-color: #a1c2b6;
+    --text-color: #ffffff;
+    --sidebar-bg: #91b2a6;
+    --panel-bg: #a9cabe;
+    --border-color: #81a296;
+    --accent-color: #c9eadf;
+    --button-hover: #d9faef;
+    --editor-bg: #9bbca0;
+    --panel-header-border: #81a296;
+    --input-bg: #8baaa0;
+}
+
+/* --- 13. 鉛色 --- */
+body.theme-namari {
+    --bg-color: #aeb4b7;
+    --text-color: #ffffff;
+    --sidebar-bg: #9ea4a7;
+    --panel-bg: #b6bcbf;
+    --border-color: #8e9497;
+    --accent-color: #d6dcde;
+    --button-hover: #e6ecee;
+    --editor-bg: #a8aeb1;
+    --panel-header-border: #8e9497;
+    --input-bg: #989ea1;
+}
+
+/* --- 14. ぶどう鼠 --- */
+body.theme-budou {
+    --bg-color: #998d9a;
+    --text-color: #ffffff;
+    --sidebar-bg: #897d8a;
+    --panel-bg: #a195a2;
+    --border-color: #796d7a;
+    --accent-color: #c1b5c2;
+    --button-hover: #d1c5d2;
+    --editor-bg: #938794;
+    --panel-header-border: #796d7a;
+    --input-bg: #837784;
+}
+
+/* --- 15. 牡丹鼠 --- */
+body.theme-botan {
+    --bg-color: #c2a8b5;
+    --text-color: #ffffff;
+    --sidebar-bg: #b298a5;
+    --panel-bg: #cab0bd;
+    --border-color: #a28895;
+    --accent-color: #ead0dc;
+    --button-hover: #fae0ec;
+    --editor-bg: #bca2af;
+    --panel-header-border: #a28895;
+    --input-bg: #ac929f;
+}
