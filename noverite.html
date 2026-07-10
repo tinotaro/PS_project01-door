@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v17)</title>
+    <title>rei-style Editor (Palette Layout v18)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
+        /* --- カラーテーマの変数定義群 --- */
         :root {
+            /* デフォルト（デフォルトブラック） */
             --bg-color: #1a1a1a;
             --text-color: #cccccc;
             --sidebar-bg: #242424;
@@ -19,18 +21,85 @@
             --border-color: #333333;
             --accent-color: #4a90e2;
             --button-hover: #357abd;
+            --editor-bg: #1e1e1e;
+            --panel-header-border: #444;
+            --input-bg: #111;
+        }
+
+        /* 各種プリセットテーマのCSS変数切り替え */
+        body.theme-default-white {
+            --bg-color: #f5f5f5; --text-color: #333333; --sidebar-bg: #e0e0e0; --panel-bg: #ffffff;
+            --border-color: #cccccc; --accent-color: #3498db; --button-hover: #2980b9; --editor-bg: #ffffff;
+            --panel-header-border: #dddddd; --input-bg: #fafafa;
+        }
+        body.theme-coffeebrown {
+            --bg-color: #4a3e3d; --text-color: #f4f1ea; --sidebar-bg: #3d3231; --panel-bg: #5a4d4c;
+            --border-color: #2e2524; --accent-color: #bfa18f; --button-hover: #a68574; --editor-bg: #524645;
+            --panel-header-border: #3d3231; --input-bg: #2e2524;
+        }
+        body.theme-bluegray {
+            --bg-color: #34495e; --text-color: #ecf0f1; --sidebar-bg: #2c3e50; --panel-bg: #3d566e;
+            --border-color: #253342; --accent-color: #5dade2; --button-hover: #2e86c1; --editor-bg: #3b5268;
+            --panel-header-border: #2c3e50; --input-bg: #253342;
+        }
+        body.theme-pitchblack {
+            --bg-color: #0b0b0b; --text-color: #999999; --sidebar-bg: #111111; --panel-bg: #161616;
+            --border-color: #222222; --accent-color: #555555; --button-hover: #777777; --editor-bg: #0d0d0d;
+            --panel-header-border: #222222; --input-bg: #050505;
+        }
+        body.theme-craftpaper {
+            --bg-color: #f1ebd9; --text-color: #4a3c31; --sidebar-bg: #e2d9c2; --panel-bg: #f7f3e8;
+            --border-color: #cfc4a6; --accent-color: #8e7a63; --button-hover: #73614e; --editor-bg: #f4efe2;
+            --panel-header-border: #cfc4a6; --input-bg: #eae3ce;
+        }
+        body.theme-greentea {
+            --bg-color: #556b2f; --text-color: #f5f5dc; --sidebar-bg: #465826; --panel-bg: #637d37;
+            --border-color: #38461e; --accent-color: #a3c1ad; --button-hover: #82a38e; --editor-bg: #5b7232;
+            --panel-header-border: #465826; --input-bg: #38461e;
+        }
+        body.theme-lavender {
+            --bg-color: #7d75a1; --text-color: #ffffff; --sidebar-bg: #69608c; --panel-bg: #8b83b0;
+            --border-color: #574e78; --accent-color: #decbe4; --button-hover: #c5afd0; --editor-bg: #847ca9;
+            --panel-header-border: #69608c; --input-bg: #574e78;
+        }
+        body.theme-dustyrose {
+            --bg-color: #9c8285; --text-color: #fbf7f7; --sidebar-bg: #856d70; --panel-bg: #aa9396;
+            --border-color: #70595c; --accent-color: #e8d7d8; --button-hover: #d1b9bc; --editor-bg: #a38a8d;
+            --panel-header-border: #856d70; --input-bg: #70595c;
+        }
+        body.theme-mintgreen {
+            --bg-color: #6e8b7e; --text-color: #f4f9f6; --sidebar-bg: #5c7469; --panel-bg: #7c9b8e;
+            --border-color: #4a5d54; --accent-color: #bce3d1; --button-hover: #a1cca8; --editor-bg: #759486;
+            --panel-header-border: #5c7469; --input-bg: #4a5d54;
+        }
+        body.theme-namari {
+            --bg-color: #707c74; --text-color: #ffffff; --sidebar-bg: #5d6861; --panel-bg: #7e8b83;
+            --border-color: #4b534e; --accent-color: #bdc7c1; --button-hover: #a2ada7; --editor-bg: #77847c;
+            --panel-header-border: #5d6861; --input-bg: #4b534e;
+        }
+        body.theme-budou {
+            --bg-color: #5e525e; --text-color: #f7f2f7; --sidebar-bg: #4d434d; --panel-bg: #6c5e6c;
+            --border-color: #3d353d; --accent-color: #d1b3d1; --button-hover: #b89cb8; --editor-bg: #655865;
+            --panel-header-border: #4d434d; --input-bg: #3d353d;
+        }
+        body.theme-botan {
+            --bg-color: #7a5f66; --text-color: #faf5f6; --sidebar-bg: #664f55; --panel-bg: #8a6c73;
+            --border-color: #523f43; --accent-color: #e3bebf; --button-hover: #cca2a4; --editor-bg: #82656c;
+            --panel-header-border: #664f55; --input-bg: #523f43;
+        }
+        body.theme-konnezumi {
+            --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg: #3e444d; --panel-bg: #57606b;
+            --border-color: #31363d; --accent-color: #a9bdcc; --button-hover: #8fa6ba; --editor-bg: #515964;
+            --panel-header-border: #3e444d; --input-bg: #31363d;
         }
 
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
-            display: flex;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
+            display: flex; height: 100vh; overflow: hidden; position: relative;
+            transition: background-color 0.2s, color 0.2s;
         }
 
         /* --- 左側：アイコンツールパレット --- */
@@ -38,456 +107,159 @@
             width: 46px;
             background-color: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 15px 0;
-            box-sizing: border-box;
-            gap: 10px;
-            z-index: 10;
+            display: flex; flex-direction: column; align-items: center; padding: 15px 0; box-sizing: border-box; gap: 10px; z-index: 10;
         }
 
         .palette-icon-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            background-color: #1e1e1e;
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            position: relative;
-            
-            font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-            font-size: 13px;
-            color: transparent;
-            text-shadow: 0 0 0 #888888;
+            width: 32px; height: 32px; border-radius: 6px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; position: relative;
+            font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; font-size: 13px; color: transparent; text-shadow: 0 0 0 #888888;
         }
-        
         .palette-icon-btn:hover, .palette-icon-btn.active {
-            background-color: var(--accent-color);
-            border-color: #555;
-            transform: scale(1.05);
-            text-shadow: 0 0 0 #ffffff;
+            background-color: var(--accent-color); border-color: #555; transform: scale(1.05); text-shadow: 0 0 0 #ffffff;
         }
-
         .palette-icon-btn::after {
-            content: attr(data-tooltip);
-            position: absolute;
-            left: 44px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: #000;
-            color: #fff;
-            padding: 5px 9px;
-            border-radius: 4px;
-            font-size: 11px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            font-family: sans-serif;
-            font-weight: normal;
-            text-shadow: none;
+            content: attr(data-tooltip); position: absolute; left: 44px; top: 50%; transform: translateY(-50%); background: #000; color: #fff;
+            padding: 5px 9px; border-radius: 4px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-family: sans-serif; font-weight: normal; text-shadow: none;
         }
-        .palette-icon-btn:hover::after {
-            opacity: 1;
-        }
+        .palette-icon-btn:hover::after { opacity: 1; }
 
         /* --- ポップアップする機能パネル --- */
         .floating-panel {
-            position: absolute;
-            left: 52px;
-            top: 15px;
-            bottom: 15px;
-            width: 290px;
-            background-color: var(--panel-bg);
-            border: 1px solid #444;
-            border-radius: 8px;
-            box-shadow: 5px 5px 20px rgba(0,0,0,0.6);
-            z-index: 20;
-            display: none;
-            flex-direction: column;
-            padding: 15px;
-            box-sizing: border-box;
-            overflow-y: auto;
+            position: absolute; left: 52px; top: 15px; bottom: 15px; width: 290px;
+            background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            box-shadow: 5px 5px 20px rgba(0,0,0,0.4); z-index: 20; display: none; flex-direction: column; padding: 15px; box-sizing: border-box; overflow-y: auto;
         }
-        .floating-panel.active {
-            display: flex;
-        }
+        .floating-panel.active { display: flex; }
 
         .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #444;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-header-border); padding-bottom: 8px; margin-bottom: 12px;
         }
-        .panel-title {
-            font-size: 13px;
-            font-weight: bold;
-            color: #fff;
-        }
-        .panel-close-btn {
-            background: transparent;
-            border: none;
-            color: #999;
-            font-size: 16px;
-            cursor: pointer;
-            padding: 0 4px;
-        }
-        .panel-close-btn:hover {
-            color: #fff;
-        }
+        .panel-title { font-size: 13px; font-weight: bold; color: var(--text-color); }
+        .panel-close-btn { background: transparent; border: none; color: var(--text-color); opacity: 0.6; font-size: 16px; cursor: pointer; padding: 0 4px; }
+        .panel-close-btn:hover { opacity: 1; }
 
         button {
-            background-color: #333;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
+            background-color: rgba(0,0,0,0.2); color: var(--text-color); border: 1px solid var(--border-color);
+            padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; transition: all 0.2s;
         }
-        button:hover {
-            background-color: var(--accent-color);
-            color: #fff;
-        }
+        button:hover { background-color: var(--accent-color); color: #fff; }
 
         .sidebar-input, .sidebar-textarea {
-            width: 100%;
-            background: #111;
-            border: 1px solid var(--border-color);
-            color: #fff;
-            padding: 8px;
-            box-sizing: border-box;
-            border-radius: 4px;
-            font-size: 13px;
-            margin-bottom: 8px;
+            width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color);
+            padding: 8px; box-sizing: border-box; border-radius: 4px; font-size: 13px; margin-bottom: 8px;
         }
-        .sidebar-textarea {
-            resize: vertical;
-            min-height: 120px;
-            font-family: inherit;
+        .sidebar-textarea { resize: vertical; min-height: 120px; font-family: inherit; }
+
+        /* カラーテーマ：グリッドレイアウトパレット */
+        .theme-grid-container {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 15px;
         }
+        .theme-select-btn {
+            padding: 8px 4px; font-size: 11px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.15);
+            cursor: pointer; font-weight: bold; transition: transform 0.1s, box-shadow 0.1s; display: flex; align-items: center; justify-content: center;
+        }
+        .theme-select-btn:hover { transform: scale(1.02); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .theme-select-btn.active { outline: 2px solid var(--accent-color); outline-offset: -1px; }
 
         /* リスト用コンテナ */
         .replace-pickup-container {
-            background: #1a1a1a;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 8px;
-            margin-top: 8px;
-            font-size: 11px;
-            max-height: 160px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
+            background: rgba(0,0,0,0.1); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px; margin-top: 8px; font-size: 11px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
         }
-        .pickup-item {
-            padding: 6px;
-            background: #252525;
-            border: 1px solid #383838;
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .pickup-line-num {
-            color: #888;
-            font-weight: bold;
-        }
-        .item-replace-btn {
-            background-color: #2980b9;
-            color: #fff;
-            border: none;
-            padding: 3px 8px;
-            font-size: 10px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .item-replace-btn:hover {
-            background-color: #3498db;
-        }
+        .pickup-item { padding: 6px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .pickup-line-num { color: var(--text-color); opacity: 0.7; font-weight: bold; }
+        .item-replace-btn { background-color: var(--accent-color); color: #fff; border: none; padding: 3px 8px; font-size: 10px; border-radius: 3px; cursor: pointer; }
 
-        .dict-icon-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            margin-bottom: 8px;
-        }
-        .dict-icon-btn {
-            font-size: 13px;
-            font-weight: bold;
-            padding: 8px;
-            text-align: center;
-            background-color: #2c3e50;
-        }
-        #dict-preview-area {
-            background: #151515;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 10px;
-            font-size: 13px;
-            height: 180px;
-            overflow-y: auto;
-            color: #eee;
-            line-height: 1.5;
-        }
-        .preview-placeholder {
-            color: #666;
-            font-style: italic;
-        }
+        .dict-icon-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 8px; }
+        .dict-icon-btn { font-size: 13px; font-weight: bold; padding: 8px; text-align: center; background-color: rgba(0,0,0,0.2); }
+        #dict-preview-area { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; font-size: 13px; height: 180px; overflow-y: auto; color: var(--text-color); line-height: 1.5; }
+        .preview-placeholder { opacity: 0.5; font-style: italic; }
 
-        .replace-btn { background-color: #5c3b4d; color: #ffdde5; font-weight: bold; width: 100%; margin-bottom: 4px;}
-        .replace-btn:hover { background-color: #804d65; }
-        .confirm-btn { background-color: #27ae60; color: #fff; font-weight: bold; width: 100%; margin-top: 6px; display: none;}
-        .confirm-btn:hover { background-color: #2ecc71; }
-        
-        .save-btn { background-color: #3b3b5c; color: #ddddff; font-weight: bold; width: 100%; margin-top: 5px;}
+        .replace-btn { background-color: rgba(128,77,101,0.3); color: var(--text-color); font-weight: bold; width: 100%; margin-bottom: 4px;}
+        .confirm-btn { background-color: rgba(39,174,96,0.4); color: var(--text-color); font-weight: bold; width: 100%; margin-top: 6px; display: none;}
+        .save-btn { background-color: rgba(59,59,92,0.4); color: var(--text-color); font-weight: bold; width: 100%; margin-top: 5px;}
         
         .load-label {
-            background-color: #2a3a3a;
-            color: #aaffff;
-            font-weight: bold;
-            text-align: center;
-            padding: 6px 12px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            font-size: 13px;
-            display: block;
-            margin-top: 8px;
-            transition: all 0.2s;
-        }
-        .load-label:hover { background-color: #3b5c5c; }
-
-        #yt-container {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: #000;
-            margin-top: 8px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
+            background-color: rgba(42,58,58,0.4); color: var(--text-color); font-weight: bold; text-align: center;
+            padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; font-size: 13px; display: block; margin-top: 8px; transition: all 0.2s;
         }
 
+        #yt-container { width: 100%; aspect-ratio: 16 / 9; background: #000; margin-top: 8px; border: 1px solid var(--border-color); border-radius: 4px; }
         .btn-row { display: flex; gap: 5px; margin-bottom: 8px; }
         .btn-row button { flex: 1; }
-        .color-picker-group { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 
         /* --- 右側：メイン執筆エリア --- */
         #main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 40px;
-            box-sizing: border-box;
-            z-index: 5;
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 20px 40px; box-sizing: border-box; z-index: 5;
         }
 
         #top-phrase-panel {
-            width: 100%;
-            max-width: 720px;
-            background-color: #181818;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 10px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            width: 100%; max-width: 720px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; box-sizing: border-box; display: flex; align-items: center; gap: 8px;
         }
-        .phrase-main-block {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            overflow: hidden;
-        }
-        .phrase-horizontal-list {
-            display: flex;
-            gap: 6px;
-            overflow-x: auto;
-            padding-bottom: 4px;
-        }
+        .phrase-main-block { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+        .phrase-horizontal-list { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
         .phrase-horizontal-list::-webkit-scrollbar { height: 4px; }
-        .phrase-horizontal-list::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+        .phrase-horizontal-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
         
-        .phrase-chip {
-            display: flex;
-            align-items: center;
-            background: #2b2b2b;
-            border: 1px solid #444;
-            border-radius: 4px;
-            white-space: nowrap;
-        }
-        .phrase-chip-btn {
-            background: transparent;
-            border: none;
-            color: #eee;
-            padding: 4px 8px;
-            font-size: 13px;
-        }
+        .phrase-chip { display: flex; align-items: center; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: 4px; white-space: nowrap; }
+        .phrase-chip-btn { background: transparent; border: none; color: var(--text-color); padding: 4px 8px; font-size: 13px; }
         .phrase-chip-btn:hover { background: var(--accent-color); color: #fff; }
-        .phrase-chip-del {
-            background: #442222; border: none; color: #ffaaaa;
-            padding: 4px 6px; cursor: pointer; border-radius: 0 3px 3px 0; font-size: 11px;
-        }
-        .phrase-chip-del:hover { background: #662222; }
+        .phrase-chip-del { background: rgba(100,30,30,0.4); border: none; color: var(--text-color); padding: 4px 6px; cursor: pointer; border-radius: 0 3px 3px 0; font-size: 11px; }
 
         #editor-wrapper {
-            width: 100%;
-            max-width: 720px;
-            flex: 1;
-            margin: 10px 0;
-            background-color: #1e1e1e;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-radius: 4px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+            width: 100%; max-width: 720px; flex: 1; margin: 10px 0; background-color: var(--editor-bg); border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 4px; display: flex; flex-direction: column; position: relative;
+            transition: background-color 0.2s;
         }
 
         #quick-toolbar {
-            display: flex;
-            gap: 6px;
-            padding: 10px 20px;
-            background-color: #181818;
-            border-bottom: 1px solid var(--border-color);
-            border-radius: 4px 4px 0 0;
-            z-index: 3;
+            display: flex; gap: 6px; padding: 10px 20px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); border-radius: 4px 4px 0 0; z-index: 3;
         }
         .quick-btn {
-            background-color: #2b2b2b;
-            border: 1px solid #444;
-            color: #eee;
-            padding: 4px 12px;
-            font-size: 14px;
-            font-family: 'Shippori Mincho', serif;
-            min-width: 38px;
-            text-align: center;
+            background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color); color: var(--text-color);
+            padding: 4px 12px; font-size: 14px; font-family: 'Shippori Mincho', serif; min-width: 38px; text-align: center;
         }
 
-        /* 重ね合わせ構造による本文内ハイライト表示レイヤー */
-        .editor-container-inner {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-        }
+        .editor-container-inner { flex: 1; position: relative; width: 100%; overflow: hidden; }
 
         #backdrop {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            padding: 30px 40px;
-            box-sizing: border-box;
-            font-family: 'Shippori Mincho', serif;
-            font-size: 17px;
-            line-height: 1.8;
-            letter-spacing: 0.05em;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            color: transparent; /* テキストそのものは透明に */
-            background-color: transparent;
-            overflow-y: auto;
-            pointer-events: none; /* 下のtextareaを操作可能にする */
-            z-index: 1;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 30px 40px; box-sizing: border-box;
+            font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 1.8; letter-spacing: 0.05em;
+            white-space: pre-wrap; word-wrap: break-word; color: transparent; background-color: transparent;
+            overflow-y: auto; pointer-events: none; z-index: 1;
         }
 
-        /* 本文ハイライトのスタイル */
-        .editor-match-highlight {
-            background-color: rgba(241, 196, 15, 0.6); /* 半透明の黄色 */
-            border-radius: 2px;
-            color: transparent;
-        }
+        .editor-match-highlight { background-color: rgba(241, 196, 15, 0.5); border-radius: 2px; color: transparent; }
 
         #editor {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            border: none;
-            color: #dddddd;
-            padding: 30px 40px;
-            box-sizing: border-box;
-            resize: none;
-            outline: none;
-            font-family: 'Shippori Mincho', serif;
-            font-size: 17px;
-            line-height: 1.8;
-            letter-spacing: 0.05em;
-            overflow-y: auto;
-            z-index: 2;
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%;
+            background: transparent; border: none; color: var(--text-color); padding: 30px 40px; box-sizing: border-box;
+            resize: none; outline: none; font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 1.8;
+            letter-spacing: 0.05em; overflow-y: auto; z-index: 2;
         }
 
         #editor-footer {
-            padding: 10px 20px;
-            background-color: #151515;
-            border-top: 1px solid var(--border-color);
-            font-size: 12px;
-            color: #666;
-            display: flex;
-            justify-content: space-between;
-            z-index: 3;
+            padding: 10px 20px; background-color: var(--sidebar-bg); border-top: 1px solid var(--border-color); font-size: 12px; color: var(--text-color); opacity: 0.6; display: flex; justify-content: space-between; z-index: 3;
         }
 
         #bottom-page-panel {
-            width: 100%;
-            max-width: 720px;
-            background-color: #181818;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            padding: 10px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
+            width: 100%; max-width: 720px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 10px;
         }
-        .page-scroll-container {
-            flex: 1;
-            display: flex;
-            gap: 5px;
-            overflow-x: auto;
-            padding: 2px 0;
-        }
+        .page-scroll-container { flex: 1; display: flex; gap: 5px; overflow-x: auto; padding: 2px 0; }
         .page-scroll-container::-webkit-scrollbar { height: 4px; }
-        .page-scroll-container::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
+        .page-scroll-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
         
-        .page-btn { padding: 6px 12px; background-color: #333; border: 1px solid #444; color: #fff; min-width: 35px; text-align: center; }
+        .page-btn { padding: 6px 12px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color); color: var(--text-color); min-width: 35px; text-align: center; }
         .page-btn.active { background-color: var(--accent-color); color: #fff; font-weight: bold; }
-        .add-page-btn { background-color: #2a3a2a; color: #aaffaa; white-space: nowrap; }
-        .del-page-btn { background-color: #3d2222; color: #ffaaaa; white-space: nowrap; }
+        .add-page-btn { background-color: rgba(42,58,42,0.4); color: var(--text-color); white-space: nowrap; }
+        .del-page-btn { background-color: rgba(61,34,34,0.4); color: var(--text-color); white-space: nowrap; }
         
         .jump-btn {
-            background-color: #2c3e50;
-            color: #fff;
-            font-weight: bold;
-            font-size: 16px;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            flex-shrink: 0;
-            transition: all 0.2s;
+            background-color: rgba(0,0,0,0.15); color: var(--text-color); font-weight: bold; font-size: 16px; width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; border: 1px solid var(--border-color); flex-shrink: 0; transition: all 0.2s;
         }
-        .jump-btn:hover {
-            background-color: var(--accent-color);
-        }
+        .jump-btn:hover { background-color: var(--accent-color); color: #fff; }
     </style>
 </head>
 <body>
@@ -512,14 +284,14 @@
         <div class="dict-icon-row">
             <button class="dict-icon-btn" onclick="searchWordInline('kotobank')" title="国語辞書意味">📘 コ</button>
             <button class="dict-icon-btn" onclick="searchWordInline('weblio')" title="類語・関連表現">📚 辞</button>
-            <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:#444;" title="リセット">🔄 リ</button>
+            <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:rgba(0,0,0,0.3);" title="リセット">🔄 リ</button>
         </div>
         <div id="dict-preview-area">
             <span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>
         </div>
     </div>
 
-    <!-- 2. 置き換え（本文ハイライト対応版） -->
+    <!-- 2. 置き換え -->
     <div class="floating-panel" id="panel-replace">
         <div class="panel-header">
             <div class="panel-title">🔀 文字の抽出と置き換え</div>
@@ -536,7 +308,6 @@
         
         <button class="replace-btn" onclick="pickupMatches()">対象箇所を本文で確認</button>
         
-        <!-- 各行へのジャンプ・個別実行リスト -->
         <div class="replace-pickup-container" id="pickup-results">
             <span style="color:#666; font-style:italic;">「対象箇所を本文で確認」を押すと、メイン執筆エリアが黄色くハイライトされます。</span>
         </div>
@@ -562,16 +333,35 @@
         <input type="text" id="yt-url-input" class="sidebar-input" placeholder="動画ID または URL を入力">
         <button style="width:100%;" onclick="loadYouTubeVideo()">プレイヤーに読み込み</button>
         <div id="yt-container">
-            <div style="color:#555; text-align:center; padding-top:25px; font-size:12px;">動画未読込</div>
+            <div style="text-align:center; padding-top:25px; font-size:12px; opacity:0.5;">動画未読込</div>
         </div>
     </div>
 
-    <!-- 5. 設定 -->
+    <!-- 5. 設定（グリッドカラーパレット搭載） -->
     <div class="floating-panel" id="panel-settings">
         <div class="panel-header">
             <div class="panel-title">🎨 表示・カラー設定</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
+
+        <!-- プリセットカラーパレットグリッド -->
+        <div class="theme-grid-container">
+            <div class="theme-select-btn" id="btn-theme-default" style="background-color:#1a1a1a; color:#ccc;" onclick="applyPresetTheme('default')">デフォルトブラック</div>
+            <div class="theme-select-btn" id="btn-theme-default-white" style="background-color:#f5f5f5; color:#333;" onclick="applyPresetTheme('default-white')">デフォルトホワイト</div>
+            <div class="theme-select-btn" id="btn-theme-coffeebrown" style="background-color:#4a3e3d; color:#f4f1ea;" onclick="applyPresetTheme('coffeebrown')">コーヒーブラウン</div>
+            <div class="theme-select-btn" id="btn-theme-bluegray" style="background-color:#34495e; color:#ecf0f1;" onclick="applyPresetTheme('bluegray')">ブルーグレイ</div>
+            <div class="theme-select-btn" id="btn-theme-pitchblack" style="background-color:#0b0b0b; color:#999;" onclick="applyPresetTheme('pitchblack')">ピッチブラック</div>
+            <div class="theme-select-btn" id="btn-theme-craftpaper" style="background-color:#f1ebd9; color:#4a3c31;" onclick="applyPresetTheme('craftpaper')">クラフトペーパー</div>
+            <div class="theme-select-btn" id="btn-theme-greentea" style="background-color:#556b2f; color:#f5f5dc;" onclick="applyPresetTheme('greentea')">グリーンティー</div>
+            <div class="theme-select-btn" id="btn-theme-lavender" style="background-color:#7d75a1; color:#fff;" onclick="applyPresetTheme('lavender')">ラベンダー</div>
+            <div class="theme-select-btn" id="btn-theme-dustyrose" style="background-color:#9c8285; color:#fbf7f7;" onclick="applyPresetTheme('dustyrose')">ダスティローズ</div>
+            <div class="theme-select-btn" id="btn-theme-mintgreen" style="background-color:#6e8b7e; color:#f4f9f6;" onclick="applyPresetTheme('mintgreen')">ミントグリーン</div>
+            <div class="theme-select-btn" id="btn-theme-namari" style="background-color:#707c74; color:#fff;" onclick="applyPresetTheme('namari')">鉛色</div>
+            <div class="theme-select-btn" id="btn-theme-budou" style="background-color:#5e525e; color:#f7f2f7;" onclick="applyPresetTheme('budou')">ぶどう鼠</div>
+            <div class="theme-select-btn" id="btn-theme-botan" style="background-color:#7a5f66; color:#faf5f6;" onclick="applyPresetTheme('botan')">牡丹鼠</div>
+            <div class="theme-select-btn" id="btn-theme-konnezumi" style="background-color:#4b535c; color:#f4f6f8;" onclick="applyPresetTheme('konnezumi')">紺鼠</div>
+        </div>
+
         <select id="font-selector" class="sidebar-input" style="margin-bottom:8px;" onchange="changeFontFamily(this.value)">
             <option value="'Shippori Mincho', serif">しっぽり明朝（濁点対応）</option>
             <option value="'M PLUS Round 1c', sans-serif">かわいめ丸ゴシック</option>
@@ -581,14 +371,6 @@
             <button onclick="changeFontSize('14px')">小</button>
             <button onclick="changeFontSize('17px')">中</button>
             <button onclick="changeFontSize('22px')">大</button>
-        </div>
-        <div class="color-picker-group">
-            <span style="font-size:12px; width:55px;">背景色:</span>
-            <input type="text" id="bg-color-code" class="sidebar-input" style="margin:0;" value="#1e1e1e" placeholder="#1e1e1e" oninput="applyCustomColors()">
-        </div>
-        <div class="color-picker-group">
-            <span style="font-size:12px; width:55px;">文字色:</span>
-            <input type="text" id="text-color-code" class="sidebar-input" style="margin:0;" value="#dddddd" placeholder="#dddddd" oninput="applyCustomColors()">
         </div>
     </div>
 
@@ -630,9 +412,7 @@
             </div>
             
             <div class="editor-container-inner">
-                <!-- ハイライト表示用の背面レイヤー -->
                 <div id="backdrop"></div>
-                <!-- 実際の文字入力用前面レイヤー -->
                 <textarea id="editor" placeholder="ここに小説を書き出せます..." oninput="updatePageData()" onscroll="syncScroll()" onselect="handleTextSelection()"></textarea>
             </div>
 
@@ -655,13 +435,13 @@
         let pages = [""];
         let currentPageIndex = 0;
         let selectedText = "";
-        let targetSearchText = ""; // 本文内ハイライト用の保持トークン
+        let targetSearchText = ""; 
+        let activeTheme = "default";
 
         let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || ["定型文１","定型文２","定型文３"];
 
         const editor = document.getElementById('editor');
         const backdrop = document.getElementById('backdrop');
-        const editorWrapper = document.getElementById('editor-wrapper');
         const pageContainer = document.getElementById('page-container');
         const phraseContainer = document.getElementById('phrase-container');
         const memoArea = document.getElementById('memo-area');
@@ -682,6 +462,13 @@
             renderPhrases();
             loadPage(currentPageIndex);
             
+            // 保存されたカラーテーマの復元
+            if(localStorage.getItem('active_preset_theme')) {
+                applyPresetTheme(localStorage.getItem('active_preset_theme'));
+            } else {
+                applyPresetTheme('default');
+            }
+
             if(localStorage.getItem('custom_font_family')) {
                 const font = localStorage.getItem('custom_font_family');
                 document.getElementById('font-selector').value = font;
@@ -690,13 +477,6 @@
             if(localStorage.getItem('custom_font_size')) {
                 changeFontSize(localStorage.getItem('custom_font_size'));
             }
-            if(localStorage.getItem('custom_bg_color')) {
-                document.getElementById('bg-color-code').value = localStorage.getItem('custom_bg_color');
-            }
-            if(localStorage.getItem('custom_text_color')) {
-                document.getElementById('text-color-code').value = localStorage.getItem('custom_text_color');
-            }
-            applyCustomColors();
 
             if(localStorage.getItem('novel_memo')) {
                 memoArea.value = localStorage.getItem('novel_memo');
@@ -716,7 +496,6 @@
             });
         };
 
-        // スクロール同期連動
         function syncScroll() {
             backdrop.scrollTop = editor.scrollTop;
             backdrop.scrollLeft = editor.scrollLeft;
@@ -755,25 +534,29 @@
             clearPickup();
         }
 
-        function applyCustomColors() {
-            const bgColor = document.getElementById('bg-color-code').value.trim();
-            const textColor = document.getElementById('text-color-code').value.trim();
+        /* --- プリセットカラーテーマ適用機能 --- */
+        function applyPresetTheme(themeName) {
+            // いったんテーマ関連のクラスを全削除
+            document.body.className = '';
+            
+            if (themeName !== 'default') {
+                document.body.classList.add('theme-' + themeName);
+            }
+            activeTheme = themeName;
+            localStorage.setItem('active_preset_theme', themeName);
 
-            if (bgColor.match(/^#[0-9a-fA-F]{3,6}$/) || bgColor === "transparent") {
-                editorWrapper.style.backgroundColor = bgColor;
-                localStorage.setItem('custom_bg_color', bgColor);
-            }
-            if (textColor.match(/^#[0-9a-fA-F]{3,6}$/)) {
-                editor.style.color = textColor;
-                localStorage.setItem('custom_text_color', textColor);
-            }
+            // パレット内のボタンのアクティブ表示切り替え
+            document.querySelectorAll('.theme-select-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const activeBtn = document.getElementById('btn-theme-' + themeName);
+            if(activeBtn) activeBtn.classList.add('active');
         }
 
         /* --- 全角・半角英数の事前チェック ＆ 置き換え --- */
         function checkAndConvertAlphaNumeric(mode) {
             let text = editor.value;
             if (mode === 'toFull') {
-                // 半角英数字と半角スペースを検出
                 const matches = text.match(/[A-Za-z0-9 ]/g);
                 const count = matches ? matches.length : 0;
                 
@@ -791,7 +574,6 @@
                     alert("全角に一括置き換えしました。");
                 }
             } else if (mode === 'toHalf') {
-                // 全角英数字と全角スペースを検出
                 const matches = text.match(/[Ａ-Ｚａ-ｚ０-９ ]/g);
                 const count = matches ? matches.length : 0;
                 
@@ -818,18 +600,15 @@
             confirmBtn.style.display = 'none';
         }
 
-        /* --- 本文内ハイライト処理（背面レイヤーの書き換え） --- */
         function applyBackdropHighlight() {
             const text = editor.value;
             if (!targetSearchText) {
-                // ハイライトがない場合はそのままHTMLエスケープして反映
                 backdrop.innerHTML = escapeHtml(text);
                 return;
             }
             const escapedSrc = targetSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             const regex = new RegExp(escapedSrc, 'g');
             
-            // 本文のテキストにハイライト用のタグを差し込む
             const highlightedHtml = escapeHtml(text).replace(regex, (match) => {
                 return `<span class="editor-match-highlight">${match}</span>`;
             });
@@ -837,7 +616,6 @@
             syncScroll();
         }
 
-        /* --- 本文内抽出の実行 --- */
         let currentMatches = [];
 
         function pickupMatches() {
@@ -848,7 +626,7 @@
             }
 
             targetSearchText = srcText;
-            applyBackdropHighlight(); // 本文ハイライトを実行
+            applyBackdropHighlight(); 
 
             const currentText = editor.value;
             const lines = currentText.split('\n');
@@ -860,16 +638,13 @@
                 let pos = line.indexOf(srcText);
                 while (pos !== -1) {
                     currentMatches.push({
-                        id: globalMatchId,
-                        lineIndex: lineIndex,
-                        charIndex: pos,
-                        text: srcText
+                        id: globalMatchId, lineIndex: lineIndex, charIndex: pos, text: srcText
                     });
                     
                     htmlBuffer += `
                         <div class="pickup-item" id="pickup-item-${globalMatchId}">
-                            <span class="pickup-line-num">${lineIndex + 1}行目に対象あり</span>
-                            <button class="item-replace-btn" onclick="executeIndividualReplace(${globalMatchId})">ここを個別に置き換え</button>
+                            <span class="pickup-line-num">${lineIndex + 1}行目</span>
+                            <button class="item-replace-btn" onclick="executeIndividualReplace(${globalMatchId})">置換</button>
                         </div>`;
 
                     globalMatchId++;
@@ -882,7 +657,7 @@
                 confirmBtn.innerText = `このページの抽出（${currentMatches.length}箇所）を一括置き換える`;
                 confirmBtn.style.display = 'block';
             } else {
-                pickupResults.innerHTML = `<span style="color:#e74c3c;">⚠️ 現在のページに対象の文字列は見つかりませんでした。</span>`;
+                pickupResults.innerHTML = `<span style="color:#e74c3c;">⚠️ 対象の文字列は見つかりませんでした。</span>`;
                 confirmBtn.style.display = 'none';
                 targetSearchText = "";
                 applyBackdropHighlight();
@@ -893,11 +668,9 @@
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        /* 1箇所だけ個別に置き換える機能 */
         function executeIndividualReplace(matchId) {
             const srcText = document.getElementById('replace-src').value;
             const dstText = document.getElementById('replace-dst').value;
-            
             if (!srcText) return;
 
             const targetMatch = currentMatches.find(m => m.id === matchId);
@@ -910,27 +683,21 @@
             const after = targetLine.substring(targetMatch.charIndex + srcText.length);
             
             lines[targetMatch.lineIndex] = before + dstText + after;
-            
             editor.value = lines.join('\n');
             updatePageData();
-
-            // ズレを防ぐため再抽出・本文ハイライトを更新
             pickupMatches();
         }
 
-        /* ページ内全一括置き換え */
         function executeConfirmedReplaceAll() {
             const srcText = document.getElementById('replace-src').value;
             const dstText = document.getElementById('replace-dst').value;
-
             if (!srcText) return;
 
             const currentText = editor.value;
             const escapedSrc = srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             const regex = new RegExp(escapedSrc, 'g');
 
-            const newText = currentText.replace(regex, dstText);
-            editor.value = newText;
+            editor.value = currentText.replace(regex, dstText);
             updatePageData();
 
             alert(`現在のページの全対象箇所を「${dstText}」に一括置き換えました。`);
@@ -967,7 +734,7 @@
                     .then(res => { if (!res.ok) throw new Error(); return res.json(); })
                     .then(data => {
                         if (data && data.extract) {
-                            previewArea.innerHTML = `<div style="font-family: ${currentFont}; line-height: 1.6;"><div style="font-weight:bold; color:#2ecc71; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom:3px;">📘 「${queryText}」の意味</div><div style="font-size:14px; color:#eee; white-space:pre-wrap;">${data.extract}</div></div>`;
+                            previewArea.innerHTML = `<div style="font-family: ${currentFont}; line-height: 1.6;"><div style="font-weight:bold; color:var(--accent-color); margin-bottom:8px; border-bottom: 1px solid var(--border-color); padding-bottom:3px;">📘 「${queryText}」の意味</div><div style="font-size:14px; white-space:pre-wrap;">${data.extract}</div></div>`;
                         } else { showExternalLink('kotobank', queryText, currentFont); }
                     }).catch(() => showExternalLink('kotobank', queryText, currentFont));
             } 
@@ -978,7 +745,7 @@
                     .then(data => {
                         if (data && data.pages && data.pages.length > 0) {
                             const relatedWords = data.pages.slice(0, 5).map(p => `・<b>${p.title}</b>：${p.description || '関連表現'}`).join('<br>');
-                            previewArea.innerHTML = `<div style="font-family: ${currentFont}; line-height: 1.6;"><div style="font-weight:bold; color:#9b59b6; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom:3px;">📚 「${queryText}」の関連語</div><div style="font-size:13px; color:#eee; white-space:pre-wrap;">${relatedWords}</div></div>`;
+                            previewArea.innerHTML = `<div style="font-family: ${currentFont}; line-height: 1.6;"><div style="font-weight:bold; color:var(--accent-color); margin-bottom:8px; border-bottom: 1px solid var(--border-color); padding-bottom:3px;">📚 「${queryText}」の関連語</div><div style="font-size:13px; white-space:pre-wrap;">${relatedWords}</div></div>`;
                         } else { showExternalLink('weblio', queryText, currentFont); }
                     }).catch(() => showExternalLink('weblio', queryText, currentFont));
             }
@@ -987,7 +754,7 @@
         function showExternalLink(type, cleanText, currentFont) {
             let searchUrl = (type === 'kotobank') ? `https://kotobank.jp/word/${encodeURIComponent(cleanText)}` : `https://thesaurus.weblio.jp/content/${encodeURIComponent(cleanText)}`;
             let siteName = (type === 'kotobank') ? "コトバンク" : "Weblio類語辞典";
-            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><div style="font-weight:bold; color:#e67e22; margin-bottom:8px; font-size:13px;">⚠️ 簡易表示に対応していない単語です</div><button onclick="window.open('${searchUrl}', '_blank')" style="width:100%; background:#2c3e50; text-align:center; padding:10px; color:#fff; border:1px solid #444; border-radius:4px; font-weight:bold; cursor:pointer;">🔗 ${siteName}で「${cleanText}」を見る</button></div>`;
+            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><div style="font-weight:bold; margin-bottom:8px; font-size:13px; opacity:0.8;">⚠️ 簡易表示非対応の単語です</div><button onclick="window.open('${searchUrl}', '_blank')" style="width:100%; background:var(--sidebar-bg); text-align:center; padding:10px; color:var(--text-color); border:1px solid var(--border-color); border-radius:4px; font-weight:bold; cursor:pointer;">🔗 ${siteName}で「${cleanText}」を見る</button></div>`;
         }
 
         function resetDictInline() {
@@ -1045,7 +812,7 @@
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
             localStorage.setItem('novel_current_page_idx', currentPageIndex);
             resetDictInline();
-            applyBackdropHighlight(); // ページ切り替え時にハイライトをリセット・同期
+            applyBackdropHighlight(); 
             editor.focus();
         }
 
@@ -1070,7 +837,7 @@
             document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
             localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-            applyBackdropHighlight(); // 入力中も常に背面レイヤーをリアルタイム更新
+            applyBackdropHighlight(); 
         }
 
         function changeFontFamily(fontName) {
@@ -1112,6 +879,8 @@
         }
 
         function saveMemo() { localStorage.setItem('novel_memo', memoArea.value); }
+
+        document.getElementById('file-loader').addEventListener('change', function(e) { importFromTxt(this); });
 
         function exportToTxt() {
             pages[currentPageIndex] = editor.value;
