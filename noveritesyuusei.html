@@ -547,24 +547,24 @@
             loadPage(currentPageIndex);
         }
 
-        function updatePageData() {
-           // 1. エスケープ処理
-    let html = editor.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-    
-    // 2. ルビ構文の変換 (元の文字を残さず <ruby>タグのみに置換する正規表現)
-    // |対象《るび》 の形式
-    html = html.replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
-    
-    // 対象《るび》 の形式（対象が漢字の場合）
-    html = html.replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+    function updatePageData() {
+    // エディタのテキストを取得
+    let text = editor.value;
 
-    backdrop.innerHTML = html;
-    document.getElementById('char-count-display').innerText = editor.value.length + " 文字";
-    
-    // ページデータの更新
-    pages[currentPageIndex] = editor.value;
+    // ルビ変換処理（|対象《るび》をタグ化）
+    let html = text
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
+        .replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>')
+        .replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+
+    // backdropに変換後のHTMLを流し込む
+    document.getElementById('backdrop').innerHTML = html;
+
+    // その他更新処理
+    document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
+    document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
     localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-        }
+}
 
         // --- テーマ・フォント設定 ---
         function applyPresetTheme(t) {
