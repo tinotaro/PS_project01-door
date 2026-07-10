@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v23)</title>
+    <title>rei-style Editor (Palette Layout v24)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Noto Color Emoji とフォントの読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&family=Noto+Color+Emoji&display=swap" rel="stylesheet">
     
     <style>
         /* --- カラーテーマの変数定義群 --- */
@@ -100,6 +101,12 @@
             font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
             display: flex; height: 100vh; overflow: hidden; position: relative;
             transition: background-color 0.2s, color 0.2s;
+        }
+
+        /* 絵文字を太めに表示するための共通クラス */
+        .emoji-bold {
+            font-family: "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+            font-weight: bold;
         }
 
         /* --- 左側：テキストツールパレット --- */
@@ -242,25 +249,25 @@
             padding: 10px 20px; background-color: var(--sidebar-bg); border-top: 1px solid var(--border-color); font-size: 12px; color: var(--text-color); opacity: 0.6; display: flex; justify-content: space-between; z-index: 3;
         }
 
+        /* --- 下部：ページ管理パネル --- */
         #bottom-page-panel {
             width: 100%; max-width: 720px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px;
         }
-        .page-control-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .page-control-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .page-scroll-container { flex: 1; display: flex; gap: 5px; overflow-x: auto; padding: 2px 0; }
         .page-scroll-container::-webkit-scrollbar { height: 4px; }
         .page-scroll-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
         
         .page-btn { padding: 6px 12px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color); color: var(--text-color); min-width: 35px; text-align: center; }
         .page-btn.active { background-color: var(--accent-color); color: #fff; font-weight: bold; }
+        
+        /* 統合された同じエリア内のボタンスタイル */
         .add-page-btn { background-color: rgba(42,58,42,0.4); color: var(--text-color); white-space: nowrap; }
         .del-page-btn { background-color: rgba(61,34,34,0.4); color: var(--text-color); white-space: nowrap; }
-        
-        .special-page-btn {
-            background-color: rgba(74, 144, 226, 0.25); font-weight: bold; border-color: var(--accent-color); font-size: 12px; padding: 6px 12px; border-radius: 4px; width: 100%; text-align: center;
-        }
+        .next-page-send-btn { background-color: rgba(74, 144, 226, 0.25); font-weight: bold; border-color: var(--accent-color); white-space: nowrap; }
 
         .jump-btn {
-            background-color: rgba(0,0,0,0.15); color: var(--text-color); font-weight: bold; font-size: 13px; width: 36px; height: 36px;
+            background-color: rgba(0,0,0,0.15); color: var(--text-color); font-weight: bold; font-size: 13px; width: 38px; height: 36px;
             display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; border: 1px solid var(--border-color); flex-shrink: 0; transition: all 0.2s;
         }
         .jump-btn:hover { background-color: var(--accent-color); color: #fff; }
@@ -268,7 +275,8 @@
 </head>
 <body>
 
-    <div id="sidebar-palette">
+    <!-- 左側：パレット（Noto Emojiを適用して太めに指定しました） -->
+    <div id="sidebar-palette" class="emoji-bold">
         <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">📖</div>
         <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">🔍</div>
         <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">📝</div>
@@ -279,6 +287,7 @@
         <div class="palette-icon-btn" data-tooltip="操作説明ヘルプ" onclick="togglePanel('panel-help')" style="border-color: var(--accent-color);">❓</div>
     </div>
 
+    <!-- ポップアップパネル群 -->
     <div class="floating-panel" id="panel-dict">
         <div class="panel-header">
             <div class="panel-title">言葉の意味を調べる</div>
@@ -376,6 +385,7 @@
         <input type="file" id="file-loader" accept=".txt" style="display:none;" onchange="importFromTxt(this)">
     </div>
 
+    <!-- 操作説明ヘルプパネル -->
     <div class="floating-panel" id="panel-help">
         <div class="panel-header">
             <div class="panel-title">操作説明・機能ヘルプ</div>
@@ -408,15 +418,18 @@
         </div>
     </div>
 
+    <!-- 右側：メイン執筆エリア -->
     <div id="main-container">
         <div id="top-phrase-panel">
             <div class="phrase-main-block">
                 <input type="text" id="new-phrase-input" class="sidebar-input" style="margin:0;" placeholder="文章を入力してEnterで定型文に登録">
                 <div class="phrase-horizontal-list" id="phrase-container"></div>
             </div>
-            <button class="jump-btn" onclick="scrollToElement('bottom-page-panel')">下へ</button>
+            <!-- 下へ移動ボタン（矢印絵文字を太めに復活） -->
+            <button class="jump-btn emoji-bold" onclick="scrollToElement('bottom-page-panel')" title="一番下へスクロール">🔽</button>
         </div>
 
+        <!-- 中央：エディタ本体 -->
         <div id="editor-wrapper">
             <div id="quick-toolbar">
                 <button class="quick-btn" onclick="insertQuickText('「」')">「」</button>
@@ -440,14 +453,17 @@
             </div>
         </div>
 
+        <!-- 下部：ページ管理パネル（ボタンを統合して横一列にスッキリ並べました） -->
         <div id="bottom-page-panel">
-            <button class="special-page-btn" onclick="sendSelectionToNextPage()">選択部分を次ページへ送る</button>
-            
             <div class="page-control-row">
                 <button class="add-page-btn" onclick="addNewPage()">＋ 新規ページ</button>
+                <button class="next-page-send-btn" onclick="sendSelectionToNextPage()">選択部を次ページ</button>
+                
                 <div class="page-scroll-container" id="page-container"></div>
+                
                 <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
-                <button class="jump-btn" onclick="scrollToElement('top-phrase-panel')">上へ</button>
+                <!-- 上へ移動ボタン（矢印絵文字を太めに復活） -->
+                <button class="jump-btn emoji-bold" onclick="scrollToElement('top-phrase-panel')" title="一番上へスクロール">🔼</button>
             </div>
         </div>
     </div>
