@@ -123,22 +123,9 @@
         button:hover { background-color: var(--accent-color); color: #fff; }
 
         .sidebar-input, .sidebar-textarea {
-    width: 100%; 
-    background: var(--input-bg); /* ここを共通変数にする */
-    border: 1px solid var(--border-color); 
-    color: var(--text-color);
-    padding: 8px; box-sizing: border-box; border-radius: 4px; font-size: 13px; margin-bottom: 8px;
-}
-
-/* プリセットテーマごとに --input-bg を定義する */
-:root {
-    --input-bg: #111; /* デフォルト用 */
-}
-body.theme-default-white { --input-bg: #fafafa; }
-body.theme-coffeebrown { --input-bg: #5a4e4d; }
-/* 他のテーマも必要に応じて追加：例 */
-body.theme-craftpaper { --input-bg: #f9f4e5; }
-        
+            width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color);
+            padding: 8px; box-sizing: border-box; border-radius: 4px; font-size: 13px; margin-bottom: 8px;
+        }
         .sidebar-textarea { resize: vertical; min-height: 120px; font-family: inherit; }
 
         .theme-grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 15px; }
@@ -588,43 +575,75 @@ body.theme-craftpaper { --input-bg: #f9f4e5; }
     localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
 }
 
-function applyPresetTheme(t) {
-    const themes = {
-        'default': { bg: '#1a1a1a', text: '#cccccc', side: '#242424', panel: '#2c2c2c', border: '#333333', accent: '#4a90e2', editor: '#1e1e1e' },
-        'default-white': { bg: '#f5f5f5', text: '#333333', side: '#e0e0e0', panel: '#ffffff', border: '#cccccc', accent: '#3498db', editor: '#ffffff' },
-        'coffeebrown': { bg: '#4a3e3d', text: '#f4f1ea', side: '#3d3433', panel: '#5a4e4d', border: '#70605e', accent: '#a6897c', editor: '#3a3231' },
-        'bluegray': { bg: '#34495e', text: '#ecf0f1', side: '#2c3e50', panel: '#455a73', border: '#5d6d7e', accent: '#5dade2', editor: '#2c3e50' },
-        'pitchblack': { bg: '#0b0b0b', text: '#999999', side: '#1a1a1a', panel: '#222222', border: '#333333', accent: '#555555', editor: '#000000' },
-        'craftpaper': { bg: '#f1ebd9', text: '#4a3c31', side: '#e6dfca', panel: '#fcfaf5', border: '#dcd1b5', accent: '#b8a07a', editor: '#fcfaf5' },
-        'greentea': { bg: '#556b2f', text: '#f5f5dc', side: '#485c28', panel: '#6b8e23', border: '#80a040', accent: '#d2b48c', editor: '#4a5d2a' },
-        'lavender': { bg: '#7d75a1', text: '#ffffff', side: '#6a628a', panel: '#8e86b0', border: '#a098c0', accent: '#d8b4e2', editor: '#6a628a' },
-        'dustyrose': { bg: '#9c8285', text: '#fbf7f7', side: '#8a7275', panel: '#b09699', border: '#c0a8aa', accent: '#e2b4bb', editor: '#8a7275' },
-        'mintgreen': { bg: '#6e8b7e', text: '#f4f9f6', side: '#5f7a6d', panel: '#82a393', border: '#97b8a8', accent: '#a3d9c5', editor: '#5f7a6d' },
-        'namari': { bg: '#707c74', text: '#ffffff', side: '#606c64', panel: '#808c84', border: '#909c94', accent: '#b0bcb4', editor: '#606c64' },
-        'budou': { bg: '#5e525e', text: '#f7f2f7', side: '#4e424e', panel: '#6e626e', border: '#7e727e', accent: '#a68ca6', editor: '#4e424e' },
-        'botan': { bg: '#7a5f66', text: '#faf5f6', side: '#6a4f56', panel: '#8a6f76', border: '#9a7f86', accent: '#c6a8b0', editor: '#6a4f56' },
-        'konnezumi': { bg: '#4b535c', text: '#f4f6f8', side: '#3b434c', panel: '#5b636c', border: '#6b737c', accent: '#8b939c', editor: '#3b434c' }
-    };
+        // --- テーマ・フォント設定 ---
+        function applyPresetTheme(t) {
+            document.body.className = '';
+            if (t !== 'default') document.body.classList.add('theme-' + t);
+            localStorage.setItem('active_preset_theme', t);
+            activeTheme = t;
+            
+            document.querySelectorAll('.theme-select-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('btn-theme-' + t);
+            if(btn) btn.classList.add('active');
+        }
 
-    const colors = themes[t] || themes['default'];
-    const root = document.documentElement;
-    
-    // 背景色、文字色、エディタ背景色に加え、入力欄の背景色もメイン背景(bg)に統一
-    root.style.setProperty('--bg-color', colors.bg);
-    root.style.setProperty('--text-color', colors.text);
-    root.style.setProperty('--sidebar-bg', colors.side);
-    root.style.setProperty('--panel-bg', colors.panel);
-    root.style.setProperty('--border-color', colors.border);
-    root.style.setProperty('--accent-color', colors.accent);
-    root.style.setProperty('--editor-bg', colors.editor);
-    root.style.setProperty('--input-bg', colors.bg); // インプット欄を背景色と同一にする
+        function changeFontFamily(f) {
+            editor.style.fontFamily = f;
+            backdrop.style.fontFamily = f;
+            localStorage.setItem('custom_font_family', f);
+        }
 
-    document.querySelectorAll('.theme-select-btn').forEach(b => b.classList.remove('active'));
-    const activeBtn = document.getElementById('btn-theme-' + t);
-    if (activeBtn) activeBtn.classList.add('active');
+        function changeFontSize(s) {
+            editor.style.fontSize = s;
+            backdrop.style.fontSize = s;
+            localStorage.setItem('custom_font_size', s);
+        }
 
-    localStorage.setItem('active_preset_theme', t);
-}
+        // --- 定型文・クイック入力 ---
+        function renderPhrases() {
+            phraseContainer.innerHTML = "";
+            customPhrases.forEach((p, i) => {
+                const chip = document.createElement('div');
+                chip.className = 'phrase-chip';
+                
+                const btn = document.createElement('button');
+                btn.className = 'phrase-chip-btn';
+                btn.innerText = p;
+                btn.onclick = () => insertQuickText(p);
+                
+                const del = document.createElement('button');
+                del.className = 'phrase-chip-del';
+                del.innerText = '×';
+                del.onclick = () => { 
+                    customPhrases.splice(i, 1); 
+                    localStorage.setItem('novel_phrases', JSON.stringify(customPhrases)); 
+                    renderPhrases(); 
+                };
+                
+                chip.appendChild(btn); 
+                chip.appendChild(del);
+                phraseContainer.appendChild(chip);
+            });
+        }
+
+        function insertQuickText(t) {
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const text = editor.value;
+            
+            if (t === '「」' || t === '|《》') {
+                const inner = text.substring(start, end);
+                const prefix = t.substring(0, t.length / 2);
+                const suffix = t.substring(t.length / 2);
+                editor.value = text.substring(0, start) + prefix + inner + suffix + text.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + prefix.length + inner.length;
+            } else {
+                editor.value = text.substring(0, start) + t + text.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + t.length;
+            }
+            updatePageData();
+            editor.focus();
+        }
 
         // --- 辞書機能 ---
         function handleTextSelection() {
