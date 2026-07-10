@@ -720,22 +720,37 @@
     // 編集中の内容を取得
     const content = editor.value;
     
+    // ルビ変換処理（エディタと同じルールを適用）
+    let formattedContent = content
+        .replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
+        .replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>')
+        .replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+    
     // 別窓を開く
-    const previewWindow = window.open('', '_blank', 'width=800,height=600');
+    const previewWindow = window.open('', '_blank', 'width=800,height=900');
     
     // プレビュー用のHTMLを構築
     previewWindow.document.write(`
         <!DOCTYPE html>
-        <html>
+        <html lang="ja">
         <head>
-            <title>プレビュー</title>
+            <meta charset="UTF-8">
+            <title>小説プレビュー</title>
             <style>
-                body { font-family: 'Shippori Mincho', serif; padding: 40px; line-height: 2.0; color: #333; }
-                rt { font-size: 0.5em; } /* ルビのサイズ調整 */
+                body { 
+                    font-family: "Shippori Mincho", serif; 
+                    padding: 50px 80px; 
+                    line-height: 2.2; 
+                    color: #333; 
+                    background-color: #fcfcfc;
+                    letter-spacing: 0.05em;
+                }
+                ruby { ruby-align: center; }
+                rt { font-size: 0.55em; color: #555; }
             </style>
         </head>
         <body>
-            ${content}
+            <div class="novel-body">${formattedContent}</div>
         </body>
         </html>
     `);
