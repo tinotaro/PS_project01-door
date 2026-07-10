@@ -730,27 +730,49 @@
         }
 
 function openPreview() {
-    const content = editor.value;
+    // 1. 現在の画面のテーマクラス（例: theme-default-white, theme-coffeebrown等）を取得
+    const themeClass = document.body.className;
     
-    // ルビの変換ロジック
+    // 2. エディタの内容をHTML変換
+    const content = editor.value;
     let formattedContent = content
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
         .replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>')
         .replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
-    
+
+    // 3. 別窓を開く
     const win = window.open("", "_blank", "width=800,height=900");
+    
+    // 4. スタイルとテーマを確実に引き継ぐ
     win.document.write(`
-        <html><head><style>
-            body { font-family: 'Shippori Mincho', serif; padding: 50px; line-height: 2.2; background: #fcfcfc; }
-            ruby { ruby-align: center; }
-            rt { font-size: 0.6em; color: #666; }
-        </style></head><body>
-            ${formattedContent}
-        </body></html>
+        <!DOCTYPE html>
+        <html lang="ja">
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                /* 現在のページのCSSスタイルを継承 */
+                ${document.querySelector('style').innerText}
+                
+                /* プレビュー専用のレイアウト */
+                body { 
+                    margin: 0; 
+                    padding: 50px; 
+                    line-height: 2.2; 
+                    font-family: 'Shippori Mincho', serif;
+                    height: 100vh;
+                    box-sizing: border-box;
+                }
+                ruby { ruby-align: center; }
+                rt { font-size: 0.6em; color: var(--ruby-color); }
+            </style>
+        </head>
+        <body class="${themeClass}">
+            <div class="novel-body">${formattedContent}</div>
+        </body>
+        </html>
     `);
     win.document.close();
 }
-
         // --- メモ・YouTube・入出力 ---
         function saveMemo() { 
             localStorage.setItem('novel_memo', memoArea.value); 
