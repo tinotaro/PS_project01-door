@@ -212,10 +212,16 @@ body.theme-konnezumi { --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg:
         .phrase-chip-del { background: rgba(100,30,30,0.4); border: none; color: var(--text-color); padding: 4px 6px; cursor: pointer; border-radius: 0 3px 3px 0; font-size: 11px; }
 
         #editor-wrapper {
-            width: 100%; max-width: 1500px; flex: 1; margin: 10px 0; background-color: var(--editor-bg); border: 1px solid var(--border-color);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 4px; display: flex; flex-direction: column; position: relative;
-            transition: background-color 0.2s;
-        }
+    width: 98% !important; /* 少し広めに確保 */
+    max-width: 1400px;
+    flex: 1; /* ここが重要：残りの空間を全て使う */
+    display: flex;
+    flex-direction: column; /* ツールバー・エディタ・フッターを縦に並べる */
+    overflow: hidden;
+    margin: 10px 0;
+    background-color: var(--editor-bg);
+    border: none; /* 枠線を消す */
+}
 
         #quick-toolbar {
             display: flex; gap: 6px; padding: 10px 20px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); border-radius: 4px 4px 0 0; z-index: 3; flex-wrap: wrap;
@@ -253,27 +259,26 @@ body.theme-konnezumi { --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg:
     display: none;
 }
 
-/* エディタの文字を透明にしない（普通に見えるようにする） */
+/* 入力エリア本体の定義 */
 #editor {
-    position: relative;
+    flex: 1; /* ここが重要：親の残りの高さを全て埋める */
     width: 100%;
-    /* 500px固定を廃止し、flexboxで親要素いっぱいに広げる */
-    flex: 1; 
     background: var(--editor-bg);
     color: var(--text-color);
     -webkit-text-fill-color: var(--text-color);
     padding: 30px 40px;
     font-family: 'Shippori Mincho', serif;
     font-size: 17px;
-    resize: none; /* 右下のサイズ変更ハンドルを消してスッキリさせます */
     border: none;
-    overflow-y: auto;
+    resize: none;
+    overflow-y: auto; /* 長くなったらスクロール */
     box-sizing: border-box;
-    display: block; /* ブロック要素として定義 */
+    display: block;
 }
-        #editor-footer {
-            padding: 10px 20px; background-color: var(--sidebar-bg); border-top: 1px solid var(--border-color); font-size: 12px; color: var(--text-color); opacity: 0.6; display: flex; justify-content: space-between; z-index: 3;
-        }
+
+/* ツールバーとフッターは固定サイズにする */
+#quick-toolbar { flex-shrink: 0; }
+#editor-footer { flex-shrink: 0; }
 
         /* --- 下部：ページ管理パネル --- */
         #bottom-page-panel {
