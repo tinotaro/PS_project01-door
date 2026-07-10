@@ -362,7 +362,7 @@
         
         <div class="help-section">
             <div class="help-subtitle">1. ルビ入力ルール</div>
-            <p class="help-text">本文中で「文字《るび》」または「|対象《るび》」の形式で記述すると、エディタ裏側のプレビュー画面にリアルタイムでルビが反映されます。上部バーの「|《》」ボタンでテンプレートを挿入可能です。</p>
+            <p class="help-text">本文中で「文字《るび》」または「|対象《るび》」の形式で記述すると、エルビが反映されます。上部バーの「|《》」ボタンでテンプレートを挿入可能です。</p>
         </div>
 
         <div class="help-section">
@@ -377,7 +377,7 @@
 
         <div class="help-section">
             <div class="help-subtitle">4. ページ送り機能</div>
-            <p class="help-text">本文中でテキストを選択した状態で、画面最下部にある「選択部分を次ページへ送る」ボタンを押すと、選択した部分だけが自動的に次のページ（または新規ページ）の先頭に移動します。</p>
+            <p class="help-text">新規ページボタンを押すと、自動的に次のページの先頭に移動します。ページを切り替えて執筆できます。</p>
         </div>
 
         <div class="help-section">
@@ -544,18 +544,22 @@
         }
 
         function updatePageData() {
-            // ルビやハイライトの反映用にエスケープ処理
-            let html = editor.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
-            
-            // ルビ構文の変換 (|対象《るび》または 対象《るび》)
-            html = html.replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
-            html = html.replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+           // 1. エスケープ処理
+    let html = editor.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+    
+    // 2. ルビ構文の変換 (元の文字を残さず <ruby>タグのみに置換する正規表現)
+    // |対象《るび》 の形式
+    html = html.replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+    
+    // 対象《るび》 の形式（対象が漢字の場合）
+    html = html.replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
 
-            backdrop.innerHTML = html;
-            document.getElementById('char-count-display').innerText = editor.value.length + " 文字";
-            document.getElementById('current-page-display').innerText = "ページ: " + (currentPageIndex + 1);
-            pages[currentPageIndex] = editor.value;
-            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+    backdrop.innerHTML = html;
+    document.getElementById('char-count-display').innerText = editor.value.length + " 文字";
+    
+    // ページデータの更新
+    pages[currentPageIndex] = editor.value;
+    localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
         }
 
         // --- テーマ・フォント設定 ---
