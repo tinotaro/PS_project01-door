@@ -532,40 +532,83 @@
             }
         }
 
-        // --- その場で簡易辞書表示 ---
+      // --- ボタンごとに国語辞典（コトバンク風）と類語（Weblio風）をその場で引き分け ---
         function searchWordInline(type) {
             if (!selectedText) {
                 previewArea.innerHTML = `<span style="color:#e74c3c;">⚠️ 本文の調べたい文字をドラッグ選択してから押してください。</span>`;
                 return;
             }
 
-            previewArea.innerHTML = `<span style="color:#3498db;">🔄 「${selectedText}」を検索中...</span>`;
-
-            let searchUrl = "";
-            let siteName = "";
+            // 現在選択しているフォントのスタイルを取得
+            const currentFont = editor.style.fontFamily || "'Shippori Mincho', serif";
             
+            // 1. コトバンクボタン（📘 コ）が押された場合 ＝ 国語辞典の意味を取得
             if (type === 'kotobank') {
-                siteName = "コトバンク";
-                searchUrl = `https://kotobank.jp/word/${encodeURIComponent(selectedText)}`;
-            } else if (type === 'weblio') {
-                siteName = "Weblio類語辞典";
-                searchUrl = `https://thesaurus.weblio.jp/content/${encodeURIComponent(selectedText)}`;
+                previewArea.innerHTML = `<span style="color:#3498db;">🔍 国語辞典で「${selectedText}」の意味を検索中...</span>`;
+                
+                const url = `https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(selectedText)}`;
+                
+                fetch(url)
+                    .then(response => { if (!response.ok) throw new Error(); return response.json(); })
+                    .then(data => {
+                        if (data.extract) {
+                            previewArea.innerHTML = `
+                                <div style="font-family: ${currentFont}; line-height: 1.6;">
+                                    <div style="font-weight:bold; color:#2ecc71; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom: 3px;">📘 「${selectedText}」の言葉の意味</div>
+                                    <div style="font-size: 14px; color:#eee; white-space: pre-wrap;">${data.extract}</div>
+                                </div>
+                            `;
+                        } else {
+                            showExternalLink('kotobank', currentFont);
+                        }
+                    })
+                    .catch(() => showExternalLink('kotobank', currentFont));
+            } 
+            
+            // 2. Weblioボタン（📚 辞）が押された場合 ＝ 類語・関連語・同義語を取得
+            else if (type === 'weblio') {
+                previewArea.innerHTML = `<span style="color:#9b59b6;">🔍 類語辞典で「${selectedText}」の仲間を検索中...</span>`;
+                
+                // 言葉の関連語や同義語データを取得するAPI
+                const url = `https://ja.wikipedia.org/api/rest_v1/page/related/${encodeURIComponent(selectedText)}`;
+                
+                fetch(url)
+                    .then(response => { if (!response.ok) throw new Error(); return response.json(); })
+                    .then(data => {
+                        if (data.pages && data.pages.length > 0) {
+                            // 関連する言葉・言い換えになりそうな言葉を箇条書きで抽出
+                            const relatedWords = data.pages.slice(0, 5).map(p => `・<b>${p.title}</b>：${p.description || '関連語'}`).join('<br>');
+                            
+                            previewArea.innerHTML = `
+                                <div style="font-family: ${currentFont}; line-height: 1.6;">
+                                    <div style="font-weight:bold; color:#9b59b6; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom: 3px;">📚 「${selectedText}」の類語・関連表現</div>
+                                    <div style="font-size: 13px; color:#eee; white-space: pre-wrap;">${relatedWords}</div>
+                                </div>
+                            `;
+                        } else {
+                            showExternalLink('weblio', currentFont);
+                        }
+                    })
+                    .catch(() => showExternalLink('weblio', currentFont));
             }
-
-            setTimeout(() => {
-                previewArea.innerHTML = `
-                    <div style="font-weight:bold; color:#4a90e2; margin-bottom:5px;">🧐 「${selectedText}」の検索</div>
-                    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">セキュリティ制限のため、安全な簡易ウィンドウで開きます。</div>
-                    <button onclick="window.open('${searchUrl}', '_blank')" style="width:100%; background:#2c3e50; text-align:center; padding:8px;">
-                        🔗 ${siteName} で直接確認する
-                    </button>
-                `;
-            }, 300);
         }
 
-        function resetDictInline() {
-            selectedText = "";
-            previewArea.innerHTML = `<span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>`;
+        // 該当データが取得できなかった場合のバックアップ（外部サイトを開く）
+        function showExternalLink(type, currentFont) {
+            let searchUrl = (type === 'kotobank') 
+                ? `https://kotobank.jp/word/${encodeURIComponent(selectedText)}`
+                : `https://thesaurus.weblio.jp/content/${encodeURIComponent(selectedText)}`;
+            let siteName = (type === 'kotobank') ? "コトバンク" : "Weblio類語辞典";
+
+            previewArea.innerHTML = `
+                <div style="font-family: ${currentFont};">
+                    <div style="font-weight:bold; color:#e67e22; margin-bottom:5px;">⚠️ 「${selectedText}」の自動抽出ができませんでした</div>
+                    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">執筆画面を離れて、公式の外部サイトで確認しますか？</div>
+                    <button onclick="window.open('${searchUrl}', '_blank')" style="width:100%; background:#2c3e50; text-align:center; padding:8px;">
+                        🔗 ${siteName} で直接調べる
+                    </button>
+                </div>
+            `;
         }
 
         // --- 特等席ボタン（共通） ---
