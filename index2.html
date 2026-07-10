@@ -123,9 +123,22 @@
         button:hover { background-color: var(--accent-color); color: #fff; }
 
         .sidebar-input, .sidebar-textarea {
-            width: 100%; background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-color);
-            padding: 8px; box-sizing: border-box; border-radius: 4px; font-size: 13px; margin-bottom: 8px;
-        }
+    width: 100%; 
+    background: var(--input-bg); /* ここを共通変数にする */
+    border: 1px solid var(--border-color); 
+    color: var(--text-color);
+    padding: 8px; box-sizing: border-box; border-radius: 4px; font-size: 13px; margin-bottom: 8px;
+}
+
+/* プリセットテーマごとに --input-bg を定義する */
+:root {
+    --input-bg: #111; /* デフォルト用 */
+}
+body.theme-default-white { --input-bg: #fafafa; }
+body.theme-coffeebrown { --input-bg: #5a4e4d; }
+/* 他のテーマも必要に応じて追加：例 */
+body.theme-craftpaper { --input-bg: #f9f4e5; }
+        
         .sidebar-textarea { resize: vertical; min-height: 120px; font-family: inherit; }
 
         .theme-grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 15px; }
@@ -575,9 +588,7 @@
     localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
 }
 
-        // --- テーマ・フォント設定 ---
-        function applyPresetTheme(t) {
-    // 1. 各テーマのカラー定義を追加・修正する
+function applyPresetTheme(t) {
     const themes = {
         'default': { bg: '#1a1a1a', text: '#cccccc', side: '#242424', panel: '#2c2c2c', border: '#333333', accent: '#4a90e2', editor: '#1e1e1e' },
         'default-white': { bg: '#f5f5f5', text: '#333333', side: '#e0e0e0', panel: '#ffffff', border: '#cccccc', accent: '#3498db', editor: '#ffffff' },
@@ -595,9 +606,10 @@
         'konnezumi': { bg: '#4b535c', text: '#f4f6f8', side: '#3b434c', panel: '#5b636c', border: '#6b737c', accent: '#8b939c', editor: '#3b434c' }
     };
 
-    // 2. 選択されたテーマの適用
     const colors = themes[t] || themes['default'];
     const root = document.documentElement;
+    
+    // 背景色、文字色、エディタ背景色に加え、入力欄の背景色もメイン背景(bg)に統一
     root.style.setProperty('--bg-color', colors.bg);
     root.style.setProperty('--text-color', colors.text);
     root.style.setProperty('--sidebar-bg', colors.side);
@@ -605,72 +617,14 @@
     root.style.setProperty('--border-color', colors.border);
     root.style.setProperty('--accent-color', colors.accent);
     root.style.setProperty('--editor-bg', colors.editor);
+    root.style.setProperty('--input-bg', colors.bg); // インプット欄を背景色と同一にする
 
-    // 3. アクティブ状態の切り替え
     document.querySelectorAll('.theme-select-btn').forEach(b => b.classList.remove('active'));
     const activeBtn = document.getElementById('btn-theme-' + t);
     if (activeBtn) activeBtn.classList.add('active');
 
     localStorage.setItem('active_preset_theme', t);
 }
-
-        function changeFontFamily(f) {
-            editor.style.fontFamily = f;
-            backdrop.style.fontFamily = f;
-            localStorage.setItem('custom_font_family', f);
-        }
-
-        function changeFontSize(s) {
-            editor.style.fontSize = s;
-            backdrop.style.fontSize = s;
-            localStorage.setItem('custom_font_size', s);
-        }
-
-        // --- 定型文・クイック入力 ---
-        function renderPhrases() {
-            phraseContainer.innerHTML = "";
-            customPhrases.forEach((p, i) => {
-                const chip = document.createElement('div');
-                chip.className = 'phrase-chip';
-                
-                const btn = document.createElement('button');
-                btn.className = 'phrase-chip-btn';
-                btn.innerText = p;
-                btn.onclick = () => insertQuickText(p);
-                
-                const del = document.createElement('button');
-                del.className = 'phrase-chip-del';
-                del.innerText = '×';
-                del.onclick = () => { 
-                    customPhrases.splice(i, 1); 
-                    localStorage.setItem('novel_phrases', JSON.stringify(customPhrases)); 
-                    renderPhrases(); 
-                };
-                
-                chip.appendChild(btn); 
-                chip.appendChild(del);
-                phraseContainer.appendChild(chip);
-            });
-        }
-
-        function insertQuickText(t) {
-            const start = editor.selectionStart;
-            const end = editor.selectionEnd;
-            const text = editor.value;
-            
-            if (t === '「」' || t === '|《》') {
-                const inner = text.substring(start, end);
-                const prefix = t.substring(0, t.length / 2);
-                const suffix = t.substring(t.length / 2);
-                editor.value = text.substring(0, start) + prefix + inner + suffix + text.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + prefix.length + inner.length;
-            } else {
-                editor.value = text.substring(0, start) + t + text.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + t.length;
-            }
-            updatePageData();
-            editor.focus();
-        }
 
         // --- 辞書機能 ---
         function handleTextSelection() {
