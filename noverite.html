@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v18)</title>
+    <title>rei-style Editor (Palette Layout v21)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +13,6 @@
     <style>
         /* --- カラーテーマの変数定義群 --- */
         :root {
-            /* デフォルト（デフォルトブラック） */
             --bg-color: #1a1a1a;
             --text-color: #cccccc;
             --sidebar-bg: #242424;
@@ -24,73 +23,74 @@
             --editor-bg: #1e1e1e;
             --panel-header-border: #444;
             --input-bg: #111;
+            --ruby-color: #a5c7f2; /* ルビ表示時の文字色 */
         }
 
         /* 各種プリセットテーマのCSS変数切り替え */
         body.theme-default-white {
             --bg-color: #f5f5f5; --text-color: #333333; --sidebar-bg: #e0e0e0; --panel-bg: #ffffff;
             --border-color: #cccccc; --accent-color: #3498db; --button-hover: #2980b9; --editor-bg: #ffffff;
-            --panel-header-border: #dddddd; --input-bg: #fafafa;
+            --panel-header-border: #dddddd; --input-bg: #fafafa; --ruby-color: #2980b9;
         }
         body.theme-coffeebrown {
             --bg-color: #4a3e3d; --text-color: #f4f1ea; --sidebar-bg: #3d3231; --panel-bg: #5a4d4c;
             --border-color: #2e2524; --accent-color: #bfa18f; --button-hover: #a68574; --editor-bg: #524645;
-            --panel-header-border: #3d3231; --input-bg: #2e2524;
+            --panel-header-border: #3d3231; --input-bg: #2e2524; --ruby-color: #e3d2c3;
         }
         body.theme-bluegray {
             --bg-color: #34495e; --text-color: #ecf0f1; --sidebar-bg: #2c3e50; --panel-bg: #3d566e;
             --border-color: #253342; --accent-color: #5dade2; --button-hover: #2e86c1; --editor-bg: #3b5268;
-            --panel-header-border: #2c3e50; --input-bg: #253342;
+            --panel-header-border: #2c3e50; --input-bg: #253342; --ruby-color: #aed6f1;
         }
         body.theme-pitchblack {
             --bg-color: #0b0b0b; --text-color: #999999; --sidebar-bg: #111111; --panel-bg: #161616;
             --border-color: #222222; --accent-color: #555555; --button-hover: #777777; --editor-bg: #0d0d0d;
-            --panel-header-border: #222222; --input-bg: #050505;
+            --panel-header-border: #222222; --input-bg: #050505; --ruby-color: #888888;
         }
         body.theme-craftpaper {
             --bg-color: #f1ebd9; --text-color: #4a3c31; --sidebar-bg: #e2d9c2; --panel-bg: #f7f3e8;
             --border-color: #cfc4a6; --accent-color: #8e7a63; --button-hover: #73614e; --editor-bg: #f4efe2;
-            --panel-header-border: #cfc4a6; --input-bg: #eae3ce;
+            --panel-header-border: #cfc4a6; --input-bg: #eae3ce; --ruby-color: #715e4c;
         }
         body.theme-greentea {
             --bg-color: #556b2f; --text-color: #f5f5dc; --sidebar-bg: #465826; --panel-bg: #637d37;
             --border-color: #38461e; --accent-color: #a3c1ad; --button-hover: #82a38e; --editor-bg: #5b7232;
-            --panel-header-border: #465826; --input-bg: #38461e;
+            --panel-header-border: #465826; --input-bg: #38461e; --ruby-color: #c9daf8;
         }
         body.theme-lavender {
             --bg-color: #7d75a1; --text-color: #ffffff; --sidebar-bg: #69608c; --panel-bg: #8b83b0;
             --border-color: #574e78; --accent-color: #decbe4; --button-hover: #c5afd0; --editor-bg: #847ca9;
-            --panel-header-border: #69608c; --input-bg: #574e78;
+            --panel-header-border: #69608c; --input-bg: #574e78; --ruby-color: #f5eef8;
         }
         body.theme-dustyrose {
             --bg-color: #9c8285; --text-color: #fbf7f7; --sidebar-bg: #856d70; --panel-bg: #aa9396;
             --border-color: #70595c; --accent-color: #e8d7d8; --button-hover: #d1b9bc; --editor-bg: #a38a8d;
-            --panel-header-border: #856d70; --input-bg: #70595c;
+            --panel-header-border: #856d70; --input-bg: #70595c; --ruby-color: #fadbd8;
         }
         body.theme-mintgreen {
             --bg-color: #6e8b7e; --text-color: #f4f9f6; --sidebar-bg: #5c7469; --panel-bg: #7c9b8e;
             --border-color: #4a5d54; --accent-color: #bce3d1; --button-hover: #a1cca8; --editor-bg: #759486;
-            --panel-header-border: #5c7469; --input-bg: #4a5d54;
+            --panel-header-border: #5c7469; --input-bg: #4a5d54; --ruby-color: #d1f2eb;
         }
         body.theme-namari {
             --bg-color: #707c74; --text-color: #ffffff; --sidebar-bg: #5d6861; --panel-bg: #7e8b83;
             --border-color: #4b534e; --accent-color: #bdc7c1; --button-hover: #a2ada7; --editor-bg: #77847c;
-            --panel-header-border: #5d6861; --input-bg: #4b534e;
+            --panel-header-border: #5d6861; --input-bg: #4b534e; --ruby-color: #eaeded;
         }
         body.theme-budou {
             --bg-color: #5e525e; --text-color: #f7f2f7; --sidebar-bg: #4d434d; --panel-bg: #6c5e6c;
             --border-color: #3d353d; --accent-color: #d1b3d1; --button-hover: #b89cb8; --editor-bg: #655865;
-            --panel-header-border: #4d434d; --input-bg: #3d353d;
+            --panel-header-border: #4d434d; --input-bg: #3d353d; --ruby-color: #f5eeec;
         }
         body.theme-botan {
             --bg-color: #7a5f66; --text-color: #faf5f6; --sidebar-bg: #664f55; --panel-bg: #8a6c73;
             --border-color: #523f43; --accent-color: #e3bebf; --button-hover: #cca2a4; --editor-bg: #82656c;
-            --panel-header-border: #664f55; --input-bg: #523f43;
+            --panel-header-border: #664f55; --input-bg: #523f43; --ruby-color: #fdedec;
         }
         body.theme-konnezumi {
             --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg: #3e444d; --panel-bg: #57606b;
             --border-color: #31363d; --accent-color: #a9bdcc; --button-hover: #8fa6ba; --editor-bg: #515964;
-            --panel-header-border: #3e444d; --input-bg: #31363d;
+            --panel-header-border: #3e444d; --input-bg: #31363d; --ruby-color: #ebf5fb;
         }
 
         body {
@@ -152,21 +152,12 @@
         }
         .sidebar-textarea { resize: vertical; min-height: 120px; font-family: inherit; }
 
-        /* カラーテーマ：グリッドレイアウトパレット */
-        .theme-grid-container {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 15px;
-        }
-        .theme-select-btn {
-            padding: 8px 4px; font-size: 11px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.15);
-            cursor: pointer; font-weight: bold; transition: transform 0.1s, box-shadow 0.1s; display: flex; align-items: center; justify-content: center;
-        }
+        .theme-grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 4px; margin-bottom: 15px; }
+        .theme-select-btn { padding: 8px 4px; font-size: 11px; text-align: center; border-radius: 4px; border: 1px solid rgba(0,0,0,0.15); cursor: pointer; font-weight: bold; transition: transform 0.1s, box-shadow 0.1s; display: flex; align-items: center; justify-content: center; }
         .theme-select-btn:hover { transform: scale(1.02); box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .theme-select-btn.active { outline: 2px solid var(--accent-color); outline-offset: -1px; }
 
-        /* リスト用コンテナ */
-        .replace-pickup-container {
-            background: rgba(0,0,0,0.1); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px; margin-top: 8px; font-size: 11px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;
-        }
+        .replace-pickup-container { background: rgba(0,0,0,0.1); border: 1px solid var(--border-color); border-radius: 4px; padding: 8px; margin-top: 8px; font-size: 11px; max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; }
         .pickup-item { padding: 6px; background: rgba(0,0,0,0.15); border: 1px solid var(--border-color); border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
         .pickup-line-num { color: var(--text-color); opacity: 0.7; font-weight: bold; }
         .item-replace-btn { background-color: var(--accent-color); color: #fff; border: none; padding: 3px 8px; font-size: 10px; border-radius: 3px; cursor: pointer; }
@@ -179,11 +170,7 @@
         .replace-btn { background-color: rgba(128,77,101,0.3); color: var(--text-color); font-weight: bold; width: 100%; margin-bottom: 4px;}
         .confirm-btn { background-color: rgba(39,174,96,0.4); color: var(--text-color); font-weight: bold; width: 100%; margin-top: 6px; display: none;}
         .save-btn { background-color: rgba(59,59,92,0.4); color: var(--text-color); font-weight: bold; width: 100%; margin-top: 5px;}
-        
-        .load-label {
-            background-color: rgba(42,58,58,0.4); color: var(--text-color); font-weight: bold; text-align: center;
-            padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; font-size: 13px; display: block; margin-top: 8px; transition: all 0.2s;
-        }
+        .load-label { background-color: rgba(42,58,58,0.4); color: var(--text-color); font-weight: bold; text-align: center; padding: 6px 12px; border-radius: 4px; border: 1px solid var(--border-color); cursor: pointer; font-size: 13px; display: block; margin-top: 8px; transition: all 0.2s; }
 
         #yt-container { width: 100%; aspect-ratio: 16 / 9; background: #000; margin-top: 8px; border: 1px solid var(--border-color); border-radius: 4px; }
         .btn-row { display: flex; gap: 5px; margin-bottom: 8px; }
@@ -214,29 +201,46 @@
         }
 
         #quick-toolbar {
-            display: flex; gap: 6px; padding: 10px 20px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); border-radius: 4px 4px 0 0; z-index: 3;
+            display: flex; gap: 6px; padding: 10px 20px; background-color: var(--sidebar-bg); border-bottom: 1px solid var(--border-color); border-radius: 4px 4px 0 0; z-index: 3; flex-wrap: wrap;
         }
         .quick-btn {
             background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color); color: var(--text-color);
             padding: 4px 12px; font-size: 14px; font-family: 'Shippori Mincho', serif; min-width: 38px; text-align: center;
         }
+        .special-quick-btn {
+            background-color: rgba(74, 144, 226, 0.25); font-weight: bold; border-color: var(--accent-color); font-size: 12px; padding: 4px 10px;
+        }
 
         .editor-container-inner { flex: 1; position: relative; width: 100%; overflow: hidden; }
 
+        /* 背景プレビュー用 */
         #backdrop {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 30px 40px; box-sizing: border-box;
-            font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 1.8; letter-spacing: 0.05em;
+            font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 2.2; letter-spacing: 0.05em;
             white-space: pre-wrap; word-wrap: break-word; color: transparent; background-color: transparent;
             overflow-y: auto; pointer-events: none; z-index: 1;
         }
 
+        /* プレビュー時のルビ（rubyタグ）のスタイル指定 */
+        #backdrop ruby {
+            color: var(--text-color);
+        }
+        #backdrop rt {
+            font-size: 0.55em;
+            color: var(--ruby-color);
+            letter-spacing: 0;
+            padding-bottom: 0.1em;
+        }
+
         .editor-match-highlight { background-color: rgba(241, 196, 15, 0.5); border-radius: 2px; color: transparent; }
 
+        /* 入力用：プレビューに同期させるためテキスト自体は透過設定 */
         #editor {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%;
             background: transparent; border: none; color: var(--text-color); padding: 30px 40px; box-sizing: border-box;
-            resize: none; outline: none; font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 1.8;
+            resize: none; outline: none; font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 2.2;
             letter-spacing: 0.05em; overflow-y: auto; z-index: 2;
+            -webkit-text-fill-color: transparent;
         }
 
         #editor-footer {
@@ -264,7 +268,6 @@
 </head>
 <body>
 
-    <!-- 左側：アイコンツールパレット -->
     <div id="sidebar-palette">
         <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">🔍</div>
         <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">🔀</div>
@@ -274,48 +277,39 @@
         <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">🏷️</div>
     </div>
 
-    <!-- ポップアップパネル群 -->
-    <!-- 1. 辞書 -->
     <div class="floating-panel" id="panel-dict">
         <div class="panel-header">
             <div class="panel-title">🔍 言葉の意味を調べる</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <div class="dict-icon-row">
-            <button class="dict-icon-btn" onclick="searchWordInline('kotobank')" title="国語辞書意味">📘 コ</button>
-            <button class="dict-icon-btn" onclick="searchWordInline('weblio')" title="類語・関連表現">📚 辞</button>
-            <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:rgba(0,0,0,0.3);" title="リセット">🔄 リ</button>
+            <button class="dict-icon-btn" onclick="searchWordInline('kotobank')">📘 コ</button>
+            <button class="dict-icon-btn" onclick="searchWordInline('weblio')">📚 辞</button>
+            <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:rgba(0,0,0,0.3);">🔄 リ</button>
         </div>
         <div id="dict-preview-area">
             <span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>
         </div>
     </div>
 
-    <!-- 2. 置き換え -->
     <div class="floating-panel" id="panel-replace">
         <div class="panel-header">
             <div class="panel-title">🔀 文字の抽出と置き換え</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
-        
         <div class="btn-row" style="margin-bottom: 12px;">
             <button onclick="checkAndConvertAlphaNumeric('toFull')" style="font-size:11px; padding:4px;">英数全角に一括</button>
             <button onclick="checkAndConvertAlphaNumeric('toHalf')" style="font-size:11px; padding:4px;">英数半角に一括</button>
         </div>
-
         <input type="text" id="replace-src" class="sidebar-input" placeholder="置き換え前の文字（消したい文字）" oninput="clearPickup()">
         <input type="text" id="replace-dst" class="sidebar-input" placeholder="置き換え後の文字（新しい文字）">
-        
         <button class="replace-btn" onclick="pickupMatches()">対象箇所を本文で確認</button>
-        
         <div class="replace-pickup-container" id="pickup-results">
             <span style="color:#666; font-style:italic;">「対象箇所を本文で確認」を押すと、メイン執筆エリアが黄色くハイライトされます。</span>
         </div>
-        
         <button id="replace-confirm-btn" class="confirm-btn" onclick="executeConfirmedReplaceAll()">このページの抽出箇所をすべて置き換える</button>
     </div>
 
-    <!-- 3. メモ -->
     <div class="floating-panel" id="panel-memo">
         <div class="panel-header">
             <div class="panel-title">✒️ 作品メモ</div>
@@ -324,7 +318,6 @@
         <textarea id="memo-area" class="sidebar-textarea" placeholder="プロットや設定メモ（自動保存）" oninput="saveMemo()"></textarea>
     </div>
 
-    <!-- 4. ミニYouTube -->
     <div class="floating-panel" id="panel-youtube">
         <div class="panel-header">
             <div class="panel-title">📺 ミニYouTube</div>
@@ -337,14 +330,11 @@
         </div>
     </div>
 
-    <!-- 5. 設定（グリッドカラーパレット搭載） -->
     <div class="floating-panel" id="panel-settings">
         <div class="panel-header">
             <div class="panel-title">🎨 表示・カラー設定</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
-
-        <!-- プリセットカラーパレットグリッド -->
         <div class="theme-grid-container">
             <div class="theme-select-btn" id="btn-theme-default" style="background-color:#1a1a1a; color:#ccc;" onclick="applyPresetTheme('default')">デフォルトブラック</div>
             <div class="theme-select-btn" id="btn-theme-default-white" style="background-color:#f5f5f5; color:#333;" onclick="applyPresetTheme('default-white')">デフォルトホワイト</div>
@@ -361,8 +351,7 @@
             <div class="theme-select-btn" id="btn-theme-botan" style="background-color:#7a5f66; color:#faf5f6;" onclick="applyPresetTheme('botan')">牡丹鼠</div>
             <div class="theme-select-btn" id="btn-theme-konnezumi" style="background-color:#4b535c; color:#f4f6f8;" onclick="applyPresetTheme('konnezumi')">紺鼠</div>
         </div>
-
-        <select id="font-selector" class="sidebar-input" style="margin-bottom:8px;" onchange="changeFontFamily(this.value)">
+        <select id="font-selector" class="sidebar-input" onchange="changeFontFamily(this.value)">
             <option value="'Shippori Mincho', serif">しっぽり明朝（濁点対応）</option>
             <option value="'M PLUS Round 1c', sans-serif">かわいめ丸ゴシック</option>
             <option value="'Helvetica Neue', Arial, sans-serif">標準ゴシック体</option>
@@ -374,32 +363,26 @@
         </div>
     </div>
 
-    <!-- 6. 保存・読込 -->
     <div class="floating-panel" id="panel-save">
         <div class="panel-header">
             <div class="panel-title">🏷️ 作品出力と読み込み</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
-        <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft" placeholder="ファイル名を入力">
+        <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft">
         <button class="save-btn" onclick="exportToTxt()">.txt形式で全ページ保存</button>
-        
         <label for="file-loader" class="load-label">📁 続きから書く（txt読込）</label>
         <input type="file" id="file-loader" accept=".txt" style="display:none;" onchange="importFromTxt(this)">
     </div>
 
-
-    <!-- 右側：メイン執筆エリア -->
     <div id="main-container">
-        <!-- 上部：定型文管理パネル -->
         <div id="top-phrase-panel">
             <div class="phrase-main-block">
                 <input type="text" id="new-phrase-input" class="sidebar-input" style="margin:0;" placeholder="文章を入力してEnterで定型文に登録">
                 <div class="phrase-horizontal-list" id="phrase-container"></div>
             </div>
-            <button class="jump-btn" onclick="scrollToElement('bottom-page-panel')" title="一番下へジャンプ">↓</button>
+            <button class="jump-btn" onclick="scrollToElement('bottom-page-panel')">↓</button>
         </div>
 
-        <!-- 中央：エディタ本体（重ね合わせ構造） -->
         <div id="editor-wrapper">
             <div id="quick-toolbar">
                 <button class="quick-btn" onclick="insertQuickText('「」')">「」</button>
@@ -409,6 +392,8 @@
                 <button class="quick-btn" onclick="insertQuickText('♡')">♡</button>
                 <button class="quick-btn" onclick="insertQuickText('ッ')">ッ</button>
                 <button class="quick-btn" onclick="insertQuickText('▼▼▼')">▼▼▼</button>
+                <button class="quick-btn" onclick="insertRubyTemplate()" title="選択したテキストにルビを適用します">|《》</button>
+                <button class="quick-btn special-quick-btn" onclick="sendSelectionToNextPage()">選択を次ページへ送る ➡️</button>
             </div>
             
             <div class="editor-container-inner">
@@ -422,12 +407,11 @@
             </div>
         </div>
 
-        <!-- 下部：ページ管理パネル -->
         <div id="bottom-page-panel">
             <button class="add-page-btn" onclick="addNewPage()">＋ 新規ページ</button>
             <div class="page-scroll-container" id="page-container"></div>
             <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
-            <button class="jump-btn" onclick="scrollToElement('top-phrase-panel')" title="一番上へジャンプ">↑</button>
+            <button class="jump-btn" onclick="scrollToElement('top-phrase-panel')">↑</button>
         </div>
     </div>
 
@@ -437,7 +421,6 @@
         let selectedText = "";
         let targetSearchText = ""; 
         let activeTheme = "default";
-
         let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || ["定型文１","定型文２","定型文３"];
 
         const editor = document.getElementById('editor');
@@ -453,34 +436,18 @@
             if (localStorage.getItem('novel_saved_pages')) {
                 pages = JSON.parse(localStorage.getItem('novel_saved_pages'));
                 currentPageIndex = Number(localStorage.getItem('novel_current_page_idx')) || 0;
-            } else {
-                pages = [""];
-                currentPageIndex = 0;
             }
-
             renderPages();
             renderPhrases();
             loadPage(currentPageIndex);
             
-            // 保存されたカラーテーマの復元
-            if(localStorage.getItem('active_preset_theme')) {
-                applyPresetTheme(localStorage.getItem('active_preset_theme'));
-            } else {
-                applyPresetTheme('default');
-            }
-
+            applyPresetTheme(localStorage.getItem('active_preset_theme') || 'default');
             if(localStorage.getItem('custom_font_family')) {
-                const font = localStorage.getItem('custom_font_family');
-                document.getElementById('font-selector').value = font;
-                changeFontFamily(font);
+                document.getElementById('font-selector').value = localStorage.getItem('custom_font_family');
+                changeFontFamily(localStorage.getItem('custom_font_family'));
             }
-            if(localStorage.getItem('custom_font_size')) {
-                changeFontSize(localStorage.getItem('custom_font_size'));
-            }
-
-            if(localStorage.getItem('novel_memo')) {
-                memoArea.value = localStorage.getItem('novel_memo');
-            }
+            if(localStorage.getItem('custom_font_size')) changeFontSize(localStorage.getItem('custom_font_size'));
+            if(localStorage.getItem('novel_memo')) memoArea.value = localStorage.getItem('novel_memo');
             if(localStorage.getItem('novel_yt_id')) {
                 document.getElementById('yt-url-input').value = localStorage.getItem('novel_yt_id');
                 loadYouTubeVideo();
@@ -503,150 +470,104 @@
 
         function scrollToElement(elementId) {
             const element = document.getElementById(elementId);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         function togglePanel(panelId) {
             const targetPanel = document.getElementById(panelId);
             const isOpen = targetPanel.style.display === 'flex';
-            
             closeAllPanels();
-
             if (!isOpen) {
                 targetPanel.style.display = 'flex';
                 const iconButtons = document.querySelectorAll('.palette-icon-btn');
                 const indexMap = { 'panel-dict':0, 'panel-replace':1, 'panel-memo':2, 'panel-youtube':3, 'panel-settings':4, 'panel-save':5 };
-                if(indexMap[panelId] !== undefined) {
-                    iconButtons[indexMap[panelId]].classList.add('active');
-                }
+                if(indexMap[panelId] !== undefined) iconButtons[indexMap[panelId]].classList.add('active');
             }
         }
 
         function closeAllPanels() {
-            document.querySelectorAll('.floating-panel').forEach(panel => {
-                panel.style.display = 'none';
-            });
-            document.querySelectorAll('.palette-icon-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.floating-panel').forEach(panel => panel.style.display = 'none');
+            document.querySelectorAll('.palette-icon-btn').forEach(btn => btn.classList.remove('active'));
             clearPickup();
         }
 
-        /* --- プリセットカラーテーマ適用機能 --- */
         function applyPresetTheme(themeName) {
-            // いったんテーマ関連のクラスを全削除
             document.body.className = '';
-            
-            if (themeName !== 'default') {
-                document.body.classList.add('theme-' + themeName);
-            }
+            if (themeName !== 'default') document.body.classList.add('theme-' + themeName);
             activeTheme = themeName;
             localStorage.setItem('active_preset_theme', themeName);
-
-            // パレット内のボタンのアクティブ表示切り替え
-            document.querySelectorAll('.theme-select-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.theme-select-btn').forEach(btn => btn.classList.remove('active'));
             const activeBtn = document.getElementById('btn-theme-' + themeName);
             if(activeBtn) activeBtn.classList.add('active');
         }
 
-        /* --- 全角・半角英数の事前チェック ＆ 置き換え --- */
         function checkAndConvertAlphaNumeric(mode) {
             let text = editor.value;
             if (mode === 'toFull') {
                 const matches = text.match(/[A-Za-z0-9 ]/g);
-                const count = matches ? matches.length : 0;
-                
-                if (count === 0) {
-                    alert("現在のページに変換対象の【半角英数字・スペース】は見つかりませんでした。");
-                    return;
+                if (!matches) { alert("対象は見つかりませんでした。"); return; }
+                if (confirm(`半角文字 ${matches.length} 箇所を【全角】に変換しますか？`)) {
+                    text = text.replace(/[A-Za-z0-9]/g, s => String.fromCharCode(s.charCodeAt(0) + 0xFEE0)).replace(/ /g, " ");
+                    editor.value = text; updatePageData();
                 }
-                
-                if (confirm(`現在のページに半角文字が【 ${count} 箇所 】見つかりました。\nこれらをすべて【全角】に置き換えますか？`)) {
-                    text = text.replace(/[A-Za-z0-9]/g, function(s) {
-                        return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
-                    }).replace(/ /g, " ");
-                    editor.value = text;
-                    updatePageData();
-                    alert("全角に一括置き換えしました。");
-                }
-            } else if (mode === 'toHalf') {
+            } else {
                 const matches = text.match(/[Ａ-Ｚａ-ｚ０-９ ]/g);
-                const count = matches ? matches.length : 0;
-                
-                if (count === 0) {
-                    alert("現在のページに変換対象の【全角英数字・スペース】は見つかりませんでした。");
-                    return;
-                }
-                
-                if (confirm(`現在のページに全角文字が【 ${count} 箇所 】見つかりました。\nこれらをすべて【半角】に置き換えますか？`)) {
-                    text = text.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
-                        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-                    }).replace(/ /g, " ");
-                    editor.value = text;
-                    updatePageData();
-                    alert("半角に一括置き換えしました。");
+                if (!matches) { alert("対象は見つかりませんでした。"); return; }
+                if (confirm(`全角文字 ${matches.length} 箇所を【半角】に変換しますか？`)) {
+                    text = text.replace(/[Ａ-Ｚａ-ｚ０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)).replace(/ /g, " ");
+                    editor.value = text; updatePageData();
                 }
             }
         }
 
         function clearPickup() {
             targetSearchText = "";
-            applyBackdropHighlight();
+            applyBackdropAndRuby();
             pickupResults.innerHTML = `<span style="color:#666; font-style:italic;">「対象箇所を本文で確認」を押すと、メイン執筆エリアが黄色くハイライトされます。</span>`;
             confirmBtn.style.display = 'none';
         }
 
-        function applyBackdropHighlight() {
-            const text = editor.value;
-            if (!targetSearchText) {
-                backdrop.innerHTML = escapeHtml(text);
-                return;
+        /* リアルタイム・ルビプレビュー＆ハイライト解析 */
+        function applyBackdropAndRuby() {
+            let text = editor.value;
+            let html = escapeHtml(text);
+
+            if (targetSearchText) {
+                const escapedSrc = targetSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const regex = new RegExp(escapedSrc, 'g');
+                html = html.replace(regex, match => `<span class="editor-match-highlight">${match}</span>`);
             }
-            const escapedSrc = targetSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const regex = new RegExp(escapedSrc, 'g');
-            
-            const highlightedHtml = escapeHtml(text).replace(regex, (match) => {
-                return `<span class="editor-match-highlight">${match}</span>`;
-            });
-            backdrop.innerHTML = highlightedHtml;
+
+            // ルビのエスケープ処理: |《 または |》 は退避して回避
+            html = html.replace(/\|《/g, '___ESCAPE_OPEN___').replace(/\|》/g, '___ESCAPE_CLOSE___');
+
+            // ルビ規則A: |適用対象《るび》
+            html = html.replace(/\|([^《\r\n]+)《([^》\r\n]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+
+            // ルビ規則B: 漢字《るび》（開始記号省略パターン）
+            html = html.replace(/([々〇\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+)《([^》\r\n]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+
+            // エスケープを元の文字列に戻す
+            html = html.replace(/___ESCAPE_OPEN___/g, '《').replace(/___ESCAPE_CLOSE___/g, '》');
+
+            backdrop.innerHTML = html;
             syncScroll();
         }
 
         let currentMatches = [];
-
         function pickupMatches() {
             const srcText = document.getElementById('replace-src').value;
-            if (!srcText) {
-                alert("置き換え前の文字を入力してください。");
-                return;
-            }
-
+            if (!srcText) { alert("置き換え前の文字を入力してください。"); return; }
             targetSearchText = srcText;
-            applyBackdropHighlight(); 
+            applyBackdropAndRuby(); 
 
-            const currentText = editor.value;
-            const lines = currentText.split('\n');
-            let htmlBuffer = "";
-            currentMatches = [];
-            let globalMatchId = 0;
-
+            const lines = editor.value.split('\n');
+            let htmlBuffer = ""; currentMatches = []; let globalMatchId = 0;
             lines.forEach((line, lineIndex) => {
                 let pos = line.indexOf(srcText);
                 while (pos !== -1) {
-                    currentMatches.push({
-                        id: globalMatchId, lineIndex: lineIndex, charIndex: pos, text: srcText
-                    });
-                    
-                    htmlBuffer += `
-                        <div class="pickup-item" id="pickup-item-${globalMatchId}">
-                            <span class="pickup-line-num">${lineIndex + 1}行目</span>
-                            <button class="item-replace-btn" onclick="executeIndividualReplace(${globalMatchId})">置換</button>
-                        </div>`;
-
+                    currentMatches.push({ id: globalMatchId, lineIndex: lineIndex, charIndex: pos, text: srcText });
+                    htmlBuffer += `<div class="pickup-item"><span class="pickup-line-num">${lineIndex + 1}行目</span><button class="item-replace-btn" onclick="executeIndividualReplace(${globalMatchId})">置換</button></div>`;
                     globalMatchId++;
                     pos = line.indexOf(srcText, pos + srcText.length);
                 }
@@ -657,10 +578,8 @@
                 confirmBtn.innerText = `このページの抽出（${currentMatches.length}箇所）を一括置き換える`;
                 confirmBtn.style.display = 'block';
             } else {
-                pickupResults.innerHTML = `<span style="color:#e74c3c;">⚠️ 対象の文字列は見つかりませんでした。</span>`;
-                confirmBtn.style.display = 'none';
-                targetSearchText = "";
-                applyBackdropHighlight();
+                pickupResults.innerHTML = `<span style="color:#e74c3c;">⚠️ 対象は見つかりませんでした。</span>`;
+                confirmBtn.style.display = 'none'; targetSearchText = ""; applyBackdropAndRuby();
             }
         }
 
@@ -671,124 +590,126 @@
         function executeIndividualReplace(matchId) {
             const srcText = document.getElementById('replace-src').value;
             const dstText = document.getElementById('replace-dst').value;
-            if (!srcText) return;
-
             const targetMatch = currentMatches.find(m => m.id === matchId);
             if (!targetMatch) return;
-
             const lines = editor.value.split('\n');
-            const targetLine = lines[targetMatch.lineIndex];
-
-            const before = targetLine.substring(0, targetMatch.charIndex);
-            const after = targetLine.substring(targetMatch.charIndex + srcText.length);
-            
-            lines[targetMatch.lineIndex] = before + dstText + after;
-            editor.value = lines.join('\n');
-            updatePageData();
-            pickupMatches();
+            const line = lines[targetMatch.lineIndex];
+            lines[targetMatch.lineIndex] = line.substring(0, targetMatch.charIndex) + dstText + line.substring(targetMatch.charIndex + srcText.length);
+            editor.value = lines.join('\n'); updatePageData(); pickupMatches();
         }
 
         function executeConfirmedReplaceAll() {
             const srcText = document.getElementById('replace-src').value;
             const dstText = document.getElementById('replace-dst').value;
-            if (!srcText) return;
-
-            const currentText = editor.value;
-            const escapedSrc = srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const regex = new RegExp(escapedSrc, 'g');
-
-            editor.value = currentText.replace(regex, dstText);
-            updatePageData();
-
-            alert(`現在のページの全対象箇所を「${dstText}」に一括置き換えました。`);
-            clearPickup();
-            document.getElementById('replace-src').value = "";
-            document.getElementById('replace-dst').value = "";
+            const regex = new RegExp(srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g');
+            editor.value = editor.value.replace(regex, dstText);
+            updatePageData(); clearPickup();
+            document.getElementById('replace-src').value = ""; document.getElementById('replace-dst').value = "";
         }
 
         function handleTextSelection() {
             const start = editor.selectionStart;
             const end = editor.selectionEnd;
-            const text = editor.value.substring(start, end).trim();
-            if (text && start !== end) { selectedText = text; }
+            if (start !== end) selectedText = editor.value.substring(start, end).trim();
         }
 
-        function searchWordInline(type) {
-            const start = editor.selectionStart;
-            const end = editor.selectionEnd;
-            let queryText = editor.value.substring(start, end).trim();
-            
-            if (!queryText) { queryText = selectedText; }
-            queryText = queryText.replace(/[\s\r\n「」『』【】…―゛♡ッ▼]/g, "");
-
-            if (!queryText) {
-                previewArea.innerHTML = `<span style="color:#e74c3c;">⚠️ 本文の文字を選択してから押してください。</span>`;
-                return;
-            }
-
-            const currentFont = editor.style.fontFamily || "'Shippori Mincho', serif";
-            
-            if (type === 'kotobank') {
-                previewArea.innerHTML = `<span style="color:#3498db;">🔍 国語辞典で検索中...</span>`;
-                fetch(`https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(queryText)}`)
-                    .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-                    .then(data => {
-                        if (data && data.extract) {
-                            previewArea.innerHTML = `<div style="font-family: ${currentFont}; line-height: 1.6;"><div style="font-weight:bold; color:var(--accent-color); margin-bottom:8px; border-bottom: 1px solid var(--border-color); padding-bottom:3px;">📘 「${queryText}」の意味</div><div style="font-size:14px; white-space:pre-wrap;">${data.extract}</div></div>`;
-                        } else { showExternalLink('kotobank', queryText, currentFont); }
-                    }).catch(() => showExternalLink('kotobank', queryText, currentFont));
-            } 
-            else if (type === 'weblio') {
-                previewArea.innerHTML = `<span style="color:#9b59b6;">🔍 類語辞典で検索中...</span>`;
-                fetch(`https://ja.wikipedia.org/api/rest_v1/page/related/${encodeURIComponent(queryText)}`)
-                    .then(res => { if (!res.ok) throw new Error(); return res.json(); })
-                    .then(data => {
-                        if (data && data.pages && data.pages.length > 0) {
-                            const relatedWords = data.pages.slice(0, 5).map(p => `・<b>${p.title}</b>：${p.description || '関連表現'}`).join('<br>');
-                            previewArea.innerHTML = `<div style="font-family: ${currentFont}; line-height: 1.6;"><div style="font-weight:bold; color:var(--accent-color); margin-bottom:8px; border-bottom: 1px solid var(--border-color); padding-bottom:3px;">📚 「${queryText}」の関連語</div><div style="font-size:13px; white-space:pre-wrap;">${relatedWords}</div></div>`;
-                        } else { showExternalLink('weblio', queryText, currentFont); }
-                    }).catch(() => showExternalLink('weblio', queryText, currentFont));
-            }
+        function sendSelectionToNextPage() {
+            const start = editor.selectionStart; const end = editor.selectionEnd;
+            const sendText = editor.value.substring(start, end);
+            if (!sendText) { alert("次ページへ送るテキストを選択してください。"); return; }
+            editor.value = editor.value.substring(0, start) + editor.value.substring(end);
+            pages[currentPageIndex] = editor.value;
+            const nextIdx = currentPageIndex + 1;
+            if (nextIdx >= pages.length) { pages.push(sendText); } 
+            else { pages[nextIdx] = sendText + (pages[nextIdx] ? "\n" + pages[nextIdx] : ""); }
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+            renderPages(); loadPage(nextIdx);
         }
 
-        function showExternalLink(type, cleanText, currentFont) {
-            let searchUrl = (type === 'kotobank') ? `https://kotobank.jp/word/${encodeURIComponent(cleanText)}` : `https://thesaurus.weblio.jp/content/${encodeURIComponent(cleanText)}`;
-            let siteName = (type === 'kotobank') ? "コトバンク" : "Weblio類語辞典";
-            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><div style="font-weight:bold; margin-bottom:8px; font-size:13px; opacity:0.8;">⚠️ 簡易表示非対応の単語です</div><button onclick="window.open('${searchUrl}', '_blank')" style="width:100%; background:var(--sidebar-bg); text-align:center; padding:10px; color:var(--text-color); border:1px solid var(--border-color); border-radius:4px; font-weight:bold; cursor:pointer;">🔗 ${siteName}で「${cleanText}」を見る</button></div>`;
-        }
-
-        function resetDictInline() {
-            selectedText = "";
-            previewArea.innerHTML = `<span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>`;
-        }
-
-        function insertQuickText(text) {
+        /* 【改修版】ルビ記号挿入・ダイアログ制御支援関数 */
+        function insertRubyTemplate() {
             const start = editor.selectionStart;
             const end = editor.selectionEnd;
             const currentVal = editor.value;
+            const selected = currentVal.substring(start, end);
 
-            if (text === '「」') {
-                const selected = currentVal.substring(start, end);
-                editor.value = currentVal.substring(0, start) + "「" + selected + "」" + currentVal.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + 1 + selected.length;
+            if (selected.length > 0) {
+                // 文字が選択されている場合：ポップアップでルビ（読み）を求める
+                const ruby = prompt(`「${selected}」のルビ（読み）を入力してください:`);
+                
+                // キャンセルされなかった場合のみ挿入
+                if (ruby !== null) {
+                    const rubyText = `|${selected}《${ruby} |《  は反映できないよ～ 誤操作防止の追加条件`;
+                    // 親文字《読み》のセットを作成
+                    const processedRuby = `|${selected}《${ruby}》`;
+                    editor.value = currentVal.substring(0, start) + processedRuby + currentVal.substring(end);
+                    
+                    // カーソルをルビ文字列の直後に移動
+                    editor.selectionStart = editor.selectionEnd = start + processedRuby.length;
+                }
             } else {
-                editor.value = currentVal.substring(0, start) + text + currentVal.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + text.length;
+                // 何も選択されていない場合：そのまま |《》 を生成し、カーソルを《 と 》の間にセット
+                editor.value = currentVal.substring(0, start) + "|《》" + currentVal.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + 2; // 「|《」の後ろ
             }
             updatePageData();
             editor.focus();
         }
 
-        function loadYouTubeVideo() {
-            const inputVal = document.getElementById('yt-url-input').value.trim();
-            if(!inputVal) return;
-            let videoId = inputVal;
-            if(inputVal.includes('v=')) { videoId = inputVal.split('v=')[1].split('&')[0]; }
-            else if(inputVal.includes('youtu.be/')) { videoId = inputVal.split('youtu.be/')[1].split('?')[0]; }
+        function searchWordInline(type) {
+            const start = editor.selectionStart; const end = editor.selectionEnd;
+            let query = (start !== end) ? editor.value.substring(start, end).trim() : selectedText;
+            query = query.replace(/[\s\r\n「」『』【】…―゛♡ッ▼|《》]/g, "");
+            if (!query) { previewArea.innerHTML = `⚠️ 文字を選択してください。`; return; }
+            const currentFont = editor.style.fontFamily || "'Shippori Mincho', serif";
+            
+            if (type === 'kotobank') {
+                fetch(`https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`)
+                    .then(res => res.json()).then(data => {
+                        if (data && data.extract) {
+                            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><b>📘 「${query}」の意味</b><br>${data.extract}</div>`;
+                        } else { showExternalLink('kotobank', query, currentFont); }
+                    }).catch(() => showExternalLink('kotobank', query, currentFont));
+            } else {
+                fetch(`https://ja.wikipedia.org/api/rest_v1/page/related/${encodeURIComponent(query)}`)
+                    .then(res => res.json()).then(data => {
+                        if (data && data.pages) {
+                            const related = data.pages.slice(0, 5).map(p => `・<b>${p.title}</b>`).join('<br>');
+                            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><b>📚 「${query}」の関連語</b><br>${related}</div>`;
+                        } else { showExternalLink('weblio', query, currentFont); }
+                    }).catch(() => showExternalLink('weblio', query, currentFont));
+            }
+        }
 
-            if(videoId) {
-                document.getElementById('yt-container').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-                localStorage.setItem('novel_yt_id', inputVal);
+        function showExternalLink(type, cleanText, currentFont) {
+            let url = (type === 'kotobank') ? `https://kotobank.jp/word/${encodeURIComponent(cleanText)}` : `https://thesaurus.weblio.jp/content/${encodeURIComponent(cleanText)}`;
+            previewArea.innerHTML = `<button onclick="window.open('${url}', '_blank')">🔗 外部サイトで「${cleanText}」を見る</button>`;
+        }
+
+        function resetDictInline() { previewArea.innerHTML = `<span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>`; }
+
+        function insertQuickText(text) {
+            const start = editor.selectionStart; const end = editor.selectionEnd;
+            const currentVal = editor.value;
+            if (text === '「」') {
+                const sel = currentVal.substring(start, end);
+                editor.value = currentVal.substring(0, start) + "「" + sel + "」" + currentVal.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + 1 + sel.length;
+            } else {
+                editor.value = currentVal.substring(0, start) + text + currentVal.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + text.length;
+            }
+            updatePageData(); editor.focus();
+        }
+
+        function loadYouTubeVideo() {
+            const val = document.getElementById('yt-url-input').value.trim();
+            let id = val;
+            if(val.includes('v=')) id = val.split('v=')[1].split('&')[0];
+            else if(val.includes('youtu.be/')) id = val.split('youtu.be/')[1].split('?')[0];
+            if(id) {
+                document.getElementById('yt-container').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+                localStorage.setItem('novel_yt_id', val);
             }
         }
 
@@ -797,8 +718,7 @@
             pages.forEach((_, index) => {
                 const btn = document.createElement('button');
                 btn.className = `page-btn ${index === currentPageIndex ? 'active' : ''}`;
-                btn.innerText = index + 1;
-                btn.onclick = () => loadPage(index);
+                btn.innerText = index + 1; btn.onclick = () => loadPage(index);
                 pageContainer.appendChild(btn);
             });
         }
@@ -811,25 +731,20 @@
             document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
             localStorage.setItem('novel_current_page_idx', currentPageIndex);
-            resetDictInline();
-            applyBackdropHighlight(); 
-            editor.focus();
+            resetDictInline(); applyBackdropAndRuby(); editor.focus();
         }
 
         function addNewPage() {
-            pages[currentPageIndex] = editor.value;
-            pages.push(""); 
-            loadPage(pages.length - 1);
+            pages[currentPageIndex] = editor.value; pages.push(""); loadPage(pages.length - 1);
             localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
         }
 
         function deleteCurrentPage() {
-            if (pages.length <= 1) { alert("これ以上ページを削除できません。"); return; }
-            if (!confirm(`現在のページ（${currentPageIndex + 1}ページ目）を削除してもよろしいですか？`)) return;
+            if (pages.length <= 1) return;
+            if (!confirm(`現在のページ（${currentPageIndex + 1}ページ目）を削除しますか？`)) return;
             pages.splice(currentPageIndex, 1);
             if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
-            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-            loadPage(currentPageIndex);
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages)); loadPage(currentPageIndex);
         }
 
         function updatePageData() {
@@ -837,79 +752,47 @@
             document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
             localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-            applyBackdropHighlight(); 
+            applyBackdropAndRuby(); 
         }
 
         function changeFontFamily(fontName) {
-            editor.style.fontFamily = fontName;
-            backdrop.style.fontFamily = fontName;
+            editor.style.fontFamily = fontName; backdrop.style.fontFamily = fontName;
             document.querySelectorAll('.quick-btn').forEach(btn => btn.style.fontFamily = fontName);
             localStorage.setItem('custom_font_family', fontName);
         }
-
-        function changeFontSize(size) {
-            editor.style.fontSize = size;
-            backdrop.style.fontSize = size;
-            localStorage.setItem('custom_font_size', size);
-        }
-
+        function changeFontSize(size) { editor.style.fontSize = size; backdrop.style.fontSize = size; localStorage.setItem('custom_font_size', size); }
         function renderPhrases() {
             phraseContainer.innerHTML = "";
             customPhrases.forEach((phrase, index) => {
-                const chip = document.createElement('div');
-                chip.className = 'phrase-chip';
-                const btn = document.createElement('button');
-                btn.className = 'phrase-chip-btn';
-                btn.innerText = phrase;
-                btn.onclick = () => insertQuickText(phrase);
-                const delBtn = document.createElement('button');
-                delBtn.className = 'phrase-chip-del';
-                delBtn.innerText = '×';
-                delBtn.onclick = (e) => { e.stopPropagation(); deletePhrase(index); };
-                chip.appendChild(btn);
-                chip.appendChild(delBtn);
-                phraseContainer.appendChild(chip);
+                const chip = document.createElement('div'); chip.className = 'phrase-chip';
+                const btn = document.createElement('button'); btn.className = 'phrase-chip-btn'; btn.innerText = phrase; btn.onclick = () => insertQuickText(phrase);
+                const delBtn = document.createElement('button'); delBtn.className = 'phrase-chip-del'; delBtn.innerText = '×'; delBtn.onclick = (e) => { e.stopPropagation(); deletePhrase(index); };
+                chip.appendChild(btn); chip.appendChild(delBtn); phraseContainer.appendChild(chip);
             });
         }
-
-        function deletePhrase(index) {
-            customPhrases.splice(index, 1);
-            localStorage.setItem('novel_phrases', JSON.stringify(customPhrases));
-            renderPhrases();
-        }
-
+        function deletePhrase(index) { customPhrases.splice(index, 1); localStorage.setItem('novel_phrases', JSON.stringify(customPhrases)); renderPhrases(); }
         function saveMemo() { localStorage.setItem('novel_memo', memoArea.value); }
-
-        document.getElementById('file-loader').addEventListener('change', function(e) { importFromTxt(this); });
 
         function exportToTxt() {
             pages[currentPageIndex] = editor.value;
-            const joinedText = pages.map((pageText, index) => `--- 【${index + 1}ページ目】 ---\n${pageText}`).join('\n\n');
+            const joinedText = pages.map(pageText => pageText.trim()).join('\n\n【改ページ】\n\n');
             const blob = new Blob([joinedText], { type: 'text/plain;charset=utf-8' });
             const name = document.getElementById('file-name-input').value.trim() || "novel_draft";
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = `${name}.txt`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `${name}.txt`;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         }
 
         function importFromTxt(input) {
-            const file = input.files[0];
-            if (!file) return;
+            const file = input.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 const fullText = e.target.result;
-                const sections = fullText.split(/--- 【\d+ページ目】 ---\n/);
+                const sections = fullText.split(/【改ページ】|--- 【\d+ページ目】 ---\n/);
                 let newPages = sections.map(s => s.trim()).filter((s, idx) => !(idx === 0 && s === ""));
                 if (newPages.length === 0) newPages = [fullText];
-                pages = newPages;
-                currentPageIndex = 0;
-                localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-                loadPage(0);
-                alert(`全 ${pages.length} ページ分を読み込みました。`);
-                input.value = ""; 
+                pages = newPages; currentPageIndex = 0;
+                localStorage.setItem('novel_saved_pages', JSON.stringify(pages)); loadPage(0);
+                alert(`全 ${pages.length} ページ分を読み込みました。`); input.value = ""; 
             };
             reader.readAsText(file, 'utf-8');
         }
