@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rei-style Editor (AutoSave & Load v6)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
-    <title>rei-style Editor (Replace Custom v5)</title>
-    <!-- Google Fonts -->
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
@@ -46,7 +46,6 @@
             gap: 15px;
         }
 
-        /* たためるセクションの基本構造 */
         .menu-section {
             display: flex;
             flex-direction: column;
@@ -54,7 +53,6 @@
             padding-bottom: 10px;
         }
 
-        /* クリックできるタイトル */
         .menu-title {
             font-size: 12px;
             text-transform: uppercase;
@@ -77,24 +75,20 @@
             font-size: 9px;
             transition: transform 0.2s;
         }
-        /* 閉じているときの矢印の向き */
         .menu-section.collapsed .menu-title::after {
             transform: rotate(-90deg);
         }
 
-        /* セクションの中身 */
         .menu-content {
             display: flex;
             flex-direction: column;
             gap: 10px;
             padding-top: 5px;
         }
-        /* 閉じているときは非表示 */
         .menu-section.collapsed .menu-content {
             display: none;
         }
 
-        /* ボタン類の共通スタイル */
         button {
             background-color: #333;
             color: var(--text-color);
@@ -110,7 +104,6 @@
             color: #fff;
         }
 
-        /* アイコンボタン横並び用のスタイル */
         .dict-icon-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -125,7 +118,6 @@
             background-color: #2c3e50;
         }
 
-        /* 簡易辞書表示エリア */
         #dict-preview-area {
             background: #151515;
             border: 1px solid #444;
@@ -142,7 +134,6 @@
             font-style: italic;
         }
 
-        /* ページ切り替え */
         .page-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -174,7 +165,6 @@
             font-family: inherit;
         }
 
-        /* カラーカスタム用の入力欄組み */
         .color-picker-group {
             display: flex;
             align-items: center;
@@ -184,7 +174,6 @@
             flex: 1;
         }
 
-        /* 文字置き換えエリアの調整 */
         .replace-group {
             display: flex;
             flex-direction: column;
@@ -200,7 +189,6 @@
             background-color: #804d65;
         }
 
-        /* 定型文登録 */
         .phrase-list {
             display: flex;
             flex-direction: column;
@@ -230,6 +218,22 @@
             color: #ddddff;
             font-weight: bold;
         }
+        .load-label {
+            background-color: #2a3a3a;
+            color: #aaffff;
+            font-weight: bold;
+            text-align: center;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 13px;
+            display: block;
+            transition: all 0.2s;
+        }
+        .load-label:hover {
+            background-color: #3b5c5c;
+        }
 
         /* --- 右側：メイン執筆エリア --- */
         #main-container {
@@ -255,7 +259,6 @@
             transition: background-color 0.3s;
         }
 
-        /* 特等席ツールバー */
         #quick-toolbar {
             display: flex;
             gap: 6px;
@@ -305,16 +308,14 @@
 </head>
 <body>
 
-    <!-- 左側メニュー -->
     <div id="sidebar">
         
-        <!-- 1. 意味・使い方チェック -->
         <div class="menu-section" id="section-dict">
             <div class="menu-title" onclick="toggleSection('section-dict')">言葉の意味を調べる</div>
             <div class="menu-content">
                 <div class="dict-icon-row">
-                    <button class="dict-icon-btn" onclick="searchWordInline('kotobank')" title="コトバンク">📘 コ</button>
-                    <button class="dict-icon-btn" onclick="searchWordInline('weblio')" title="Weblio類語">📚 辞</button>
+                    <button class="dict-icon-btn" onclick="searchWordInline('kotobank')" title="国語辞書意味">📘 コ</button>
+                    <button class="dict-icon-btn" onclick="searchWordInline('weblio')" title="類語・関連表現">📚 辞</button>
                     <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:#444;" title="リセット">🔄 リ</button>
                 </div>
                 <div id="dict-preview-area">
@@ -323,7 +324,6 @@
             </div>
         </div>
 
-        <!-- 【新設】2. 文字の置き換え（一括置換） -->
         <div class="menu-section" id="section-replace">
             <div class="menu-title" onclick="toggleSection('section-replace')">文字の置き換え（一括）</div>
             <div class="menu-content">
@@ -335,7 +335,6 @@
             </div>
         </div>
 
-        <!-- 3. よく使う文章・単語登録 -->
         <div class="menu-section" id="section-phrases">
             <div class="menu-title" onclick="toggleSection('section-phrases')">よく使う単語・文章登録</div>
             <div class="menu-content">
@@ -344,7 +343,6 @@
             </div>
         </div>
 
-        <!-- 4. ページ管理 -->
         <div class="menu-section" id="section-pages">
             <div class="menu-title" onclick="toggleSection('section-pages')">ページ管理</div>
             <div class="menu-content">
@@ -353,7 +351,6 @@
             </div>
         </div>
 
-        <!-- 5. 表示・カラー設定 -->
         <div class="menu-section" id="section-settings">
             <div class="menu-title" onclick="toggleSection('section-settings')">表示・カラー設定</div>
             <div class="menu-content">
@@ -378,16 +375,17 @@
             </div>
         </div>
 
-        <!-- 6. 作品出力 -->
         <div class="menu-section" id="section-save">
-            <div class="menu-title" onclick="toggleSection('section-save')">作品出力</div>
+            <div class="menu-title" onclick="toggleSection('section-save')">作品出力と読み込み</div>
             <div class="menu-content">
                 <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft" placeholder="ファイル名を入力">
                 <button class="save-btn" onclick="exportToTxt()">.txt形式で全ページ保存</button>
+                
+                <label for="file-loader" class="load-label">📁 続きから書く（txt読込）</label>
+                <input type="file" id="file-loader" accept=".txt" style="display:none;" onchange="importFromTxt(this)">
             </div>
         </div>
 
-        <!-- 7. 作品メモ -->
         <div class="menu-section" id="section-memo">
             <div class="menu-title" onclick="toggleSection('section-memo')">作品メモ</div>
             <div class="menu-content">
@@ -396,7 +394,6 @@
         </div>
     </div>
 
-    <!-- 右側：執筆メインエリア -->
     <div id="main-container">
         <div id="editor-wrapper">
             <div id="quick-toolbar">
@@ -436,10 +433,19 @@
         const memoArea = document.getElementById('memo-area');
         const previewArea = document.getElementById('dict-preview-area');
 
+        // --- 画面読み込み時：自動保存された小説を復元 ---
         window.onload = function() {
+            if (localStorage.getItem('novel_saved_pages')) {
+                pages = JSON.parse(localStorage.getItem('novel_saved_pages'));
+                currentPageIndex = Number(localStorage.getItem('novel_current_page_idx')) || 0;
+            } else {
+                pages = [""];
+                currentPageIndex = 0;
+            }
+
             renderPages();
             renderPhrases();
-            loadPage(0);
+            loadPage(currentPageIndex);
             
             if(localStorage.getItem('custom_bg_color')) {
                 document.getElementById('bg-color-code').value = localStorage.getItem('custom_bg_color');
@@ -463,13 +469,11 @@
             });
         };
 
-        // --- メニュー折りたたみ開閉制御 ---
         function toggleSection(id) {
             const section = document.getElementById(id);
             section.classList.toggle('collapsed');
         }
 
-        // --- カラーコードのリアルタイム反映 ---
         function applyCustomColors() {
             const bgColor = document.getElementById('bg-color-code').value.trim();
             const textColor = document.getElementById('text-color-code').value.trim();
@@ -484,7 +488,6 @@
             }
         }
 
-        // --- 【新機能】文字の一括置き換え処理 ---
         function replaceAllText() {
             const srcText = document.getElementById('replace-src').value;
             const dstText = document.getElementById('replace-dst').value;
@@ -494,36 +497,25 @@
                 return;
             }
 
-            // 現在表示中のページの最新内容を配列に同期
             pages[currentPageIndex] = editor.value;
-
-            // 特殊文字をエスケープして正規表現を作成（すべて一括置換するため「g」フラグを使用）
             const escapedSrc = srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
             const regex = new RegExp(escapedSrc, 'g');
 
             let totalCount = 0;
-
-            // 全ページを走査して文字を置換
             pages = pages.map((pageText) => {
                 const matches = pageText.match(regex);
-                if (matches) {
-                    totalCount += matches.length;
-                }
+                if (matches) totalCount += matches.length;
                 return pageText.replace(regex, dstText);
             });
 
-            // エディタの表示内容を更新
             editor.value = pages[currentPageIndex];
             updatePageData();
-
             alert(`すべてのページから「${srcText}」を「${dstText}」に一括置き換えしました（計 ${totalCount} 箇所）。`);
             
-            // 入力欄をクリア
             document.getElementById('replace-src').value = "";
             document.getElementById('replace-dst').value = "";
         }
 
-        // --- 選択テキストの取得 ---
         function handleTextSelection() {
             const start = editor.selectionStart;
             const end = editor.selectionEnd;
@@ -533,20 +525,17 @@
             }
         }
 
-      // --- ボタンごとに国語辞典（コトバンク風）と類語（Weblio風）をその場で引き分け ---
+        // --- その場で辞書引き & 類語引き分け機能 ---
         function searchWordInline(type) {
             if (!selectedText) {
                 previewArea.innerHTML = `<span style="color:#e74c3c;">⚠️ 本文の調べたい文字をドラッグ選択してから押してください。</span>`;
                 return;
             }
 
-            // 現在選択しているフォントのスタイルを取得
             const currentFont = editor.style.fontFamily || "'Shippori Mincho', serif";
             
-            // 1. コトバンクボタン（📘 コ）が押された場合 ＝ 国語辞典の意味を取得
             if (type === 'kotobank') {
                 previewArea.innerHTML = `<span style="color:#3498db;">🔍 国語辞典で「${selectedText}」の意味を検索中...</span>`;
-                
                 const url = `https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(selectedText)}`;
                 
                 fetch(url)
@@ -555,46 +544,35 @@
                         if (data.extract) {
                             previewArea.innerHTML = `
                                 <div style="font-family: ${currentFont}; line-height: 1.6;">
-                                    <div style="font-weight:bold; color:#2ecc71; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom: 3px;">📘 「${selectedText}」の言葉の意味</div>
+                                    <div style="font-weight:bold; color:#2ecc71; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom: 3px;">📘 「${selectedText}」の意味</div>
                                     <div style="font-size: 14px; color:#eee; white-space: pre-wrap;">${data.extract}</div>
                                 </div>
                             `;
-                        } else {
-                            showExternalLink('kotobank', currentFont);
-                        }
+                        } else { showExternalLink('kotobank', currentFont); }
                     })
                     .catch(() => showExternalLink('kotobank', currentFont));
             } 
-            
-            // 2. Weblioボタン（📚 辞）が押された場合 ＝ 類語・関連語・同義語を取得
             else if (type === 'weblio') {
                 previewArea.innerHTML = `<span style="color:#9b59b6;">🔍 類語辞典で「${selectedText}」の仲間を検索中...</span>`;
-                
-                // 言葉の関連語や同義語データを取得するAPI
                 const url = `https://ja.wikipedia.org/api/rest_v1/page/related/${encodeURIComponent(selectedText)}`;
                 
                 fetch(url)
                     .then(response => { if (!response.ok) throw new Error(); return response.json(); })
                     .then(data => {
                         if (data.pages && data.pages.length > 0) {
-                            // 関連する言葉・言い換えになりそうな言葉を箇条書きで抽出
-                            const relatedWords = data.pages.slice(0, 5).map(p => `・<b>${p.title}</b>：${p.description || '関連語'}`).join('<br>');
-                            
+                            const relatedWords = data.pages.slice(0, 5).map(p => `・<b>${p.title}</b>：${p.description || '関連表現'}`).join('<br>');
                             previewArea.innerHTML = `
                                 <div style="font-family: ${currentFont}; line-height: 1.6;">
-                                    <div style="font-weight:bold; color:#9b59b6; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom: 3px;">📚 「${selectedText}」の類語・関連表現</div>
+                                    <div style="font-weight:bold; color:#9b59b6; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom: 3px;">📚 「${selectedText}」の類語・関連語</div>
                                     <div style="font-size: 13px; color:#eee; white-space: pre-wrap;">${relatedWords}</div>
                                 </div>
                             `;
-                        } else {
-                            showExternalLink('weblio', currentFont);
-                        }
+                        } else { showExternalLink('weblio', currentFont); }
                     })
                     .catch(() => showExternalLink('weblio', currentFont));
             }
         }
 
-        // 該当データが取得できなかった場合のバックアップ（外部サイトを開く）
         function showExternalLink(type, currentFont) {
             let searchUrl = (type === 'kotobank') 
                 ? `https://kotobank.jp/word/${encodeURIComponent(selectedText)}`
@@ -604,7 +582,6 @@
             previewArea.innerHTML = `
                 <div style="font-family: ${currentFont};">
                     <div style="font-weight:bold; color:#e67e22; margin-bottom:5px;">⚠️ 「${selectedText}」の自動抽出ができませんでした</div>
-                    <div style="font-size:12px; color:#aaa; margin-bottom:8px;">執筆画面を離れて、公式の外部サイトで確認しますか？</div>
                     <button onclick="window.open('${searchUrl}', '_blank')" style="width:100%; background:#2c3e50; text-align:center; padding:8px;">
                         🔗 ${siteName} で直接調べる
                     </button>
@@ -612,7 +589,11 @@
             `;
         }
 
-        // --- 特等席ボタン（共通） ---
+        function resetDictInline() {
+            selectedText = "";
+            previewArea.innerHTML = `<span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>`;
+        }
+
         function insertQuickText(text) {
             const start = editor.selectionStart;
             const end = editor.selectionEnd;
@@ -630,7 +611,7 @@
             editor.focus();
         }
 
-        // --- ページ処理 ---
+        // --- ページ管理 & 自動記憶 ---
         function renderPages() {
             pageContainer.innerHTML = "";
             pages.forEach((_, index) => {
@@ -645,9 +626,13 @@
         function loadPage(index) {
             pages[currentPageIndex] = editor.value;
             currentPageIndex = index;
-            editor.value = pages[currentPageIndex];
+            editor.value = pages[currentPageIndex] || "";
             renderPages();
-            updatePageData();
+            
+            document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
+            document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
+            
+            localStorage.setItem('novel_current_page_idx', currentPageIndex);
             resetDictInline();
             editor.focus();
         }
@@ -656,15 +641,18 @@
             pages[currentPageIndex] = editor.value;
             pages.push(""); 
             loadPage(pages.length - 1);
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
         }
 
+        // 1文字入力するごとに裏でリアルタイム自動保存
         function updatePageData() {
             pages[currentPageIndex] = editor.value;
             document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
+            
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
         }
 
-        // --- 表示設定変更 ---
         function changeFontFamily(fontName) {
             editor.style.fontFamily = fontName;
             document.querySelectorAll('.quick-btn').forEach(btn => btn.style.fontFamily = fontName);
@@ -674,7 +662,6 @@
             editor.style.fontSize = size;
         }
 
-        // --- 定型文処理 ---
         function renderPhrases() {
             phraseContainer.innerHTML = "";
             customPhrases.forEach((phrase, index) => {
@@ -708,6 +695,7 @@
             localStorage.setItem('novel_memo', memoArea.value);
         }
 
+        // --- 出力（全ページまとめて書き出し） ---
         function exportToTxt() {
             pages[currentPageIndex] = editor.value;
             const joinedText = pages.map((pageText, index) => {
@@ -724,6 +712,43 @@
             document.body.appendChild(downloadLink);
             downloadLink.click();
             document.body.removeChild(downloadLink);
+        }
+
+        // --- 【新設】読み込み（保存したtxtからエディタへ完全に復元） ---
+        function importFromTxt(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fullText = e.target.result;
+                
+                // 出力時につけた「--- 【○ページ目】 ---」の区切り線を基準にページを逆引き分解する
+                const pageSections = fullText.split(/--- 【\d+ページ目】 ---\n/);
+                
+                // 先頭にゴミが出るのを防止
+                let newPages = pageSections.map(section => section.trim()).filter((section, idx) => {
+                    return !(idx === 0 && section === "");
+                });
+
+                if (newPages.length === 0) {
+                    newPages = [fullText]; // 万が一区切り線がない普通のtxtなら丸ごと1ページ目に入れる
+                }
+
+                // データをエディタに完全に上書き同期
+                pages = newPages;
+                currentPageIndex = 0;
+                
+                // 自動保存データも新しい内容に更新
+                localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+                localStorage.setItem('novel_current_page_idx', currentPageIndex);
+                
+                // 画面表示をリフレッシュ
+                loadPage(0);
+                alert(`テキストファイルから全 ${pages.length} ページ分を正常に読み込みました。続きから執筆できます！`);
+                input.value = ""; // 連続読込できるようにリセット
+            };
+            reader.readAsText(file, 'utf-8');
         }
     </script>
 </body>
