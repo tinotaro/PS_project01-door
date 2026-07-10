@@ -426,7 +426,7 @@
                 <div class="page-scroll-container" id="page-container"></div>
                 
                 <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
-                <button onclick="openPreview()" class="palette-icon-btn">プレビュー別窓</button>
+                <div class="palette-icon-btn" data-tooltip="プレビュー" onclick="openPreview()">⭐</div>
                 <button class="jump-btn emoji-bold" onclick="scrollToElement('top-phrase-panel')" title="一番上へスクロール">🔺</button>
             </div>
         </div>
@@ -716,11 +716,11 @@
             alert("このページの置き換えが完了しました。");
         }
 
-       function openPreview() {
+      function openPreview() {
     // 編集中の内容を取得
     const content = editor.value;
     
-    // ルビ変換処理（エディタと同じルールを適用）
+    // ルビ変換処理：|対象《るび》や漢字《るび》をHTMLタグに置換
     let formattedContent = content
         .replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>')
         .replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>')
@@ -729,7 +729,7 @@
     // 別窓を開く
     const previewWindow = window.open('', '_blank', 'width=800,height=900');
     
-    // プレビュー用のHTMLを構築
+    // プレビュー用のHTML構築
     previewWindow.document.write(`
         <!DOCTYPE html>
         <html lang="ja">
@@ -738,7 +738,7 @@
             <title>小説プレビュー</title>
             <style>
                 body { 
-                    font-family: "Shippori Mincho", serif; 
+                    font-family: 'Shippori Mincho', serif; 
                     padding: 50px 80px; 
                     line-height: 2.2; 
                     color: #333; 
@@ -750,7 +750,7 @@
             </style>
         </head>
         <body>
-            <div class="novel-body">${formattedContent}</div>
+            ${formattedContent}
         </body>
         </html>
     `);
