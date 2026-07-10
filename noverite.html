@@ -24,6 +24,15 @@
             --input-bg: #111;
             --ruby-color: #a5c7f2;
         }
+        /* 絵文字を強制的にモノクロ（テキスト風）にする設定 */
+* {
+    font-variant-emoji: text !important;
+}
+
+/* Noto Emojiフォントを優先的に使う設定 */
+body, .emoji-bold, .palette-icon-btn, .jump-btn {
+    font-family: 'Noto Emoji', sans-serif !important;
+}
 
         /* 各種プリセットテーマのCSS変数切り替え */
         body.theme-default-white {
