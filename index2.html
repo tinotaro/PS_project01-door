@@ -117,11 +117,26 @@ body.theme-konnezumi { --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg:
 
         /* --- ポップアップする機能パネル --- */
         .floating-panel {
-            position: absolute; left: 62px; top: 15px; bottom: 15px; width: 290px;
-            background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
-            box-shadow: 5px 5px 20px rgba(0,0,0,0.4); z-index: 20; display: none; flex-direction: column; padding: 15px; box-sizing: border-box; overflow-y: auto;
-        }
-        .floating-panel.active { display: flex; }
+    /* position: absolute; を削除し、flexの子要素として配置 */
+    width: 0; /* 最初は幅0（閉じた状態） */
+    overflow: hidden;
+    transition: width 0.3s ease; /* 幅をアニメーション */
+    flex-shrink: 0;
+    border: none;
+}
+
+/* クラス active が付いたときだけ幅を持つ */
+.floating-panel.active {
+    width: 290px;
+    border-right: 1px solid var(--border-color);
+}
+
+/* メインコンテナがメニューに合わせて自動調整されるようにする */
+#main-container {
+    flex: 1;
+    transition: margin-left 0.3s ease;
+    overflow: hidden;
+}
 
         .panel-header {
             display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-header-border); padding-bottom: 8px; margin-bottom: 12px;
@@ -412,7 +427,7 @@ body.theme-konnezumi { --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg:
             <p class="help-text">「辞書」は選択文字をインラインで簡易検索できます。「動画」は作業用BGM等のURLを入力して再生可能です。「保存」から出力したtxtファイルは、いつでも再読込して執筆を再開できます。</p>
         </div>
     </div>
-
+<div id="panel-container" style="display: flex;"></div>
     <div id="main-container">
         <div id="top-phrase-panel">
             <div class="phrase-main-block">
@@ -510,20 +525,22 @@ body.theme-konnezumi { --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg:
 
         // --- パネル・UI管理 ---
         function togglePanel(id) {
-            if (currentPanel && currentPanel !== id) {
-                document.getElementById(currentPanel).classList.remove('active');
-            }
-            const panel = document.getElementById(id);
-            panel.classList.toggle('active');
-            currentPanel = panel.classList.contains('active') ? id : null;
-        }
-
-        function closeAllPanels() {
-            if (currentPanel) {
-                document.getElementById(currentPanel).classList.remove('active');
-                currentPanel = null;
-            }
-        }
+    const container = document.getElementById('panel-container');
+    const targetPanel = document.getElementById(id);
+    
+    // すでに開いているものを閉じる
+    if (currentPanel === id) {
+        targetPanel.classList.remove('active');
+        container.style.width = '0px';
+        currentPanel = null;
+    } else {
+        // 全パネルを非表示にして、選んだものだけを表示
+        document.querySelectorAll('.floating-panel').forEach(p => p.classList.remove('active'));
+        targetPanel.classList.add('active');
+        container.style.width = '290px'; // ここで押し出し幅を確定
+        currentPanel = id;
+    }
+}
 
         function syncScroll() {
             backdrop.scrollTop = editor.scrollTop;
