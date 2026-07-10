@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v11)</title>
+    <title>rei-style Editor (Palette Layout v12)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- 記号・絵文字をテキスト（単色）として扱うためのフォント群を読み込み -->
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -34,9 +33,9 @@
             position: relative;
         }
 
-        /* --- 左側：アイコンツールパレット（完全単色・テキスト化） --- */
+        /* --- 左側：アイコンツールパレット（サイズ半分・潰れ対策版） --- */
         #sidebar-palette {
-            width: 60px;
+            width: 44px; /* ボタンが小さくなったのでパレット幅も少しスリムに */
             background-color: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -44,14 +43,14 @@
             align-items: center;
             padding: 15px 0;
             box-sizing: border-box;
-            gap: 15px;
+            gap: 12px;
             z-index: 10;
         }
 
         .palette-icon-btn {
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
+            width: 30px;  /* 44pxから縮小 */
+            height: 30px; /* 44pxから縮小 */
+            border-radius: 6px;
             background-color: #1e1e1e;
             border: 1px solid var(--border-color);
             display: flex;
@@ -61,27 +60,23 @@
             transition: all 0.2s ease;
             position: relative;
             
-            /* 絵文字をカラーではなく単色テキスト（太め）にする指定 */
-            font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Sans Symbols 2", sans-serif;
+            /* 標準の環境絵文字を最優先にして潰れを完全に防止 */
+            font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
             font-weight: bold;
-            font-size: 22px;
-            color: #aaaaaa; /* 通常時のアイコンの色 */
-            text-shadow: 0 0 1px #aaaaaa; /* 細いアイコンの線を擬似的に太く見せる処理 */
+            font-size: 11px; /* 22pxから半分のサイズへ変更 */
         }
         
         /* ホバーまたはアクティブ時 */
         .palette-icon-btn:hover, .palette-icon-btn.active {
             background-color: var(--accent-color);
             border-color: #fff;
-            color: #ffffff; /* パキッと白いアイコンに */
-            text-shadow: 0 0 1px #ffffff;
-            transform: scale(1.05);
+            transform: scale(1.08);
         }
 
         .palette-icon-btn::after {
             content: attr(data-tooltip);
             position: absolute;
-            left: 55px;
+            left: 42px; /* パレットの幅に合わせて調整 */
             top: 50%;
             transform: translateY(-50%);
             background: #000;
@@ -96,7 +91,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
             font-family: sans-serif;
             font-weight: normal;
-            text-shadow: none;
         }
         .palette-icon-btn:hover::after {
             opacity: 1;
@@ -105,7 +99,7 @@
         /* --- ポップアップする機能パネル --- */
         .floating-panel {
             position: absolute;
-            left: 65px;
+            left: 50px; /* パレットの幅に合わせて調整 */
             top: 15px;
             bottom: 15px;
             width: 280px;
@@ -416,14 +410,14 @@
 </head>
 <body>
 
-    <!-- 左側：アイコンツールパレット（完全テキスト化＋視認性強化版） -->
+    <!-- 左側：アイコンツールパレット（サイズ半分＆潰れ対策完了） -->
     <div id="sidebar-palette">
-        <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">&#x1F50D;</div>
-        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">&#x2712;</div>
-        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">&#x1F4DD;</div>
-        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">&#x1F3AC;</div>
-        <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">&#x1F3A8;</div>
-        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">&#x1F4BE;</div>
+        <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">🔍</div>
+        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">✒️</div>
+        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">📝</div>
+        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">🎬</div>
+        <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">🎨</div>
+        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">💾</div>
     </div>
 
     <!-- ポップアップパネル群 -->
