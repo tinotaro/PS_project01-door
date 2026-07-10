@@ -463,124 +463,156 @@
     </div>
 
 <script>
-    let pages = JSON.parse(localStorage.getItem('novel_saved_pages')) || [""];
-    let currentPageIndex = Number(localStorage.getItem('novel_current_page_idx')) || 0;
-    let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || ["定型文１","定型文２","定型文３"];
+        // --- 状態管理 ---
+        let pages = JSON.parse(localStorage.getItem('novel_saved_pages')) || [""];
+        let currentPageIndex = Number(localStorage.getItem('novel_current_page_idx')) || 0;
+        let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || ["同数くらいで考え中", "息を呑んだ。", "あ゛っ、"];
+        let selectedText = "";
 
-    const editor = document.getElementById('editor');
-    const backdrop = document.getElementById('backdrop');
-    const pageContainer = document.getElementById('page-container');
+        const editor = document.getElementById('editor');
+        const editorWrapper = document.getElementById('editor-wrapper');
+        const pageContainer = document.getElementById('page-container');
+        const phraseContainer = document.getElementById('phrase-container');
+        const memoArea = document.getElementById('memo-area');
+        const previewArea = document.getElementById('dict-preview-area');
 
-    window.onload = function() {
-        renderPages();
-        renderPhrases();
-        editor.value = pages[currentPageIndex] || "";
-        updatePageData();
-    };
+        // --- 初期化 ---
+        window.onload = function() {
+            renderPages();
+            renderPhrases();
+            editor.value = pages[currentPageIndex] || "";
+            
+            // 設定復元
+            if(localStorage.getItem('custom_bg_color')) document.getElementById('bg-color-code').value = localStorage.getItem('custom_bg_color');
+            if(localStorage.getItem('custom_text_color')) document.getElementById('text-color-code').value = localStorage.getItem('custom_text_color');
+            applyCustomColors();
+            memoArea.value = localStorage.getItem('novel_memo') || "";
 
-    function renderPages() {
-        pageContainer.innerHTML = '';
-        pages.forEach((_, index) => {
-            const btn = document.createElement('button');
-            btn.className = `page-btn ${index === currentPageIndex ? 'active' : ''}`;
-            btn.innerText = index + 1;
-            btn.onclick = () => switchPage(index);
-            pageContainer.appendChild(btn);
-        });
-    }
-
-    function switchPage(index) {
-        pages[currentPageIndex] = editor.value;
-        currentPageIndex = index;
-        editor.value = pages[currentPageIndex] || "";
-        localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-        localStorage.setItem('novel_current_page_idx', currentPageIndex);
-        renderPages();
-        updatePageData();
-    }
-
-    function addNewPage() {
-        pages[currentPageIndex] = editor.value;
-        pages.push("");
-        switchPage(pages.length - 1);
-    }
-
-    function deleteCurrentPage() {
-        if (pages.length <= 1) return;
-        pages.splice(currentPageIndex, 1);
-        if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
-        switchPage(currentPageIndex);
-    }
-
-    function sendSelectionToNextPage() {
-        const start = editor.selectionStart;
-        const end = editor.selectionEnd;
-        if (start === end) return;
-        const selectedText = editor.value.substring(start, end);
-        const remainingText = editor.value.substring(0, start) + editor.value.substring(end);
-        pages[currentPageIndex] = remainingText;
-        if (!pages[currentPageIndex + 1]) pages.push(selectedText);
-        else pages[currentPageIndex + 1] = selectedText + "\n" + pages[currentPageIndex + 1];
-        switchPage(currentPageIndex + 1);
-    }
-
-    function updatePageData() {
-        backdrop.innerHTML = editor.value.replace(/\n/g, '<br>');
-        document.getElementById('char-count-display').innerText = editor.value.length + " 文字";
-        document.getElementById('current-page-display').innerText = "ページ: " + (currentPageIndex + 1);
-        pages[currentPageIndex] = editor.value;
-        localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
-    }
-
-    function syncScroll() { backdrop.scrollTop = editor.scrollTop; backdrop.scrollLeft = editor.scrollLeft; }
-    function scrollToElement(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
-    function togglePanel(id) { 
-        const p = document.getElementById(id);
-        const isOpen = p.style.display === 'flex';
-        document.querySelectorAll('.floating-panel').forEach(el => el.style.display = 'none');
-        if (!isOpen) p.style.display = 'flex';
-    }
-    function closeAllPanels() { document.querySelectorAll('.floating-panel').forEach(el => el.style.display = 'none'); }
-    function applyPresetTheme(t) { 
-        document.body.className = t !== 'default' ? 'theme-' + t : '';
-        localStorage.setItem('active_preset_theme', t);
-    }
-    function changeFontFamily(f) { editor.style.fontFamily = f; backdrop.style.fontFamily = f; }
-    function changeFontSize(s) { editor.style.fontSize = s; backdrop.style.fontSize = s; }
-    function insertQuickText(t) { 
-        const s = editor.selectionStart, e = editor.selectionEnd, v = editor.value;
-        editor.value = v.substring(0, s) + t + v.substring(e);
-        updatePageData();
-    }
-    function renderPhrases() {
-        const c = document.getElementById('phrase-container');
-        c.innerHTML = '';
-        customPhrases.forEach(p => {
-            const b = document.createElement('button');
-            b.className = 'phrase-chip-btn';
-            b.innerText = p;
-            b.onclick = () => insertQuickText(p);
-            c.appendChild(b);
-        });
-    }
-    function saveMemo() { localStorage.setItem('novel_memo', document.getElementById('memo-area').value); }
-    function loadYouTubeVideo() { localStorage.setItem('novel_yt_id', document.getElementById('yt-url-input').value); }
-    function exportToTxt() {
-        const blob = new Blob([pages.join("\n\n--- 次ページ ---\n\n")], {type: "text/plain"});
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = (document.getElementById('file-name-input').value || "novel") + ".txt";
-        a.click();
-    }
-    function importFromTxt(o) {
-        const f = o.files[0];
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            pages = e.target.result.split(/\n\n--- 次ページ ---\n\n/);
-            switchPage(0);
+            updatePageData();
         };
-        reader.readAsText(f);
-    }
-</script>
+
+        // --- ページ操作 ---
+        function renderPages() {
+            pageContainer.innerHTML = "";
+            pages.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${index === currentPageIndex ? 'active' : ''}`;
+                btn.innerText = index + 1;
+                btn.onclick = () => loadPage(index);
+                pageContainer.appendChild(btn);
+            });
+        }
+
+        function loadPage(index) {
+            pages[currentPageIndex] = editor.value;
+            currentPageIndex = index;
+            editor.value = pages[currentPageIndex] || "";
+            renderPages();
+            updatePageData();
+            localStorage.setItem('novel_current_page_idx', currentPageIndex);
+            editor.focus();
+        }
+
+        function addNewPage() {
+            pages[currentPageIndex] = editor.value;
+            pages.push("");
+            loadPage(pages.length - 1);
+        }
+
+        function updatePageData() {
+            pages[currentPageIndex] = editor.value;
+            document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
+            document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+        }
+
+        // --- 辞書・ツール ---
+        function handleTextSelection() {
+            const start = editor.selectionStart, end = editor.selectionEnd;
+            selectedText = editor.value.substring(start, end).trim();
+        }
+
+        function searchWordInline(type) {
+            if (!selectedText) { previewArea.innerHTML = "⚠️ 文字を選択してください"; return; }
+            const url = type === 'kotobank' ? `https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(selectedText)}` 
+                                           : `https://ja.wikipedia.org/api/rest_v1/page/related/${encodeURIComponent(selectedText)}`;
+            
+            previewArea.innerHTML = "検索中...";
+            fetch(url).then(r => r.json()).then(data => {
+                if(type === 'kotobank' && data.extract) previewArea.innerHTML = data.extract;
+                else previewArea.innerHTML = "情報が見つかりました（リンク参照）";
+            }).catch(() => previewArea.innerHTML = "検索エラー");
+        }
+
+        function resetDictInline() { selectedText = ""; previewArea.innerHTML = '<span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>'; }
+
+        // --- 置換 ---
+        function replaceAllText() {
+            const src = document.getElementById('replace-src').value, dst = document.getElementById('replace-dst').value;
+            if(!src) return;
+            pages = pages.map(p => p.split(src).join(dst));
+            editor.value = pages[currentPageIndex];
+            updatePageData();
+            alert("全ページ置換完了");
+        }
+
+        // --- 設定・登録 ---
+        function applyCustomColors() {
+            editorWrapper.style.backgroundColor = document.getElementById('bg-color-code').value;
+            editor.style.color = document.getElementById('text-color-code').value;
+            localStorage.setItem('custom_bg_color', document.getElementById('bg-color-code').value);
+            localStorage.setItem('custom_text_color', document.getElementById('text-color-code').value);
+        }
+
+        function insertQuickText(text) {
+            const s = editor.selectionStart, e = editor.selectionEnd, v = editor.value;
+            if (text === '「」') editor.value = v.slice(0, s) + "「" + v.slice(s, e) + "」" + v.slice(e);
+            else editor.value = v.slice(0, s) + text + v.slice(e);
+            updatePageData();
+        }
+
+        function renderPhrases() {
+            phraseContainer.innerHTML = "";
+            customPhrases.forEach((p, i) => {
+                const div = document.createElement('div'); div.className = 'phrase-item';
+                div.innerHTML = `<button class="phrase-btn">${p}</button><button class="delete-btn">×</button>`;
+                div.querySelector('.phrase-btn').onclick = () => insertQuickText(p);
+                div.querySelector('.delete-btn').onclick = () => { customPhrases.splice(i,1); localStorage.setItem('novel_phrases', JSON.stringify(customPhrases)); renderPhrases(); };
+                phraseContainer.appendChild(div);
+            });
+        }
+
+        document.getElementById('new-phrase-input').onkeypress = (e) => {
+            if (e.key === 'Enter' && e.target.value) {
+                customPhrases.push(e.target.value);
+                localStorage.setItem('novel_phrases', JSON.stringify(customPhrases));
+                e.target.value = ""; renderPhrases();
+            }
+        };
+
+        function saveMemo() { localStorage.setItem('novel_memo', memoArea.value); }
+        function toggleSection(id) { document.getElementById(id).classList.toggle('collapsed'); }
+        function changeFontFamily(f) { editor.style.fontFamily = f; }
+        function changeFontSize(s) { editor.style.fontSize = s; }
+
+        // --- 入出力 ---
+        function exportToTxt() {
+            pages[currentPageIndex] = editor.value;
+            const blob = new Blob([pages.join("\n\n--- 次ページ ---\n\n")], {type: 'text/plain'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = document.getElementById('file-name-input').value + ".txt";
+            a.click();
+        }
+
+        function importFromTxt(input) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                pages = e.target.result.split("\n\n--- 次ページ ---\n\n");
+                loadPage(0);
+            };
+            reader.readAsText(input.files[0]);
+        }
+    </script>
 </body>
 </html>
