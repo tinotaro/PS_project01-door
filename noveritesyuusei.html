@@ -102,11 +102,26 @@
         .palette-icon-btn:hover::after { opacity: 1; }
 
         /* --- ポップアップする機能パネル --- */
-        .floating-panel {
-            position: absolute; left: 62px; top: 15px; bottom: 15px; width: 290px;
-            background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
-            box-shadow: 5px 5px 20px rgba(0,0,0,0.4); z-index: 20; display: none; flex-direction: column; padding: 15px; box-sizing: border-box; overflow-y: auto;
-        }
+.floating-panel {
+    position: absolute;
+    left: 62px;
+    top: 15px;
+    /* bottom は外して、代わりに高さを制御するか自動にすると重なりにくいです */
+    width: 290px;
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 5px 5px 20px rgba(0,0,0,0.4);
+    /* z-indexを大きくして最前面にする */
+    z-index: 1000; 
+    display: none;
+    flex-direction: column;
+    padding: 15px;
+    box-sizing: border-box;
+    /* overflow を auto にしてパネル内でスクロールさせる */
+    max-height: 90vh;
+    overflow-y: auto;
+}
         .floating-panel.active { display: flex; }
 
         .panel-header {
