@@ -761,6 +761,11 @@
     previewWindow.document.close();
 }
 
+       function syncScroll() {
+    const backdrop = document.getElementById('backdrop');
+    backdrop.scrollTop = editor.scrollTop;
+}
+
         // --- メモ・YouTube・入出力 ---
         function saveMemo() { 
             localStorage.setItem('novel_memo', memoArea.value); 
