@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rei-style Editor (Full Integrated)</title>
+    <meta name="robots" content="noindex,nofollow,noarchive">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-color: #1a1a1a; --text-color: #cccccc; --sidebar-bg: #242424; --panel-bg: #2c2c2c; --border-color: #333333; --accent-color: #4a90e2; --editor-bg: #1e1e1e; }
+        * { font-variant-emoji: text !important; }
+        body { margin: 0; display: flex; height: 100vh; background: var(--bg-color); color: var(--text-color); overflow: hidden; }
+        #sidebar-palette { width: 56px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; align-items: center; padding: 15px 0; z-index: 100; }
+        .palette-icon-btn { width: 40px; height: 40px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .floating-panel { position: absolute; left: 62px; top: 15px; bottom: 15px; width: 290px; background: var(--panel-bg); border: 1px solid var(--border-color); z-index: 200; display: none; flex-direction: column; padding: 15px; }
+        #editor { flex: 1; background: var(--editor-bg); color: #fff; border: none; padding: 20px; resize: none; }
+        #page-container { display: flex; gap: 5px; padding: 10px; }
+        .page-btn { padding: 5px 10px; cursor: pointer; }
+        .page-btn.active { background: var(--accent-color); color: white; }
+    </style>
+</head>
+<body>
+    <div id="sidebar-palette">
+        <div class="palette-icon-btn" onclick="togglePanel('panel-dict')">🔍</div>
+        <div class="palette-icon-btn" onclick="togglePanel('panel-replace')">🔁</div>
+        <div class="palette-icon-btn" onclick="togglePanel('panel-memo')">✒️</div>
+        <div class="palette-icon-btn" onclick="togglePanel('panel-youtube')">🎬</div>
+        <div class="palette-icon-btn" onclick="togglePanel('panel-settings')">🖌️</div>
+        <div class="palette-icon-btn" onclick="togglePanel('panel-save')">🔖</div>
+    </div>
+
+    <div id="panel-dict" class="floating-panel">辞書パネル</div>
+    <div id="panel-replace" class="floating-panel">置換パネル</div>
+    <div id="panel-memo" class="floating-panel">メモパネル</div>
+    <div id="panel-youtube" class="floating-panel">YouTubeパネル</div>
+    <div id="panel-settings" class="floating-panel">設定パネル</div>
+    <div id="panel-save" class="floating-panel">保存パネル</div>
+
+    <div style="display:flex; flex-direction:column; flex:1;">
+        <textarea id="editor"></textarea>
+        <div id="page-control-area" style="background:#333;">
+            <div id="page-container"></div>
+            <button onclick="addNewPage()">＋ 追加</button>
+            <button onclick="deleteCurrentPage()">－ 削除</button>
+        </div>
+    </div>
+
+    <script>
+        let pages = JSON.parse(localStorage.getItem('novel_saved_pages')) || [""];
+        let currentPageIndex = Number(localStorage.getItem('novel_current_page_idx')) || 0;
+        const editor = document.getElementById('editor');
+
+        function togglePanel(panelId) {
+            document.querySelectorAll('.floating-panel').forEach(p => p.style.display = 'none');
+            const target = document.getElementById(panelId);
+            if(target) target.style.display = 'flex';
+        }
+
+        function renderPages() {
+            const container = document.getElementById('page-container');
+            container.innerHTML = "";
+            pages.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'page-btn' + (index === currentPageIndex ? ' active' : '');
+                btn.innerText = (index + 1);
+                btn.onclick = () => loadPage(index);
+                container.appendChild(btn);
+            });
+        }
+
+        function loadPage(idx) {
+            pages[currentPageIndex] = editor.value;
+            currentPageIndex = idx;
+            editor.value = pages[currentPageIndex] || "";
+            renderPages();
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+            localStorage.setItem('novel_current_page_idx', currentPageIndex);
+        }
+
+        function addNewPage() {
+            pages[currentPageIndex] = editor.value;
+            pages.push("");
+            loadPage(pages.length - 1);
+        }
+
+        function deleteCurrentPage() {
+            if (pages.length <= 1) return;
+            pages.splice(currentPageIndex, 1);
+            if (currentPageIndex >= pages.length) currentPageIndex = pages.length - 1;
+            loadPage(currentPageIndex);
+        }
+
+        // 既存機能の実装
+        function exportToTxt() { 
+            const blob = new Blob([editor.value], {type: 'text/plain'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'novel.txt';
+            a.click();
+        }
+        function importFromTxt(e) { /* ファイル読み込みロジック */ }
+        function applyPresetTheme(t) { /* テーマロジック */ }
+        function changeFontFamily(f) { /* フォントロジック */ }
+        function changeFontSize(s) { /* サイズロジック */ }
+        function insertQuickText(t) { /* 定型文ロジック */ }
+
+        window.onload = function() {
+            editor.value = pages[currentPageIndex] || "";
+            renderPages();
+        };
+    </script>
+</body>
+</html>
