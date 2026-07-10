@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Pro Layout)</title>
+    <title>rei-style Editor (Pro Layout v7)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Round+1c:wght@400;700&family=Shippori+Mincho:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --bg-color: #1a1a1a;
@@ -12,111 +17,937 @@
             --sidebar-bg: #242424;
             --border-color: #333333;
             --accent-color: #4a90e2;
+            --button-hover: #357abd;
         }
-        body { margin: 0; background-color: var(--bg-color); color: var(--text-color); font-family: sans-serif; display: flex; height: 100vh; overflow: hidden; }
-        
-        /* Sidebar */
-        #sidebar { width: 250px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); overflow-y: auto; }
-        .menu-title { font-size: 11px; padding: 10px; background: #282828; cursor: pointer; border-bottom: 1px solid #333; }
-        .menu-content { padding: 10px; background: #202020; }
-        
-        /* Right Area */
-        #main-container { flex: 1; display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
-        
-        /* 1. Phrases (Top) */
-        #phrase-toolbar { background: #222; padding: 8px; border: 1px solid var(--border-color); margin-bottom: 10px; display: flex; gap: 5px; flex-wrap: wrap; }
-        
-        /* 2. Editor */
-        #editor-wrapper { flex: 1; display: flex; flex-direction: column; background: #1e1e1e; border: 1px solid var(--border-color); min-height: 200px; }
-        #editor { flex: 1; width: 100%; background: transparent; color: #fff; border: none; padding: 20px; box-sizing: border-box; outline: none; font-size: 16px; resize: none; font-family: 'Shippori Mincho', serif; }
-        
-        /* 3. Page Manager (Bottom) */
-        #page-toolbar { background: #222; padding: 10px; border: 1px solid var(--border-color); margin-top: 10px; display: flex; align-items: center; gap: 10px; }
-        .page-btn { padding: 5px 10px; cursor: pointer; background: #333; color: #fff; border: 1px solid #444; }
-        .page-btn.active { background: var(--accent-color); }
-        
-        /* YouTube Player */
-        #yt-container { width: 100%; aspect-ratio: 16/9; background: #000; margin-top: 10px; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- 左側メニュー（スリム化・整理） --- */
+        #sidebar {
+            width: 290px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 15px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            font-size: 14px;
+            gap: 15px;
+        }
+
+        .menu-section {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .menu-title {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            padding: 8px 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            font-weight: bold;
+        }
+        .menu-title:hover {
+            color: #fff;
+            background-color: #2c2c2c;
+        }
+        .menu-title::after {
+            content: '▼';
+            font-size: 9px;
+            transition: transform 0.2s;
+        }
+        .menu-section.collapsed .menu-title::after {
+            transform: rotate(-90deg);
+        }
+
+        .menu-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-top: 5px;
+        }
+        .menu-section.collapsed .menu-content {
+            display: none;
+        }
+
+        button {
+            background-color: #333;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .dict-icon-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-bottom: 5px;
+        }
+        .dict-icon-btn {
+            font-size: 13px;
+            font-weight: bold;
+            padding: 8px;
+            text-align: center;
+            background-color: #2c3e50;
+        }
+
+        #dict-preview-area {
+            background: #151515;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+            color: #eee;
+            line-height: 1.5;
+        }
+        .preview-placeholder {
+            color: #666;
+            font-style: italic;
+        }
+
+        .sidebar-input, .sidebar-textarea {
+            width: 100%;
+            background: #111;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 8px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .sidebar-textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-row button {
+            flex: 1;
+        }
+
+        .color-picker-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .color-code-input {
+            flex: 1;
+        }
+
+        .replace-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .replace-btn {
+            background-color: #5c3b4d;
+            color: #ffdde5;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .replace-btn:hover {
+            background-color: #804d65;
+        }
+
+        .save-btn {
+            background-color: #3b3b5c;
+            color: #ddddff;
+            font-weight: bold;
+        }
+        .load-label {
+            background-color: #2a3a3a;
+            color: #aaffff;
+            font-weight: bold;
+            text-align: center;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 13px;
+            display: block;
+            transition: all 0.2s;
+        }
+        .load-label:hover {
+            background-color: #3b5c5c;
+        }
+
+        /* YouTube Player Area */
+        #yt-container {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            margin-top: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        /* --- 右側：メイン執筆エリア --- */
+        #main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            box-sizing: border-box;
+        }
+
+        /* 1. 上部：定型文エリア */
+        #top-phrase-panel {
+            width: 100%;
+            max-width: 720px;
+            background-color: #181818;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .phrase-horizontal-list {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .phrase-horizontal-list::-webkit-scrollbar {
+            height: 4px;
+        }
+        .phrase-horizontal-list::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 2px;
+        }
+        .phrase-chip {
+            display: flex;
+            align-items: center;
+            background: #2b2b2b;
+            border: 1px solid #444;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+        .phrase-chip-btn {
+            background: transparent;
+            border: none;
+            color: #eee;
+            padding: 4px 8px;
+            font-size: 13px;
+        }
+        .phrase-chip-btn:hover {
+            background: var(--accent-color);
+            color: #fff;
+        }
+        .phrase-chip-del {
+            background: #442222;
+            border: none;
+            color: #ffaaaa;
+            padding: 4px 6px;
+            cursor: pointer;
+            border-radius: 0 3px 3px 0;
+            font-size: 11px;
+        }
+        .phrase-chip-del:hover {
+            background: #662222;
+        }
+
+        /* 2. 中央：エディタ */
+        #editor-wrapper {
+            width: 100%;
+            max-width: 720px;
+            flex: 1;
+            margin: 10px 0;
+            background-color: #1e1e1e;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s;
+        }
+
+        #quick-toolbar {
+            display: flex;
+            gap: 6px;
+            padding: 10px 20px;
+            background-color: #181818;
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 4px 4px 0 0;
+        }
+        .quick-btn {
+            background-color: #2b2b2b;
+            border: 1px solid #444;
+            color: #eee;
+            padding: 4px 12px;
+            font-size: 14px;
+            font-family: 'Shippori Mincho', serif;
+            min-width: 38px;
+            text-align: center;
+        }
+
+        #editor {
+            flex: 1;
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #dddddd;
+            padding: 30px 40px 40px 40px;
+            box-sizing: border-box;
+            resize: none;
+            outline: none;
+            font-family: 'Shippori Mincho', serif;
+            font-size: 17px;
+            line-height: 1.8;
+            letter-spacing: 0.05em;
+            transition: color 0.3s;
+        }
+
+        #editor-footer {
+            padding: 10px 20px;
+            background-color: #151515;
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* 3. 下部：ページ管理エリア */
+        #bottom-page-panel {
+            width: 100%;
+            max-width: 720px;
+            background-color: #181818;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .page-scroll-container {
+            flex: 1;
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            padding: 2px 0;
+        }
+        .page-scroll-container::-webkit-scrollbar {
+            height: 4px;
+        }
+        .page-scroll-container::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 2px;
+        }
+        .page-btn {
+            padding: 6px 12px;
+            background-color: #333;
+            border: 1px solid #444;
+            color: #fff;
+            min-width: 35px;
+            text-align: center;
+        }
+        .page-btn.active {
+            background-color: var(--accent-color);
+            color: #fff;
+            font-weight: bold;
+        }
+        .add-page-btn {
+            background-color: #2a3a2a;
+            color: #aaffaa;
+            white-space: nowrap;
+        }
+        .del-page-btn {
+            background-color: #3d2222;
+            color: #ffaaaa;
+            white-space: nowrap;
+        }
+        .move-controls {
+            display: flex;
+            gap: 4px;
+        }
+        .move-btn {
+            background-color: #2c3e50;
+            color: #fff;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Sidebar -->
+    <!-- 左側メニュー -->
     <div id="sidebar">
-        <div class="menu-title" onclick="toggle('dict-sec')">辞書</div>
-        <div id="dict-sec" class="menu-content"><button onclick="searchWord()">検索</button><div id="dict-preview"></div></div>
         
-        <div class="menu-title" onclick="toggle('settings-sec')">設定</div>
-        <div id="settings-sec" class="menu-content">...設定項目...</div>
+        <div class="menu-section" id="section-dict">
+            <div class="menu-title" onclick="toggleSection('section-dict')">言葉の意味を調べる</div>
+            <div class="menu-content">
+                <div class="dict-icon-row">
+                    <button class="dict-icon-btn" onclick="searchWordInline('kotobank')" title="国語辞書意味">📘 コ</button>
+                    <button class="dict-icon-btn" onclick="searchWordInline('weblio')" title="類語・関連表現">📚 辞</button>
+                    <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:#444;" title="リセット">🔄 リ</button>
+                </div>
+                <div id="dict-preview-area">
+                    <span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>
+                </div>
+            </div>
+        </div>
 
-        <div class="menu-title" onclick="toggle('yt-sec')">ミニYouTube</div>
-        <div id="yt-sec" class="menu-content">
-            <input type="text" id="yt-url" placeholder="動画ID (例: dQw4w9WgXcQ)" style="width:100%">
-            <button onclick="loadYT()">再生</button>
-            <div id="yt-container"></div>
+        <div class="menu-section" id="section-replace">
+            <div class="menu-title" onclick="toggleSection('section-replace')">文字の置き換え（一括）</div>
+            <div class="menu-content">
+                <div class="replace-group">
+                    <input type="text" id="replace-src" class="sidebar-input" placeholder="置き換え前の文字（消したい文字）">
+                    <input type="text" id="replace-dst" class="sidebar-input" placeholder="置き換え後の文字（新しい文字）">
+                    <button class="replace-btn" onclick="replaceAllText()">すべてのページを置き換える</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ミニYouTubeプレイヤーエリア (新規独立搭載) -->
+        <div class="menu-section" id="section-youtube">
+            <div class="menu-title" onclick="toggleSection('section-youtube')">ミニYouTube</div>
+            <div class="menu-content">
+                <input type="text" id="yt-url-input" class="sidebar-input" placeholder="動画ID または URL を入力">
+                <button onclick="loadYouTubeVideo()">プレイヤーに読み込み</button>
+                <div id="yt-container">
+                    <div style="color:#555; text-align:center; padding-top:25px; font-size:12px;">動画未読込</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-section" id="section-settings">
+            <div class="menu-title" onclick="toggleSection('section-settings')">表示・カラー設定</div>
+            <div class="menu-content">
+                <select id="font-selector" onchange="changeFontFamily(this.value)">
+                    <option value="'Shippori Mincho', serif">しっぽり明朝（濁点対応）</option>
+                    <option value="'M PLUS Round 1c', sans-serif">かわいめ丸ゴシック</option>
+                    <option value="'Helvetica Neue', Arial, sans-serif">標準ゴシック体</option>
+                </select>
+                <div class="btn-row">
+                    <button onclick="changeFontSize('14px')">小</button>
+                    <button onclick="changeFontSize('17px')">中</button>
+                    <button onclick="changeFontSize('22px')">大</button>
+                </div>
+                <div class="color-picker-group">
+                    <span style="font-size:12px; width:55px;">背景色:</span>
+                    <input type="text" id="bg-color-code" class="sidebar-input color-code-input" value="#1e1e1e" placeholder="#1e1e1e" oninput="applyCustomColors()">
+                </div>
+                <div class="color-picker-group">
+                    <span style="font-size:12px; width:55px;">文字色:</span>
+                    <input type="text" id="text-color-code" class="sidebar-input color-code-input" value="#dddddd" placeholder="#dddddd" oninput="applyCustomColors()">
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-section" id="section-save">
+            <div class="menu-title" onclick="toggleSection('section-save')">作品出力と読み込み</div>
+            <div class="menu-content">
+                <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft" placeholder="ファイル名を入力">
+                <button class="save-btn" onclick="exportToTxt()">.txt形式で全ページ保存</button>
+                
+                <label for="file-loader" class="load-label">📁 続きから書く（txt読込）</label>
+                <input type="file" id="file-loader" accept=".txt" style="display:none;" onchange="importFromTxt(this)">
+            </div>
+        </div>
+
+        <div class="menu-section" id="section-memo">
+            <div class="menu-title" onclick="toggleSection('section-memo')">作品メモ</div>
+            <div class="menu-content">
+                <textarea id="memo-area" class="sidebar-textarea" placeholder="プロットや設定メモ（自動保存）" oninput="saveMemo()"></textarea>
+            </div>
         </div>
     </div>
 
-    <!-- Right Writing Area -->
+    <!-- 右側：メイン執筆エリア -->
     <div id="main-container">
-        <!-- Top: Phrases -->
-        <div id="phrase-toolbar">
-            <input type="text" id="new-phrase" placeholder="定型文追加" onkeypress="addPhrase(event)">
-            <div id="phrase-list" style="display:flex; gap:5px;"></div>
+        
+        <!-- 【上部へ移動】定型文管理パネル -->
+        <div id="top-phrase-panel">
+            <input type="text" id="new-phrase-input" class="sidebar-input" placeholder="文章を入力してEnterで定型文に登録">
+            <div class="phrase-horizontal-list" id="phrase-container"></div>
         </div>
 
-        <!-- Center: Editor -->
+        <!-- 中央：エディタ本体 -->
         <div id="editor-wrapper">
-            <textarea id="editor" oninput="saveData()"></textarea>
+            <div id="quick-toolbar">
+                <button class="quick-btn" onclick="insertQuickText('「」')">「」</button>
+                <button class="quick-btn" onclick="insertQuickText('――')">――</button>
+                <button class="quick-btn" onclick="insertQuickText('……')">……</button>
+                <button class="quick-btn" onclick="insertQuickText('゛')">゛</button>
+                <button class="quick-btn" onclick="insertQuickText('♡')">♡</button>
+                <button class="quick-btn" onclick="insertQuickText('ッ')">ッ</button>
+                <button class="quick-btn" onclick="insertQuickText('▼▼▼')">▼▼▼</button>
+            </div>
+            
+            <textarea id="editor" placeholder="ここに小説を書き出せます..." oninput="updatePageData()" onselect="handleTextSelection()"></textarea>
+            <div id="editor-footer">
+                <span id="current-page-display">ページ: 1</span>
+                <span id="char-count-display">0 文字</span>
+            </div>
         </div>
 
-        <!-- Bottom: Pages -->
-        <div id="page-toolbar">
-            <button onclick="addNewPage()">+ 新規追加</button>
-            <div id="page-list" style="display:flex; gap:5px;"></div>
-            <button onclick="movePage(-1)">←</button>
-            <button onclick="movePage(1)">→</button>
+        <!-- 【下部へ移動】ページ管理パネル -->
+        <div id="bottom-page-panel">
+            <button class="add-page-btn" onclick="addNewPage()">＋ 新規ページ</button>
+            
+            <!-- 横スクロール可能なページボタン一覧 -->
+            <div class="page-scroll-container" id="page-container"></div>
+            
+            <!-- 移動コントロール -->
+            <div class="move-controls">
+                <button class="move-btn" onclick="movePage(-1)" title="現在のページを左へ移動">下に移動（左）</button>
+                <button class="move-btn" onclick="movePage(1)" title="現在のページを右へ移動">上に移動（右）</button>
+            </div>
+
+            <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
         </div>
     </div>
 
     <script>
-        let pages = [""], currentPageIndex = 0;
-        let phrases = ["同数くらいで考え中", "息を呑んだ"];
+        // --- データ・状態管理 ---
+        let pages = [""];
+        let currentPageIndex = 0;
+        let selectedText = "";
 
-        // ページ移動ロジック
-        function movePage(direction) {
-            if (currentPageIndex + direction >= 0 && currentPageIndex + direction < pages.length) {
-                let temp = pages[currentPageIndex];
-                pages[currentPageIndex] = pages[currentPageIndex + direction];
-                pages[currentPageIndex + direction] = temp;
-                currentPageIndex += direction;
-                render();
+        let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || [
+            "同数くらいで考え中",
+            "息を呑んだ。",
+            "あ゛っ、"
+        ];
+
+        const editor = document.getElementById('editor');
+        const editorWrapper = document.getElementById('editor-wrapper');
+        const pageContainer = document.getElementById('page-container');
+        const phraseContainer = document.getElementById('phrase-container');
+        const memoArea = document.getElementById('memo-area');
+        const previewArea = document.getElementById('dict-preview-area');
+
+        // --- 画面読み込み時：復元処理 ---
+        window.onload = function() {
+            if (localStorage.getItem('novel_saved_pages')) {
+                pages = JSON.parse(localStorage.getItem('novel_saved_pages'));
+                currentPageIndex = Number(localStorage.getItem('novel_current_page_idx')) || 0;
+            } else {
+                pages = [""];
+                currentPageIndex = 0;
+            }
+
+            renderPages();
+            renderPhrases();
+            loadPage(currentPageIndex);
+            
+            // 各種環境設定の復元
+            if(localStorage.getItem('custom_font_family')) {
+                const font = localStorage.getItem('custom_font_family');
+                document.getElementById('font-selector').value = font;
+                changeFontFamily(font);
+            }
+            if(localStorage.getItem('custom_font_size')) {
+                changeFontSize(localStorage.getItem('custom_font_size'));
+            }
+            if(localStorage.getItem('custom_bg_color')) {
+                document.getElementById('bg-color-code').value = localStorage.getItem('custom_bg_color');
+            }
+            if(localStorage.getItem('custom_text_color')) {
+                document.getElementById('text-color-code').value = localStorage.getItem('custom_text_color');
+            }
+            applyCustomColors();
+
+            if(localStorage.getItem('novel_memo')) {
+                memoArea.value = localStorage.getItem('novel_memo');
+            }
+            if(localStorage.getItem('novel_yt_id')) {
+                document.getElementById('yt-url-input').value = localStorage.getItem('novel_yt_id');
+                loadYouTubeVideo();
+            }
+
+            // 定型文入力イベント
+            document.getElementById('new-phrase-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && this.value.trim() !== "") {
+                    customPhrases.push(this.value.trim());
+                    localStorage.setItem('novel_phrases', JSON.stringify(customPhrases));
+                    this.value = "";
+                    renderPhrases();
+                }
+            });
+        };
+
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            section.classList.toggle('collapsed');
+        }
+
+        function applyCustomColors() {
+            const bgColor = document.getElementById('bg-color-code').value.trim();
+            const textColor = document.getElementById('text-color-code').value.trim();
+
+            if (bgColor.match(/^#[0-9a-fA-F]{3,6}$/) || bgColor === "transparent") {
+                editorWrapper.style.backgroundColor = bgColor;
+                localStorage.setItem('custom_bg_color', bgColor);
+            }
+            if (textColor.match(/^#[0-9a-fA-F]{3,6}$/)) {
+                editor.style.color = textColor;
+                localStorage.setItem('custom_text_color', textColor);
             }
         }
 
-        // YTプレイヤー
-        function loadYT() {
-            const id = document.getElementById('yt-url').value;
-            document.getElementById('yt-container').innerHTML = 
-                `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+        function replaceAllText() {
+            const srcText = document.getElementById('replace-src').value;
+            const dstText = document.getElementById('replace-dst').value;
+
+            if (!srcText) {
+                alert("置き換え前の文字（消したい文字）を入力してください。");
+                return;
+            }
+
+            pages[currentPageIndex] = editor.value;
+            const escapedSrc = srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escapedSrc, 'g');
+
+            let totalCount = 0;
+            pages = pages.map((pageText) => {
+                const matches = pageText.match(regex);
+                if (matches) totalCount += matches.length;
+                return pageText.replace(regex, dstText);
+            });
+
+            editor.value = pages[currentPageIndex];
+            updatePageData();
+            alert(`すべてのページから「${srcText}」を「${dstText}」に一括置き換えしました（計 ${totalCount} 箇所）。`);
+            
+            document.getElementById('replace-src').value = "";
+            document.getElementById('replace-dst').value = "";
         }
 
-        function toggle(id) { document.getElementById(id).style.display = document.getElementById(id).style.display === 'none' ? 'block' : 'none'; }
-        
-        function render() {
-            document.getElementById('page-list').innerHTML = pages.map((_, i) => 
-                `<button class="page-btn ${i===currentPageIndex?'active':''}" onclick="changePage(${i})">${i+1}</button>`
-            ).join('');
-            document.getElementById('phrase-list').innerHTML = phrases.map(p => 
-                `<button onclick="insert('${p}')">${p}</button>`
-            ).join('');
+        function handleTextSelection() {
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const text = editor.value.substring(start, end).trim();
+            if (text && start !== end) {
+                selectedText = text;
+            }
         }
-        
-        function changePage(i) { pages[currentPageIndex] = document.getElementById('editor').value; currentPageIndex = i; document.getElementById('editor').value = pages[i]; render(); }
-        function addNewPage() { pages.push(""); render(); }
-        function insert(text) { document.getElementById('editor').value += text; }
-        
-        window.onload = render;
+
+        // --- 辞書引き機能 ---
+        function searchWordInline(type) {
+            if (!selectedText) {
+                previewArea.innerHTML = `<span style="color:#e74c3c;">⚠️ 本文の調べたい文字をドラッグ選択してから押してください。</span>`;
+                return;
+            }
+
+            const currentFont = editor.style.fontFamily || "'Shippori Mincho', serif";
+            
+            if (type === 'kotobank') {
+                previewArea.innerHTML = `<span style="color:#3498db;">🔍 国語辞典で「${selectedText}」の意味を検索中...</span>`;
+                const url = `https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(selectedText)}`;
+                
+                fetch(url)
+                    .then(response => { if (!response.ok) throw new Error(); return response.json(); })
+                    .then(data => {
+                        if (data.extract) {
+                            previewArea.innerHTML = `
+                                <div style="font-family: ${currentFont}; line-height: 1.6;">
+                                    <div style="font-weight:bold; color:#2ecc71; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom: 3px;">📘 「${selectedText}」の意味</div>
+                                    <div style="font-size: 14px; color:#eee; white-space: pre-wrap;">${data.extract}</div>
+                                </div>
+                            `;
+                        } else { showExternalLink('kotobank', currentFont); }
+                    })
+                    .catch(() => showExternalLink('kotobank', currentFont));
+            } 
+            else if (type === 'weblio') {
+                previewArea.innerHTML = `<span style="color:#9b59b6;">🔍 類語辞典で「${selectedText}」の仲間を検索中...</span>`;
+                const url = `https://ja.wikipedia.org/api/rest_v1/page/related/${encodeURIComponent(selectedText)}`;
+                
+                fetch(url)
+                    .then(response => { if (!response.ok) throw new Error(); return response.json(); })
+                    .then(data => {
+                        if (data.pages && data.pages.length > 0) {
+                            const relatedWords = data.pages.slice(0, 5).map(p => `・<b>${p.title}</b>：${p.description || '関連表現'}`).join('<br>');
+                            previewArea.innerHTML = `
+                                <div style="font-family: ${currentFont}; line-height: 1.6;">
+                                    <div style="font-weight:bold; color:#9b59b6; margin-bottom:8px; border-bottom: 1px solid #444; padding-bottom: 3px;">📚 「${selectedText}」の類語・関連語</div>
+                                    <div style="font-size: 13px; color:#eee; white-space: pre-wrap;">${relatedWords}</div>
+                                </div>
+                            `;
+                        } else { showExternalLink('weblio', currentFont); }
+                    })
+                    .catch(() => showExternalLink('weblio', currentFont));
+            }
+        }
+
+        function showExternalLink(type, currentFont) {
+            let searchUrl = (type === 'kotobank') 
+                ? `https://kotobank.jp/word/${encodeURIComponent(selectedText)}`
+                : `https://thesaurus.weblio.jp/content/${encodeURIComponent(selectedText)}`;
+            let siteName = (type === 'kotobank') ? "コトバンク" : "Weblio類語辞典";
+
+            previewArea.innerHTML = `
+                <div style="font-family: ${currentFont};">
+                    <div style="font-weight:bold; color:#e67e22; margin-bottom:5px;">⚠️ 「${selectedText}」の自動抽出ができませんでした</div>
+                    <button onclick="window.open('${searchUrl}', '_blank')" style="width:100%; background:#2c3e50; text-align:center; padding:8px; color:#fff; border:none; border-radius:4px;">
+                        🔗 ${siteName} で直接調べる
+                    </button>
+                </div>
+            `;
+        }
+
+        function resetDictInline() {
+            selectedText = "";
+            previewArea.innerHTML = `<span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>`;
+        }
+
+        function insertQuickText(text) {
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const currentVal = editor.value;
+
+            if (text === '「」') {
+                const selected = currentVal.substring(start, end);
+                editor.value = currentVal.substring(0, start) + "「" + selected + "」" + currentVal.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + 1 + selected.length;
+            } else {
+                editor.value = currentVal.substring(0, start) + text + currentVal.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + text.length;
+            }
+            updatePageData();
+            editor.focus();
+        }
+
+        // --- ミニYouTubeプレイヤーロジック ---
+        function loadYouTubeVideo() {
+            const inputVal = document.getElementById('yt-url-input').value.trim();
+            if(!inputVal) return;
+
+            let videoId = inputVal;
+            // URLから動画IDを抽出する簡易パース
+            if(inputVal.includes('v=')) {
+                videoId = inputVal.split('v=')[1].split('&')[0];
+            } else if(inputVal.includes('youtu.be/')) {
+                videoId = inputVal.split('youtu.be/')[1].split('?')[0];
+            }
+
+            if(videoId) {
+                document.getElementById('yt-container').innerHTML = `
+                    <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}" 
+                    frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                `;
+                localStorage.setItem('novel_yt_id', inputVal);
+            }
+        }
+
+        // --- ページ管理ロジック ---
+        function renderPages() {
+            pageContainer.innerHTML = "";
+            pages.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.className = `page-btn ${index === currentPageIndex ? 'active' : ''}`;
+                btn.innerText = index + 1;
+                btn.onclick = () => loadPage(index);
+                pageContainer.appendChild(btn);
+            });
+        }
+
+        function loadPage(index) {
+            pages[currentPageIndex] = editor.value;
+            currentPageIndex = index;
+            editor.value = pages[currentPageIndex] || "";
+            renderPages();
+            
+            document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
+            document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
+            
+            localStorage.setItem('novel_current_page_idx', currentPageIndex);
+            resetDictInline();
+            editor.focus();
+        }
+
+        function addNewPage() {
+            pages[currentPageIndex] = editor.value;
+            pages.push(""); 
+            loadPage(pages.length - 1);
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+        }
+
+        function deleteCurrentPage() {
+            if (pages.length <= 1) {
+                alert("これ以上ページを削除できません（最低1ページ必要です）。");
+                return;
+            }
+            if (!confirm(`現在のページ（${currentPageIndex + 1}ページ目）を完全に削除してもよろしいですか？`)) {
+                return;
+            }
+            
+            pages.splice(currentPageIndex, 1);
+            if (currentPageIndex >= pages.length) {
+                currentPageIndex = pages.length - 1;
+            }
+            
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+            localStorage.setItem('novel_current_page_idx', currentPageIndex);
+            loadPage(currentPageIndex);
+        }
+
+        // ページの並び替え移動ロジック（上下に移動ボタン）
+        function movePage(direction) {
+            const targetIndex = currentPageIndex + direction;
+            if (targetIndex < 0 || targetIndex >= pages.length) {
+                return; // 移動範囲外
+            }
+            
+            // 現在のバッファを確定
+            pages[currentPageIndex] = editor.value;
+            
+            // データの入れ替え
+            const temp = pages[currentPageIndex];
+            pages[currentPageIndex] = pages[targetIndex];
+            pages[targetIndex] = temp;
+            
+            // 移動先に追従
+            currentPageIndex = targetIndex;
+            
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+            localStorage.setItem('novel_current_page_idx', currentPageIndex);
+            loadPage(currentPageIndex);
+        }
+
+        function updatePageData() {
+            pages[currentPageIndex] = editor.value;
+            document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
+            document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
+            
+            localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+        }
+
+        // --- 設定管理 ---
+        function changeFontFamily(fontName) {
+            editor.style.fontFamily = fontName;
+            document.querySelectorAll('.quick-btn').forEach(btn => btn.style.fontFamily = fontName);
+            localStorage.setItem('custom_font_family', fontName);
+        }
+
+        function changeFontSize(size) {
+            editor.style.fontSize = size;
+            localStorage.setItem('custom_font_size', size);
+        }
+
+        // --- 定型文ロジック ---
+        function renderPhrases() {
+            phraseContainer.innerHTML = "";
+            customPhrases.forEach((phrase, index) => {
+                const chip = document.createElement('div');
+                chip.className = 'phrase-chip';
+
+                const btn = document.createElement('button');
+                btn.className = 'phrase-chip-btn';
+                btn.innerText = phrase;
+                btn.title = phrase;
+                btn.onclick = () => insertQuickText(phrase);
+
+                const delBtn = document.createElement('button');
+                delBtn.className = 'phrase-chip-del';
+                delBtn.innerText = '×';
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    deletePhrase(index);
+                };
+
+                chip.appendChild(btn);
+                chip.appendChild(delBtn);
+                phraseContainer.appendChild(chip);
+            });
+        }
+
+        function deletePhrase(index) {
+            customPhrases.splice(index, 1);
+            localStorage.setItem('novel_phrases', JSON.stringify(customPhrases));
+            renderPhrases();
+        }
+
+        function saveMemo() {
+            localStorage.setItem('novel_memo', memoArea.value);
+        }
+
+        // --- TXT出力・読込ロジック ---
+        function exportToTxt() {
+            pages[currentPageIndex] = editor.value;
+            const joinedText = pages.map((pageText, index) => {
+                return `--- 【${index + 1}ページ目】 ---\n${pageText}`;
+            }).join('\n\n');
+
+            const blob = new Blob([joinedText], { type: 'text/plain;charset=utf-8' });
+            const fileNameInput = document.getElementById('file-name-input').value.trim();
+            const fileName = (fileNameInput !== "") ? `${fileNameInput}.txt` : "novel_draft.txt";
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = fileName;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+        function importFromTxt(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const fullText = e.target.result;
+                const pageSections = fullText.split(/--- 【\d+ページ目】 ---\n/);
+                
+                let newPages = pageSections.map(section => section.trim()).filter((section, idx) => {
+                    return !(idx === 0 && section === "");
+                });
+
+                if (newPages.length === 0) {
+                    newPages = [fullText];
+                }
+
+                pages = newPages;
+                currentPageIndex = 0;
+                
+                localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+                localStorage.setItem('novel_current_page_idx', currentPageIndex);
+                
+                loadPage(0);
+                alert(`テキストファイルから全 ${pages.length} ページ分を正常に読み込みました。`);
+                input.value = ""; 
+            };
+            reader.readAsText(file, 'utf-8');
+        }
     </script>
 </body>
 </html>
