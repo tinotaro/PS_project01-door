@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v21)</title>
+    <title>rei-style Editor (Palette Layout v22)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -110,6 +110,11 @@
             display: flex; flex-direction: column; align-items: center; padding: 15px 0; box-sizing: border-box; gap: 10px; z-index: 10;
         }
 
+        /* ヘルプを最下部に固定するため、保存ボタンとヘルプボタンの間に空白を作る */
+        .palette-spacer {
+            flex: 1;
+        }
+
         .palette-icon-btn {
             width: 44px; height: 32px; border-radius: 6px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color);
             display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; position: relative;
@@ -175,6 +180,11 @@
         #yt-container { width: 100%; aspect-ratio: 16 / 9; background: #000; margin-top: 8px; border: 1px solid var(--border-color); border-radius: 4px; }
         .btn-row { display: flex; gap: 5px; margin-bottom: 8px; }
         .btn-row button { flex: 1; }
+
+        /* ヘルプ用コンテンツスタイル */
+        .help-section { margin-bottom: 16px; }
+        .help-subtitle { font-size: 12px; font-weight: bold; color: var(--accent-color); margin-bottom: 4px; border-left: 2px solid var(--accent-color); padding-left: 6px; }
+        .help-text { font-size: 11px; line-height: 1.6; opacity: 0.85; margin: 0 0 8px 0; }
 
         /* --- 右側：メイン執筆エリア --- */
         #main-container {
@@ -277,6 +287,8 @@
         <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">動画</div>
         <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">設定</div>
         <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">保存</div>
+        <div class="palette-spacer"></div>
+        <div class="palette-icon-btn" data-tooltip="操作説明ヘルプ" onclick="togglePanel('panel-help')" style="border-color: var(--accent-color);">ヘルプ</div>
     </div>
 
     <div class="floating-panel" id="panel-dict">
@@ -374,6 +386,38 @@
         <button class="save-btn" onclick="exportToTxt()">.txt形式で全ページ保存</button>
         <label for="file-loader" class="load-label">続きから書く（txt読込）</label>
         <input type="file" id="file-loader" accept=".txt" style="display:none;" onchange="importFromTxt(this)">
+    </div>
+
+    <div class="floating-panel" id="panel-help">
+        <div class="panel-header">
+            <div class="panel-title">操作説明・機能ヘルプ</div>
+            <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
+        </div>
+        
+        <div class="help-section">
+            <div class="help-subtitle">1. ルビ入力ルール</div>
+            <p class="help-text">本文中で「文字《るび》」または「|対象《るび》」の形式で記述すると、エディタ裏側のプレビュー画面にリアルタイムでルビが反映されます。上部バーの「|《》」ボタンでテンプレートを挿入可能です。</p>
+        </div>
+
+        <div class="help-section">
+            <div class="help-subtitle">2. 定型文（単語登録）</div>
+            <p class="help-text">画面最上部の入力欄に文字列を入力してEnterキーを押すと、下のクイック一覧に登録されます。クリックするだけで本文のカーソル位置にその文章を挿入できます。（ブラウザに自動保存されます）</p>
+        </div>
+
+        <div class="help-section">
+            <div class="help-subtitle">3. 抽出と置き換え</div>
+            <p class="help-text">「置換」パネルから文字を入力して確認ボタンを押すと、該当箇所が本文上で黄色くハイライトされます。個別での置換のほか、そのページ内の該当文字を一括置換することも可能です。</p>
+        </div>
+
+        <div class="help-section">
+            <div class="help-subtitle">4. ページ送り機能</div>
+            <p class="help-text">本文中でテキストを選択した状態で、画面最下部にある「選択部分を次ページへ送る」ボタンを押すと、選択した部分だけが自動的に次のページ（または新規ページ）の先頭に移動します。</p>
+        </div>
+
+        <div class="help-section">
+            <div class="help-subtitle">5. 外部連携と保存</div>
+            <p class="help-text">「辞書」は選択文字をインラインで簡易検索できます。「動画」は作業用BGM等のURLを入力して再生可能です。「保存」から出力したtxtファイルは、いつでも再読込して執筆を再開できます。</p>
+        </div>
     </div>
 
     <div id="main-container">
@@ -485,7 +529,7 @@
             if (!isOpen) {
                 targetPanel.style.display = 'flex';
                 const iconButtons = document.querySelectorAll('.palette-icon-btn');
-                const indexMap = { 'panel-dict':0, 'panel-replace':1, 'panel-memo':2, 'panel-youtube':3, 'panel-settings':4, 'panel-save':5 };
+                const indexMap = { 'panel-dict':0, 'panel-replace':1, 'panel-memo':2, 'panel-youtube':3, 'panel-settings':4, 'panel-save':5, 'panel-help':6 };
                 if(indexMap[panelId] !== undefined) iconButtons[indexMap[panelId]].classList.add('active');
             }
         }
