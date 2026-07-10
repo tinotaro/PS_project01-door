@@ -1,0 +1,29 @@
+/* theme.css */
+
+/* --- カラーテーマの変数定義群 --- */
+:root {
+    --bg-color: #1a1a1a;
+    --text-color: #cccccc;
+    --sidebar-bg: #242424;
+    --panel-bg: #2c2c2c;
+    --border-color: #333333;
+    --accent-color: #4a90e2;
+    --button-hover: #357abd;
+    --editor-bg: #1e1e1e;
+    --panel-header-border: #444;
+    --input-bg: #111;
+}
+
+body.theme-default-white {
+    --bg-color: #f5f5f5; --text-color: #333333; --sidebar-bg: #e0e0e0; --panel-bg: #ffffff;
+    --border-color: #cccccc; --accent-color: #3498db; --button-hover: #2980b9; --editor-bg: #ffffff;
+    --panel-header-border: #dddddd; --input-bg: #fafafa;
+}
+
+body.theme-coffeebrown {
+    --bg-color: #4a3e3d; --text-color: #f4f1ea; --sidebar-bg: #3d3231; --panel-bg: #5a4d4c;
+    --border-color: #2e2524; --accent-color: #bfa18f; --button-hover: #a68574; --editor-bg: #524645;
+    --panel-header-border: #3d3231; --input-bg: #2e2524;
+}
+
+/* 今後新しいテーマを追加する場合は、このファイルの一番下に書き足していけばOKです */
