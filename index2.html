@@ -308,6 +308,32 @@ body.theme-konnezumi { --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg:
             font-family: 'Noto Emoji', sans-serif !important;
             font-variant-emoji: text !important;
         }
+        /* 設定パネル全体の背景をテキストエリアと合わせる */
+.floating-panel, 
+.panel-content, 
+.sidebar-input, 
+.sidebar-textarea, 
+.quick-btn, 
+#new-phrase-input,
+.phrase-chip {
+    background-color: var(--editor-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-color) !important;
+}
+
+/* ボタンのホバー時のみ、少し明るくして区別しやすくする */
+.floating-panel button:hover,
+.quick-btn:hover {
+    background-color: var(--border-color) !important;
+    color: #fff !important;
+}
+
+/* テキストエリアの枠線や影を消して、パネルと境界をなくす */
+#editor {
+    background-color: var(--editor-bg) !important;
+    border: none !important;
+    outline: none !important;
+}
     </style>
 </head>
 <body>
