@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rei-style Editor (Palette Layout v15)</title>
+    <title>rei-style Editor (Palette Layout v17)</title>
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -63,14 +63,14 @@
             font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
             font-size: 13px;
             color: transparent;
-            text-shadow: 0 0 0 #888888; /* 落ち着いたモノクロ1色 */
+            text-shadow: 0 0 0 #888888;
         }
         
         .palette-icon-btn:hover, .palette-icon-btn.active {
             background-color: var(--accent-color);
             border-color: #555;
             transform: scale(1.05);
-            text-shadow: 0 0 0 #ffffff; /* ホバー・アクティブ時は白に発光 */
+            text-shadow: 0 0 0 #ffffff;
         }
 
         .palette-icon-btn::after {
@@ -176,29 +176,44 @@
             font-family: inherit;
         }
 
-        /* 新設：ハイライトピックアップ・確認エリア */
+        /* リスト用コンテナ */
         .replace-pickup-container {
             background: #1a1a1a;
             border: 1px solid #444;
             border-radius: 4px;
             padding: 8px;
             margin-top: 8px;
-            font-size: 12px;
-            max-height: 150px;
+            font-size: 11px;
+            max-height: 160px;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
         .pickup-item {
-            padding: 4px;
-            border-bottom: 1px solid #333;
-            line-height: 1.4;
-            color: #ccc;
+            padding: 6px;
+            background: #252525;
+            border: 1px solid #383838;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .pickup-match {
-            background-color: #f1c40f;
-            color: #000;
-            padding: 0 2px;
+        .pickup-line-num {
+            color: #888;
             font-weight: bold;
-            border-radius: 2px;
+        }
+        .item-replace-btn {
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            padding: 3px 8px;
+            font-size: 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .item-replace-btn:hover {
+            background-color: #3498db;
         }
 
         .dict-icon-row {
@@ -339,7 +354,7 @@
             border-radius: 4px;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.3s;
+            position: relative;
         }
 
         #quick-toolbar {
@@ -349,6 +364,7 @@
             background-color: #181818;
             border-bottom: 1px solid var(--border-color);
             border-radius: 4px 4px 0 0;
+            z-index: 3;
         }
         .quick-btn {
             background-color: #2b2b2b;
@@ -361,13 +377,48 @@
             text-align: center;
         }
 
-        #editor {
+        /* 重ね合わせ構造による本文内ハイライト表示レイヤー */
+        .editor-container-inner {
             flex: 1;
+            position: relative;
             width: 100%;
+            overflow: hidden;
+        }
+
+        #backdrop {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            padding: 30px 40px;
+            box-sizing: border-box;
+            font-family: 'Shippori Mincho', serif;
+            font-size: 17px;
+            line-height: 1.8;
+            letter-spacing: 0.05em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            color: transparent; /* テキストそのものは透明に */
+            background-color: transparent;
+            overflow-y: auto;
+            pointer-events: none; /* 下のtextareaを操作可能にする */
+            z-index: 1;
+        }
+
+        /* 本文ハイライトのスタイル */
+        .editor-match-highlight {
+            background-color: rgba(241, 196, 15, 0.6); /* 半透明の黄色 */
+            border-radius: 2px;
+            color: transparent;
+        }
+
+        #editor {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%;
+            height: 100%;
             background: transparent;
             border: none;
             color: #dddddd;
-            padding: 30px 40px 40px 40px;
+            padding: 30px 40px;
             box-sizing: border-box;
             resize: none;
             outline: none;
@@ -375,7 +426,8 @@
             font-size: 17px;
             line-height: 1.8;
             letter-spacing: 0.05em;
-            transition: color 0.3s;
+            overflow-y: auto;
+            z-index: 2;
         }
 
         #editor-footer {
@@ -386,6 +438,7 @@
             color: #666;
             display: flex;
             justify-content: space-between;
+            z-index: 3;
         }
 
         #bottom-page-panel {
@@ -439,7 +492,7 @@
 </head>
 <body>
 
-    <!-- 左側：アイコンツールパレット（モノクロ1色・最適化） -->
+    <!-- 左側：アイコンツールパレット -->
     <div id="sidebar-palette">
         <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">🔍</div>
         <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">🔀</div>
@@ -466,30 +519,29 @@
         </div>
     </div>
 
-    <!-- 2. 置き換え（機能強化版） -->
+    <!-- 2. 置き換え（本文ハイライト対応版） -->
     <div class="floating-panel" id="panel-replace">
         <div class="panel-header">
             <div class="panel-title">🔀 文字の抽出と置き換え</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         
-        <!-- 全角半角の統一ショートカット -->
         <div class="btn-row" style="margin-bottom: 12px;">
-            <button onclick="convertAlphaNumeric('toFull')" style="font-size:11px; padding:4px;">英数全角に一括</button>
-            <button onclick="convertAlphaNumeric('toHalf')" style="font-size:11px; padding:4px;">英数半角に一括</button>
+            <button onclick="checkAndConvertAlphaNumeric('toFull')" style="font-size:11px; padding:4px;">英数全角に一括</button>
+            <button onclick="checkAndConvertAlphaNumeric('toHalf')" style="font-size:11px; padding:4px;">英数半角に一括</button>
         </div>
 
         <input type="text" id="replace-src" class="sidebar-input" placeholder="置き換え前の文字（消したい文字）" oninput="clearPickup()">
         <input type="text" id="replace-dst" class="sidebar-input" placeholder="置き換え後の文字（新しい文字）">
         
-        <button class="replace-btn" onclick="pickupMatches()">対象箇所をハイライト抽出</button>
+        <button class="replace-btn" onclick="pickupMatches()">対象箇所を本文で確認</button>
         
-        <!-- ピックアップ確認エリア -->
+        <!-- 各行へのジャンプ・個別実行リスト -->
         <div class="replace-pickup-container" id="pickup-results">
-            <span style="color:#666; font-style:italic;">ここに現在のページの該当箇所がハイライト抽出されます。</span>
+            <span style="color:#666; font-style:italic;">「対象箇所を本文で確認」を押すと、メイン執筆エリアが黄色くハイライトされます。</span>
         </div>
         
-        <button id="replace-confirm-btn" class="confirm-btn" onclick="executeConfirmedReplace()">このページの抽出箇所を置き換える</button>
+        <button id="replace-confirm-btn" class="confirm-btn" onclick="executeConfirmedReplaceAll()">このページの抽出箇所をすべて置き換える</button>
     </div>
 
     <!-- 3. メモ -->
@@ -565,7 +617,7 @@
             <button class="jump-btn" onclick="scrollToElement('bottom-page-panel')" title="一番下へジャンプ">↓</button>
         </div>
 
-        <!-- 中央：エディタ本体 -->
+        <!-- 中央：エディタ本体（重ね合わせ構造） -->
         <div id="editor-wrapper">
             <div id="quick-toolbar">
                 <button class="quick-btn" onclick="insertQuickText('「」')">「」</button>
@@ -577,7 +629,13 @@
                 <button class="quick-btn" onclick="insertQuickText('▼▼▼')">▼▼▼</button>
             </div>
             
-            <textarea id="editor" placeholder="ここに小説を書き出せます..." oninput="updatePageData()" onselect="handleTextSelection()"></textarea>
+            <div class="editor-container-inner">
+                <!-- ハイライト表示用の背面レイヤー -->
+                <div id="backdrop"></div>
+                <!-- 実際の文字入力用前面レイヤー -->
+                <textarea id="editor" placeholder="ここに小説を書き出せます..." oninput="updatePageData()" onscroll="syncScroll()" onselect="handleTextSelection()"></textarea>
+            </div>
+
             <div id="editor-footer">
                 <span id="current-page-display">ページ: 1</span>
                 <span id="char-count-display">0 文字</span>
@@ -597,15 +655,12 @@
         let pages = [""];
         let currentPageIndex = 0;
         let selectedText = "";
+        let targetSearchText = ""; // 本文内ハイライト用の保持トークン
 
-        // 初期定型文をご指定のものに変更
-        let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || [
-            "定型文１",
-            "定型文２",
-            "定型文３"
-        ];
+        let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || ["定型文１","定型文２","定型文３"];
 
         const editor = document.getElementById('editor');
+        const backdrop = document.getElementById('backdrop');
         const editorWrapper = document.getElementById('editor-wrapper');
         const pageContainer = document.getElementById('page-container');
         const phraseContainer = document.getElementById('phrase-container');
@@ -661,6 +716,12 @@
             });
         };
 
+        // スクロール同期連動
+        function syncScroll() {
+            backdrop.scrollTop = editor.scrollTop;
+            backdrop.scrollLeft = editor.scrollLeft;
+        }
+
         function scrollToElement(elementId) {
             const element = document.getElementById(elementId);
             if (element) {
@@ -708,31 +769,76 @@
             }
         }
 
-        /* --- 【機能強化】全角・半角の一括変換 --- */
-        function convertAlphaNumeric(mode) {
+        /* --- 全角・半角英数の事前チェック ＆ 置き換え --- */
+        function checkAndConvertAlphaNumeric(mode) {
             let text = editor.value;
             if (mode === 'toFull') {
-                // 半角から全角へ
-                text = text.replace(/[A-Za-z0-9]/g, function(s) {
-                    return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
-                }).replace(/ /g, " ");
-                alert("現在のページの英数字・スペースを【全角】に統一しました。");
+                // 半角英数字と半角スペースを検出
+                const matches = text.match(/[A-Za-z0-9 ]/g);
+                const count = matches ? matches.length : 0;
+                
+                if (count === 0) {
+                    alert("現在のページに変換対象の【半角英数字・スペース】は見つかりませんでした。");
+                    return;
+                }
+                
+                if (confirm(`現在のページに半角文字が【 ${count} 箇所 】見つかりました。\nこれらをすべて【全角】に置き換えますか？`)) {
+                    text = text.replace(/[A-Za-z0-9]/g, function(s) {
+                        return String.fromCharCode(s.charCodeAt(0) + 0xFEE0);
+                    }).replace(/ /g, " ");
+                    editor.value = text;
+                    updatePageData();
+                    alert("全角に一括置き換えしました。");
+                }
             } else if (mode === 'toHalf') {
-                // 全角から半角へ
-                text = text.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
-                    return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-                }).replace(/ /g, " ");
-                alert("現在のページの英数字・スペースを【半角】に統一しました。");
+                // 全角英数字と全角スペースを検出
+                const matches = text.match(/[Ａ-Ｚａ-ｚ０-９ ]/g);
+                const count = matches ? matches.length : 0;
+                
+                if (count === 0) {
+                    alert("現在のページに変換対象の【全角英数字・スペース】は見つかりませんでした。");
+                    return;
+                }
+                
+                if (confirm(`現在のページに全角文字が【 ${count} 箇所 】見つかりました。\nこれらをすべて【半角】に置き換えますか？`)) {
+                    text = text.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function(s) {
+                        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+                    }).replace(/ /g, " ");
+                    editor.value = text;
+                    updatePageData();
+                    alert("半角に一括置き換えしました。");
+                }
             }
-            editor.value = text;
-            updatePageData();
         }
 
-        /* --- 【機能大改造】ハイライトピックアップ＆確認置き換え --- */
         function clearPickup() {
-            pickupResults.innerHTML = `<span style="color:#666; font-style:italic;">ここに現在のページの該当箇所がハイライト抽出されます。</span>`;
+            targetSearchText = "";
+            applyBackdropHighlight();
+            pickupResults.innerHTML = `<span style="color:#666; font-style:italic;">「対象箇所を本文で確認」を押すと、メイン執筆エリアが黄色くハイライトされます。</span>`;
             confirmBtn.style.display = 'none';
         }
+
+        /* --- 本文内ハイライト処理（背面レイヤーの書き換え） --- */
+        function applyBackdropHighlight() {
+            const text = editor.value;
+            if (!targetSearchText) {
+                // ハイライトがない場合はそのままHTMLエスケープして反映
+                backdrop.innerHTML = escapeHtml(text);
+                return;
+            }
+            const escapedSrc = targetSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(escapedSrc, 'g');
+            
+            // 本文のテキストにハイライト用のタグを差し込む
+            const highlightedHtml = escapeHtml(text).replace(regex, (match) => {
+                return `<span class="editor-match-highlight">${match}</span>`;
+            });
+            backdrop.innerHTML = highlightedHtml;
+            syncScroll();
+        }
+
+        /* --- 本文内抽出の実行 --- */
+        let currentMatches = [];
 
         function pickupMatches() {
             const srcText = document.getElementById('replace-src').value;
@@ -741,35 +847,79 @@
                 return;
             }
 
-            const currentText = editor.value;
-            const escapedSrc = srcText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            const regex = new RegExp(escapedSrc, 'g');
-            
-            // 現在のページ内を改行ごとに分けて検索
-            const lines = currentText.split('\n');
-            let matchCount = 0;
-            let htmlBuffer = "";
+            targetSearchText = srcText;
+            applyBackdropHighlight(); // 本文ハイライトを実行
 
-            lines.forEach((line, index) => {
-                if (line.includes(srcText)) {
-                    matchCount++;
-                    // 該当ワードの前後を切り出してハイライト化
-                    const highlightedLine = line.replace(regex, `<span class="pickup-match">${srcText}</span>`);
-                    htmlBuffer += `<div class="pickup-item"><b>L:${index+1}</b> ${highlightedLine}</div>`;
+            const currentText = editor.value;
+            const lines = currentText.split('\n');
+            let htmlBuffer = "";
+            currentMatches = [];
+            let globalMatchId = 0;
+
+            lines.forEach((line, lineIndex) => {
+                let pos = line.indexOf(srcText);
+                while (pos !== -1) {
+                    currentMatches.push({
+                        id: globalMatchId,
+                        lineIndex: lineIndex,
+                        charIndex: pos,
+                        text: srcText
+                    });
+                    
+                    htmlBuffer += `
+                        <div class="pickup-item" id="pickup-item-${globalMatchId}">
+                            <span class="pickup-line-num">${lineIndex + 1}行目に対象あり</span>
+                            <button class="item-replace-btn" onclick="executeIndividualReplace(${globalMatchId})">ここを個別に置き換え</button>
+                        </div>`;
+
+                    globalMatchId++;
+                    pos = line.indexOf(srcText, pos + srcText.length);
                 }
             });
 
-            if (matchCount > 0) {
+            if (currentMatches.length > 0) {
                 pickupResults.innerHTML = htmlBuffer;
-                confirmBtn.innerText = `このページの抽出（${matchCount}箇所）を置き換える`;
+                confirmBtn.innerText = `このページの抽出（${currentMatches.length}箇所）を一括置き換える`;
                 confirmBtn.style.display = 'block';
             } else {
                 pickupResults.innerHTML = `<span style="color:#e74c3c;">⚠️ 現在のページに対象の文字列は見つかりませんでした。</span>`;
                 confirmBtn.style.display = 'none';
+                targetSearchText = "";
+                applyBackdropHighlight();
             }
         }
 
-        function executeConfirmedReplace() {
+        function escapeHtml(str) {
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        /* 1箇所だけ個別に置き換える機能 */
+        function executeIndividualReplace(matchId) {
+            const srcText = document.getElementById('replace-src').value;
+            const dstText = document.getElementById('replace-dst').value;
+            
+            if (!srcText) return;
+
+            const targetMatch = currentMatches.find(m => m.id === matchId);
+            if (!targetMatch) return;
+
+            const lines = editor.value.split('\n');
+            const targetLine = lines[targetMatch.lineIndex];
+
+            const before = targetLine.substring(0, targetMatch.charIndex);
+            const after = targetLine.substring(targetMatch.charIndex + srcText.length);
+            
+            lines[targetMatch.lineIndex] = before + dstText + after;
+            
+            editor.value = lines.join('\n');
+            updatePageData();
+
+            // ズレを防ぐため再抽出・本文ハイライトを更新
+            pickupMatches();
+        }
+
+        /* ページ内全一括置き換え */
+        function executeConfirmedReplaceAll() {
             const srcText = document.getElementById('replace-src').value;
             const dstText = document.getElementById('replace-dst').value;
 
@@ -783,7 +933,7 @@
             editor.value = newText;
             updatePageData();
 
-            alert(`現在のページの対象箇所を「${dstText}」に置き換えました。`);
+            alert(`現在のページの全対象箇所を「${dstText}」に一括置き換えました。`);
             clearPickup();
             document.getElementById('replace-src').value = "";
             document.getElementById('replace-dst').value = "";
@@ -895,6 +1045,7 @@
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
             localStorage.setItem('novel_current_page_idx', currentPageIndex);
             resetDictInline();
+            applyBackdropHighlight(); // ページ切り替え時にハイライトをリセット・同期
             editor.focus();
         }
 
@@ -919,16 +1070,19 @@
             document.getElementById('current-page-display').innerText = `ページ: ${currentPageIndex + 1} / ${pages.length}`;
             document.getElementById('char-count-display').innerText = `${editor.value.length} 文字`;
             localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+            applyBackdropHighlight(); // 入力中も常に背面レイヤーをリアルタイム更新
         }
 
         function changeFontFamily(fontName) {
             editor.style.fontFamily = fontName;
+            backdrop.style.fontFamily = fontName;
             document.querySelectorAll('.quick-btn').forEach(btn => btn.style.fontFamily = fontName);
             localStorage.setItem('custom_font_family', fontName);
         }
 
         function changeFontSize(size) {
             editor.style.fontSize = size;
+            backdrop.style.fontSize = size;
             localStorage.setItem('custom_font_size', size);
         }
 
