@@ -282,6 +282,11 @@ body, .emoji-bold, .palette-icon-btn, .jump-btn {
             font-variant-emoji: text; /* ジャンプボタンの矢印も単色固定 */
         }
         .jump-btn:hover { background-color: var(--accent-color); color: #fff; }
+    /* すべてのアイコンや要素の絵文字を強制的にモノクロ化 */
+.palette-icon-btn, .jump-btn, button, i, span {
+    font-family: 'Noto Emoji', sans-serif !important;
+    font-variant-emoji: text !important;
+}
     </style>
 </head>
 <body>
