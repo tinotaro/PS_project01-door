@@ -102,32 +102,32 @@
             transition: background-color 0.2s, color 0.2s;
         }
 
-        /* --- 左側：アイコンツールパレット --- */
+        /* --- 左側：テキストツールパレット --- */
         #sidebar-palette {
-            width: 46px;
+            width: 56px;
             background-color: var(--sidebar-bg);
             border-right: 1px solid var(--border-color);
             display: flex; flex-direction: column; align-items: center; padding: 15px 0; box-sizing: border-box; gap: 10px; z-index: 10;
         }
 
         .palette-icon-btn {
-            width: 32px; height: 32px; border-radius: 6px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color);
+            width: 44px; height: 32px; border-radius: 6px; background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color);
             display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; position: relative;
-            font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif; font-size: 13px; color: transparent; text-shadow: 0 0 0 #888888;
+            font-size: 11px; font-weight: bold; color: var(--text-color);
         }
         .palette-icon-btn:hover, .palette-icon-btn.active {
-            background-color: var(--accent-color); border-color: #555; transform: scale(1.05); text-shadow: 0 0 0 #ffffff;
+            background-color: var(--accent-color); border-color: #555; transform: scale(1.05); color: #ffffff;
         }
         .palette-icon-btn::after {
-            content: attr(data-tooltip); position: absolute; left: 44px; top: 50%; transform: translateY(-50%); background: #000; color: #fff;
+            content: attr(data-tooltip); position: absolute; left: 54px; top: 50%; transform: translateY(-50%); background: #000; color: #fff;
             padding: 5px 9px; border-radius: 4px; font-size: 11px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-family: sans-serif; font-weight: normal; text-shadow: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3); font-family: sans-serif; font-weight: normal;
         }
         .palette-icon-btn:hover::after { opacity: 1; }
 
         /* --- ポップアップする機能パネル --- */
         .floating-panel {
-            position: absolute; left: 52px; top: 15px; bottom: 15px; width: 290px;
+            position: absolute; left: 62px; top: 15px; bottom: 15px; width: 290px;
             background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
             box-shadow: 5px 5px 20px rgba(0,0,0,0.4); z-index: 20; display: none; flex-direction: column; padding: 15px; box-sizing: border-box; overflow-y: auto;
         }
@@ -163,7 +163,7 @@
         .item-replace-btn { background-color: var(--accent-color); color: #fff; border: none; padding: 3px 8px; font-size: 10px; border-radius: 3px; cursor: pointer; }
 
         .dict-icon-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 8px; }
-        .dict-icon-btn { font-size: 13px; font-weight: bold; padding: 8px; text-align: center; background-color: rgba(0,0,0,0.2); }
+        .dict-icon-btn { font-size: 12px; font-weight: bold; padding: 8px; text-align: center; background-color: rgba(0,0,0,0.2); }
         #dict-preview-area { background: var(--input-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; font-size: 13px; height: 180px; overflow-y: auto; color: var(--text-color); line-height: 1.5; }
         .preview-placeholder { opacity: 0.5; font-style: italic; }
 
@@ -207,17 +207,14 @@
             background-color: rgba(0,0,0,0.15); border: 1px solid var(--border-color); color: var(--text-color);
             padding: 4px 12px; font-size: 14px; font-family: 'Shippori Mincho', serif; min-width: 38px; text-align: center;
         }
-        .special-quick-btn {
-            background-color: rgba(74, 144, 226, 0.25); font-weight: bold; border-color: var(--accent-color); font-size: 12px; padding: 4px 10px;
-        }
 
         .editor-container-inner { flex: 1; position: relative; width: 100%; overflow: hidden; }
 
-        /* 背景プレビュー用 */
+        /* 背景プレビュー用（文字色を透過させず設定色で表示） */
         #backdrop {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 30px 40px; box-sizing: border-box;
             font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 2.2; letter-spacing: 0.05em;
-            white-space: pre-wrap; word-wrap: break-word; color: transparent; background-color: transparent;
+            white-space: pre-wrap; word-wrap: break-word; color: var(--text-color); background-color: transparent;
             overflow-y: auto; pointer-events: none; z-index: 1;
         }
 
@@ -234,13 +231,13 @@
 
         .editor-match-highlight { background-color: rgba(241, 196, 15, 0.5); border-radius: 2px; color: transparent; }
 
-        /* 入力用：プレビューに同期させるためテキスト自体は透過設定 */
+        /* 入力用：重ね合わせつつ文字をしっかり視認可能に変更 */
         #editor {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%;
             background: transparent; border: none; color: var(--text-color); padding: 30px 40px; box-sizing: border-box;
             resize: none; outline: none; font-family: 'Shippori Mincho', serif; font-size: 17px; line-height: 2.2;
             letter-spacing: 0.05em; overflow-y: auto; z-index: 2;
-            -webkit-text-fill-color: transparent;
+            -webkit-text-fill-color: var(--text-color);
         }
 
         #editor-footer {
@@ -248,8 +245,9 @@
         }
 
         #bottom-page-panel {
-            width: 100%; max-width: 720px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            width: 100%; max-width: 720px; background-color: var(--sidebar-bg); border: 1px solid var(--border-color); border-radius: 4px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 10px;
         }
+        .page-control-row { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
         .page-scroll-container { flex: 1; display: flex; gap: 5px; overflow-x: auto; padding: 2px 0; }
         .page-scroll-container::-webkit-scrollbar { height: 4px; }
         .page-scroll-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
@@ -259,8 +257,12 @@
         .add-page-btn { background-color: rgba(42,58,42,0.4); color: var(--text-color); white-space: nowrap; }
         .del-page-btn { background-color: rgba(61,34,34,0.4); color: var(--text-color); white-space: nowrap; }
         
+        .special-page-btn {
+            background-color: rgba(74, 144, 226, 0.25); font-weight: bold; border-color: var(--accent-color); font-size: 12px; padding: 6px 12px; border-radius: 4px; width: 100%; text-align: center;
+        }
+
         .jump-btn {
-            background-color: rgba(0,0,0,0.15); color: var(--text-color); font-weight: bold; font-size: 16px; width: 36px; height: 36px;
+            background-color: rgba(0,0,0,0.15); color: var(--text-color); font-weight: bold; font-size: 13px; width: 36px; height: 36px;
             display: flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; border: 1px solid var(--border-color); flex-shrink: 0; transition: all 0.2s;
         }
         .jump-btn:hover { background-color: var(--accent-color); color: #fff; }
@@ -269,32 +271,32 @@
 <body>
 
     <div id="sidebar-palette">
-        <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">🔍</div>
-        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">🔀</div>
-        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">✒️</div>
-        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">📺</div>
-        <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">🎨</div>
-        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">🏷️</div>
+        <div class="palette-icon-btn" data-tooltip="辞書機能" onclick="togglePanel('panel-dict')">辞書</div>
+        <div class="palette-icon-btn" data-tooltip="文字置き換え" onclick="togglePanel('panel-replace')">置換</div>
+        <div class="palette-icon-btn" data-tooltip="作品メモ" onclick="togglePanel('panel-memo')">メモ</div>
+        <div class="palette-icon-btn" data-tooltip="ミニYouTube" onclick="togglePanel('panel-youtube')">動画</div>
+        <div class="palette-icon-btn" data-tooltip="画面・配色設定" onclick="togglePanel('panel-settings')">設定</div>
+        <div class="palette-icon-btn" data-tooltip="作品出力・読込" onclick="togglePanel('panel-save')">保存</div>
     </div>
 
     <div class="floating-panel" id="panel-dict">
         <div class="panel-header">
-            <div class="panel-title">🔍 言葉の意味を調べる</div>
+            <div class="panel-title">言葉の意味を調べる</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <div class="dict-icon-row">
-            <button class="dict-icon-btn" onclick="searchWordInline('kotobank')">📘 コ</button>
-            <button class="dict-icon-btn" onclick="searchWordInline('weblio')">📚 辞</button>
-            <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:rgba(0,0,0,0.3);">🔄 リ</button>
+            <button class="dict-icon-btn" onclick="searchWordInline('kotobank')">コトバンク</button>
+            <button class="dict-icon-btn" onclick="searchWordInline('weblio')">類語辞典</button>
+            <button class="dict-icon-btn" onclick="resetDictInline()" style="background-color:rgba(0,0,0,0.3);">リセット</button>
         </div>
         <div id="dict-preview-area">
-            <span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>
+            <span class="preview-placeholder">本文で文字を選択して、上のボタンを押すとここに簡易表示されます。</span>
         </div>
     </div>
 
     <div class="floating-panel" id="panel-replace">
         <div class="panel-header">
-            <div class="panel-title">🔀 文字の抽出と置き換え</div>
+            <div class="panel-title">文字の抽出と置き換え</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <div class="btn-row" style="margin-bottom: 12px;">
@@ -312,7 +314,7 @@
 
     <div class="floating-panel" id="panel-memo">
         <div class="panel-header">
-            <div class="panel-title">✒️ 作品メモ</div>
+            <div class="panel-title">作品メモ</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <textarea id="memo-area" class="sidebar-textarea" placeholder="プロットや設定メモ（自動保存）" oninput="saveMemo()"></textarea>
@@ -320,7 +322,7 @@
 
     <div class="floating-panel" id="panel-youtube">
         <div class="panel-header">
-            <div class="panel-title">📺 ミニYouTube</div>
+            <div class="panel-title">ミニYouTube</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <input type="text" id="yt-url-input" class="sidebar-input" placeholder="動画ID または URL を入力">
@@ -332,7 +334,7 @@
 
     <div class="floating-panel" id="panel-settings">
         <div class="panel-header">
-            <div class="panel-title">🎨 表示・カラー設定</div>
+            <div class="panel-title">表示・カラー設定</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <div class="theme-grid-container">
@@ -365,12 +367,12 @@
 
     <div class="floating-panel" id="panel-save">
         <div class="panel-header">
-            <div class="panel-title">🏷️ 作品出力と読み込み</div>
+            <div class="panel-title">作品出力と読み込み</div>
             <button class="panel-close-btn" onclick="closeAllPanels()">×</button>
         </div>
         <input type="text" id="file-name-input" class="sidebar-input" value="novel_draft">
         <button class="save-btn" onclick="exportToTxt()">.txt形式で全ページ保存</button>
-        <label for="file-loader" class="load-label">📁 続きから書く（txt読込）</label>
+        <label for="file-loader" class="load-label">続きから書く（txt読込）</label>
         <input type="file" id="file-loader" accept=".txt" style="display:none;" onchange="importFromTxt(this)">
     </div>
 
@@ -380,7 +382,7 @@
                 <input type="text" id="new-phrase-input" class="sidebar-input" style="margin:0;" placeholder="文章を入力してEnterで定型文に登録">
                 <div class="phrase-horizontal-list" id="phrase-container"></div>
             </div>
-            <button class="jump-btn" onclick="scrollToElement('bottom-page-panel')">↓</button>
+            <button class="jump-btn" onclick="scrollToElement('bottom-page-panel')">下へ</button>
         </div>
 
         <div id="editor-wrapper">
@@ -393,7 +395,6 @@
                 <button class="quick-btn" onclick="insertQuickText('ッ')">ッ</button>
                 <button class="quick-btn" onclick="insertQuickText('▼▼▼')">▼▼▼</button>
                 <button class="quick-btn" onclick="insertRubyTemplate()" title="選択したテキストにルビを適用します">|《》</button>
-                <button class="quick-btn special-quick-btn" onclick="sendSelectionToNextPage()">選択を次ページへ送る ➡️</button>
             </div>
             
             <div class="editor-container-inner">
@@ -408,10 +409,14 @@
         </div>
 
         <div id="bottom-page-panel">
-            <button class="add-page-btn" onclick="addNewPage()">＋ 新規ページ</button>
-            <div class="page-scroll-container" id="page-container"></div>
-            <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
-            <button class="jump-btn" onclick="scrollToElement('top-phrase-panel')">↑</button>
+            <button class="special-page-btn" onclick="sendSelectionToNextPage()">選択部分を次ページへ送る</button>
+            
+            <div class="page-control-row">
+                <button class="add-page-btn" onclick="addNewPage()">＋ 新規ページ</button>
+                <div class="page-scroll-container" id="page-container"></div>
+                <button class="del-page-btn" onclick="deleteCurrentPage()">ページ削除</button>
+                <button class="jump-btn" onclick="scrollToElement('top-phrase-panel')">上へ</button>
+            </div>
         </div>
     </div>
 
@@ -527,7 +532,6 @@
             confirmBtn.style.display = 'none';
         }
 
-        /* リアルタイム・ルビプレビュー＆ハイライト解析 */
         function applyBackdropAndRuby() {
             let text = editor.value;
             let html = escapeHtml(text);
@@ -538,16 +542,9 @@
                 html = html.replace(regex, match => `<span class="editor-match-highlight">${match}</span>`);
             }
 
-            // ルビのエスケープ処理: |《 または |》 は退避して回避
             html = html.replace(/\|《/g, '___ESCAPE_OPEN___').replace(/\|》/g, '___ESCAPE_CLOSE___');
-
-            // ルビ規則A: |適用対象《るび》
             html = html.replace(/\|([^《\r\n]+)《([^》\r\n]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
-
-            // ルビ規則B: 漢字《るび》（開始記号省略パターン）
             html = html.replace(/([々〇\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]+)《([^》\r\n]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
-
-            // エスケープを元の文字列に戻す
             html = html.replace(/___ESCAPE_OPEN___/g, '《').replace(/___ESCAPE_CLOSE___/g, '》');
 
             backdrop.innerHTML = html;
@@ -578,7 +575,7 @@
                 confirmBtn.innerText = `このページの抽出（${currentMatches.length}箇所）を一括置き換える`;
                 confirmBtn.style.display = 'block';
             } else {
-                pickupResults.innerHTML = `<span style="color:#e74c3c;">⚠️ 対象は見つかりませんでした。</span>`;
+                pickupResults.innerHTML = `<span style="color:#e74c3c;">対象は見つかりませんでした。</span>`;
                 confirmBtn.style.display = 'none'; targetSearchText = ""; applyBackdropAndRuby();
             }
         }
@@ -626,7 +623,6 @@
             renderPages(); loadPage(nextIdx);
         }
 
-        /* 【改修版】ルビ記号挿入・ダイアログ制御支援関数 */
         function insertRubyTemplate() {
             const start = editor.selectionStart;
             const end = editor.selectionEnd;
@@ -634,23 +630,15 @@
             const selected = currentVal.substring(start, end);
 
             if (selected.length > 0) {
-                // 文字が選択されている場合：ポップアップでルビ（読み）を求める
                 const ruby = prompt(`「${selected}」のルビ（読み）を入力してください:`);
-                
-                // キャンセルされなかった場合のみ挿入
                 if (ruby !== null) {
-                    const rubyText = `|${selected}《${ruby} |《  は反映できないよ～ 誤操作防止の追加条件`;
-                    // 親文字《読み》のセットを作成
                     const processedRuby = `|${selected}《${ruby}》`;
                     editor.value = currentVal.substring(0, start) + processedRuby + currentVal.substring(end);
-                    
-                    // カーソルをルビ文字列の直後に移動
                     editor.selectionStart = editor.selectionEnd = start + processedRuby.length;
                 }
             } else {
-                // 何も選択されていない場合：そのまま |《》 を生成し、カーソルを《 と 》の間にセット
                 editor.value = currentVal.substring(0, start) + "|《》" + currentVal.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + 2; // 「|《」の後ろ
+                editor.selectionStart = editor.selectionEnd = start + 2; 
             }
             updatePageData();
             editor.focus();
@@ -660,14 +648,14 @@
             const start = editor.selectionStart; const end = editor.selectionEnd;
             let query = (start !== end) ? editor.value.substring(start, end).trim() : selectedText;
             query = query.replace(/[\s\r\n「」『』【】…―゛♡ッ▼|《》]/g, "");
-            if (!query) { previewArea.innerHTML = `⚠️ 文字を選択してください。`; return; }
+            if (!query) { previewArea.innerHTML = `文字を選択してください。`; return; }
             const currentFont = editor.style.fontFamily || "'Shippori Mincho', serif";
             
             if (type === 'kotobank') {
                 fetch(`https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`)
                     .then(res => res.json()).then(data => {
                         if (data && data.extract) {
-                            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><b>📘 「${query}」の意味</b><br>${data.extract}</div>`;
+                            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><b>「${query}」の意味</b><br>${data.extract}</div>`;
                         } else { showExternalLink('kotobank', query, currentFont); }
                     }).catch(() => showExternalLink('kotobank', query, currentFont));
             } else {
@@ -675,7 +663,7 @@
                     .then(res => res.json()).then(data => {
                         if (data && data.pages) {
                             const related = data.pages.slice(0, 5).map(p => `・<b>${p.title}</b>`).join('<br>');
-                            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><b>📚 「${query}」の関連語</b><br>${related}</div>`;
+                            previewArea.innerHTML = `<div style="font-family: ${currentFont};"><b>「${query}」の関連語</b><br>${related}</div>`;
                         } else { showExternalLink('weblio', query, currentFont); }
                     }).catch(() => showExternalLink('weblio', query, currentFont));
             }
@@ -683,10 +671,10 @@
 
         function showExternalLink(type, cleanText, currentFont) {
             let url = (type === 'kotobank') ? `https://kotobank.jp/word/${encodeURIComponent(cleanText)}` : `https://thesaurus.weblio.jp/content/${encodeURIComponent(cleanText)}`;
-            previewArea.innerHTML = `<button onclick="window.open('${url}', '_blank')">🔗 外部サイトで「${cleanText}」を見る</button>`;
+            previewArea.innerHTML = `<button onclick="window.open('${url}', '_blank')">外部サイトで「${cleanText}」を見る</button>`;
         }
 
-        function resetDictInline() { previewArea.innerHTML = `<span class="preview-placeholder">本文で文字を選択して、上のアイコンを押すとここに簡易表示されます。</span>`; }
+        function resetDictInline() { previewArea.innerHTML = `<span class="preview-placeholder">本文で文字を選択して、上のボタンを押すとここに簡易表示されます。</span>`; }
 
         function insertQuickText(text) {
             const start = editor.selectionStart; const end = editor.selectionEnd;
@@ -787,7 +775,7 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const fullText = e.target.result;
-                const sections = fullText.split(/【改ページ】|--- 【\d+ページ目】 ---\n/);
+                const sections = fullText.split(/【改ページ】/);
                 let newPages = sections.map(s => s.trim()).filter((s, idx) => !(idx === 0 && s === ""));
                 if (newPages.length === 0) newPages = [fullText];
                 pages = newPages; currentPageIndex = 0;
