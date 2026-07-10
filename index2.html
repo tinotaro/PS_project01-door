@@ -225,7 +225,14 @@ body.theme-konnezumi { --bg-color: #4b535c; --text-color: #f4f6f8; --sidebar-bg:
             padding: 4px 12px; font-size: 14px; font-family: 'Shippori Mincho', serif; min-width: 38px; text-align: center;
         }
 
-        .editor-container-inner { flex: 1; position: relative; width: 100%; overflow: hidden; }
+        .editor-container-inner {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    display: flex; /* これを追加 */
+    flex-direction: column; /* これを追加 */
+}
 
         #backdrop {
             position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding: 30px 40px; box-sizing: border-box;
