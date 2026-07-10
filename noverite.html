@@ -7,8 +7,8 @@
     <meta name="robots" content="noindex,nofollow,noarchive">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* --- カラーテーマの変数定義群 --- */
         :root {
@@ -25,14 +25,14 @@
             --ruby-color: #a5c7f2;
         }
         /* 絵文字を強制的にモノクロ（テキスト風）にする設定 */
-* {
-    font-variant-emoji: text !important;
-}
+        * {
+            font-variant-emoji: text !important;
+        }
 
-/* Noto Emojiフォントを優先的に使う設定 */
-body, .emoji-bold, .palette-icon-btn, .jump-btn {
-    font-family: 'Noto Emoji', sans-serif !important;
-}
+        /* Noto Emojiフォントを優先的に使う設定 */
+        body, .emoji-bold, .palette-icon-btn, .jump-btn {
+            font-family: 'Noto Emoji', sans-serif !important;
+        }
 
         /* 各種プリセットテーマのCSS変数切り替え */
         body.theme-default-white {
@@ -222,11 +222,11 @@ body, .emoji-bold, .palette-icon-btn, .jump-btn {
             font-variant-emoji: text; /* ジャンプボタンの矢印も単色固定 */
         }
         .jump-btn:hover { background-color: var(--accent-color); color: #fff; }
-    /* すべてのアイコンや要素の絵文字を強制的にモノクロ化 */
-.palette-icon-btn, .jump-btn, button, i, span {
-    font-family: 'Noto Emoji', sans-serif !important;
-    font-variant-emoji: text !important;
-}
+        /* すべてのアイコンや要素の絵文字を強制的にモノクロ化 */
+        .palette-icon-btn, .jump-btn, button, i, span {
+            font-family: 'Noto Emoji', sans-serif !important;
+            font-variant-emoji: text !important;
+        }
     </style>
 </head>
 <body>
@@ -423,6 +423,7 @@ body, .emoji-bold, .palette-icon-btn, .jump-btn {
         let targetSearchText = ""; 
         let activeTheme = "default";
         let customPhrases = JSON.parse(localStorage.getItem('novel_phrases')) || ["定型文１","定型文２","定型文３"];
+        let currentPanel = null;
 
         const editor = document.getElementById('editor');
         const backdrop = document.getElementById('backdrop');
@@ -464,7 +465,33 @@ body, .emoji-bold, .palette-icon-btn, .jump-btn {
             });
         };
 
-        // ページ管理のロジック（ここを修正・有効化しました）
+        // --- パネル・UI管理 ---
+        function togglePanel(id) {
+            if (currentPanel && currentPanel !== id) {
+                document.getElementById(currentPanel).classList.remove('active');
+            }
+            const panel = document.getElementById(id);
+            panel.classList.toggle('active');
+            currentPanel = panel.classList.contains('active') ? id : null;
+        }
+
+        function closeAllPanels() {
+            if (currentPanel) {
+                document.getElementById(currentPanel).classList.remove('active');
+                currentPanel = null;
+            }
+        }
+
+        function syncScroll() {
+            backdrop.scrollTop = editor.scrollTop;
+            backdrop.scrollLeft = editor.scrollLeft;
+        }
+
+        function scrollToElement(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- ページ管理 ---
         function renderPages() {
             pageContainer.innerHTML = "";
             pages.forEach((_, index) => {
@@ -477,13 +504,14 @@ body, .emoji-bold, .palette-icon-btn, .jump-btn {
         }
 
         function loadPage(idx) {
-            pages[currentPageIndex] = editor.value; // 現在のページを保存
+            pages[currentPageIndex] = editor.value;
             currentPageIndex = idx;
             editor.value = pages[currentPageIndex] || "";
             renderPages();
             updatePageData();
             localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
             localStorage.setItem('novel_current_page_idx', currentPageIndex);
+            editor.focus();
         }
 
         function addNewPage() {
@@ -500,25 +528,222 @@ body, .emoji-bold, .palette-icon-btn, .jump-btn {
         }
 
         function updatePageData() {
-            backdrop.innerHTML = editor.value.replace(/\n/g, '<br>');
+            // ルビやハイライトの反映用にエスケープ処理
+            let html = editor.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+            
+            // ルビ構文の変換 (|対象《るび》または 対象《るび》)
+            html = html.replace(/\|([^《]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+            html = html.replace(/([一-龠々]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
+
+            backdrop.innerHTML = html;
             document.getElementById('char-count-display').innerText = editor.value.length + " 文字";
             document.getElementById('current-page-display').innerText = "ページ: " + (currentPageIndex + 1);
             pages[currentPageIndex] = editor.value;
             localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
         }
 
-        // --- 既存の機能（書き出し、YouTube、置換など）はそのまま維持 ---
-        function syncScroll() { backdrop.scrollTop = editor.scrollTop; backdrop.scrollLeft = editor.scrollLeft; }
-        function scrollToElement(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
-        function togglePanel(id) { /* 既存ロジック */ }
-        function closeAllPanels() { /* 既存ロジック */ }
-        function applyPresetTheme(t) { /* 既存ロジック */ }
-        function changeFontFamily(f) { /* 既存ロジック */ }
-        function changeFontSize(s) { /* 既存ロジック */ }
-        function insertQuickText(t) { /* 既存ロジック */ }
-        function exportToTxt() { /* 既存の書き出しロジック */ }
-        function importFromTxt(o) { /* 既存の読込ロジック */ }
-        // ...その他すべての既存関数は削除せず、ここに含まれると想定してそのまま残してください...
-    </script>
+        // --- テーマ・フォント設定 ---
+        function applyPresetTheme(t) {
+            document.body.className = '';
+            if (t !== 'default') document.body.classList.add('theme-' + t);
+            localStorage.setItem('active_preset_theme', t);
+            activeTheme = t;
+            
+            document.querySelectorAll('.theme-select-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('btn-theme-' + t);
+            if(btn) btn.classList.add('active');
+        }
+
+        function changeFontFamily(f) {
+            editor.style.fontFamily = f;
+            backdrop.style.fontFamily = f;
+            localStorage.setItem('custom_font_family', f);
+        }
+
+        function changeFontSize(s) {
+            editor.style.fontSize = s;
+            backdrop.style.fontSize = s;
+            localStorage.setItem('custom_font_size', s);
+        }
+
+        // --- 定型文・クイック入力 ---
+        function renderPhrases() {
+            phraseContainer.innerHTML = "";
+            customPhrases.forEach((p, i) => {
+                const chip = document.createElement('div');
+                chip.className = 'phrase-chip';
+                
+                const btn = document.createElement('button');
+                btn.className = 'phrase-chip-btn';
+                btn.innerText = p;
+                btn.onclick = () => insertQuickText(p);
+                
+                const del = document.createElement('button');
+                del.className = 'phrase-chip-del';
+                del.innerText = '×';
+                del.onclick = () => { 
+                    customPhrases.splice(i, 1); 
+                    localStorage.setItem('novel_phrases', JSON.stringify(customPhrases)); 
+                    renderPhrases(); 
+                };
+                
+                chip.appendChild(btn); 
+                chip.appendChild(del);
+                phraseContainer.appendChild(chip);
+            });
+        }
+
+        function insertQuickText(t) {
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const text = editor.value;
+            
+            if (t === '「」' || t === '|《》') {
+                const inner = text.substring(start, end);
+                const prefix = t.substring(0, t.length / 2);
+                const suffix = t.substring(t.length / 2);
+                editor.value = text.substring(0, start) + prefix + inner + suffix + text.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + prefix.length + inner.length;
+            } else {
+                editor.value = text.substring(0, start) + t + text.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + t.length;
+            }
+            updatePageData();
+            editor.focus();
+        }
+
+        // --- 辞書機能 ---
+        function handleTextSelection() {
+            const text = editor.value.substring(editor.selectionStart, editor.selectionEnd).trim();
+            if (text) selectedText = text;
+        }
+
+        function searchWordInline(type) {
+            if(!selectedText) { 
+                previewArea.innerHTML = "⚠️ 文字を選択してください"; 
+                return; 
+            }
+            previewArea.innerHTML = "検索中...";
+            
+            if (type === 'kotobank') {
+                fetch(`https://ja.wiktionary.org/api/rest_v1/page/summary/${encodeURIComponent(selectedText)}`)
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(d => { previewArea.innerHTML = d.extract ? d.extract : "見つかりませんでした。"; })
+                .catch(() => { previewArea.innerHTML = `<a href="https://kotobank.jp/word/${encodeURIComponent(selectedText)}" target="_blank" style="color: var(--accent-color);">コトバンクで調べる</a>`; });
+            } else {
+                fetch(`https://ja.wikipedia.org/api/rest_v1/page/related/${encodeURIComponent(selectedText)}`)
+                .then(r => r.ok ? r.json() : Promise.reject())
+                .then(d => { previewArea.innerHTML = d.pages ? d.pages.slice(0,5).map(p=>p.title).join(', ') : "見つかりませんでした。"; })
+                .catch(() => { previewArea.innerHTML = `<a href="https://thesaurus.weblio.jp/content/${encodeURIComponent(selectedText)}" target="_blank" style="color: var(--accent-color);">Weblioで調べる</a>`; });
+            }
+        }
+
+        function resetDictInline() {
+            selectedText = "";
+            previewArea.innerHTML = '<span class="preview-placeholder">本文で文字を選択して、上のボタンを押すとここに簡易表示されます。</span>';
+        }
+
+        // --- 文字の置換と全角半角 ---
+        function checkAndConvertAlphaNumeric(type) {
+            let val = editor.value;
+            if(type === 'toFull') {
+                val = val.replace(/[A-Za-z0-9]/g, s => String.fromCharCode(s.charCodeAt(0) + 0xFEE0));
+            }
+            if(type === 'toHalf') {
+                val = val.replace(/[Ａ-Ｚａ-ｚ０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+            }
+            editor.value = val;
+            updatePageData();
+        }
+
+        function clearPickup() {
+            pickupResults.innerHTML = '<span style="color:#666; font-style:italic;">「対象箇所を本文で確認」を押すと、メイン執筆エリアが黄色くハイライトされます。</span>';
+            confirmBtn.style.display = 'none';
+            updatePageData(); // ハイライトを消すために再描画
+        }
+
+        function pickupMatches() {
+            const src = document.getElementById('replace-src').value;
+            if(!src) return;
+            targetSearchText = src;
+            
+            // エスケープ処理をして正規表現を作成
+            const regex = new RegExp(src.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+            const matches = [...editor.value.matchAll(regex)];
+            
+            if(matches.length === 0) {
+                pickupResults.innerHTML = "見つかりませんでした。";
+                confirmBtn.style.display = 'none';
+            } else {
+                pickupResults.innerHTML = `${matches.length}箇所見つかりました。`;
+                confirmBtn.style.display = 'block';
+                
+                // バックドロップにハイライトを反映
+                let html = editor.value.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+                html = html.replace(regex, `<span class="editor-match-highlight">${src}</span>`);
+                backdrop.innerHTML = html;
+            }
+        }
+
+        function executeConfirmedReplaceAll() {
+            const src = document.getElementById('replace-src').value;
+            const dst = document.getElementById('replace-dst').value;
+            if(!src) return;
+            
+            editor.value = editor.value.split(src).join(dst);
+            clearPickup();
+            updatePageData();
+            alert("このページの置き換えが完了しました。");
+        }
+
+        // --- メモ・YouTube・入出力 ---
+        function saveMemo() { 
+            localStorage.setItem('novel_memo', memoArea.value); 
+        }
+
+        function loadYouTubeVideo() {
+            const val = document.getElementById('yt-url-input').value;
+            let id = val;
+            if (val.includes('v=')) id = val.split('v=')[1].split('&')[0];
+            else if (val.includes('youtu.be/')) id = val.split('youtu.be/')[1].split('?')[0];
+            
+            if(id) {
+                document.getElementById('yt-container').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${id}" frameborder="0" allowfullscreen></iframe>`;
+                localStorage.setItem('novel_yt_id', id);
+            }
+        }
+
+        function exportToTxt() {
+            pages[currentPageIndex] = editor.value;
+            const joinedText = pages.map((t, i) => `--- 【${i + 1}ページ目】 ---\n${t}`).join('\n\n');
+            const blob = new Blob([joinedText], { type: 'text/plain;charset=utf-8' });
+            const fileName = document.getElementById('file-name-input').value.trim() || "novel_draft";
+            
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${fileName}.txt`;
+            a.click();
+        }
+
+        function importFromTxt(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const parts = e.target.result.split(/--- 【\d+ページ目】 ---\n/);
+                let newPages = parts.map(p => p.trim()).filter((p, i) => !(i === 0 && p === ""));
+                if (newPages.length === 0) newPages = [e.target.result];
+                
+                pages = newPages;
+                currentPageIndex = 0;
+                localStorage.setItem('novel_saved_pages', JSON.stringify(pages));
+                loadPage(0);
+                alert(`テキストファイルから ${pages.length} ページ分を読み込みました。`);
+                input.value = "";
+            };
+            reader.readAsText(file, 'utf-8');
+        }
+   </script>
 </body>
 </html>
